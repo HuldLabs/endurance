@@ -167,7 +167,44 @@ ferramenta, nunca o conteúdo.
 
 `.github/workflows/publish.yml` publica as features e a imagem base no GHCR usando
 o `GITHUB_TOKEN` do próprio repositório (escopo `packages: write`). Nenhum segredo
-extra é necessário.
+extra é necessário. **Só tag publica** — push na `main` não toca o registry.
+
+### Publicar uma versão
+
+Criar a tag é o ato de publicar; a versão da imagem sai do nome dela:
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
+```
+
+A tag `v1.2.0` publica `ghcr.io/huldlabs/endurance/base:1.2.0` **e**
+`ghcr.io/huldlabs/endurance/base:1` — o `:1` é o que os projetos consomem, o
+`:1.2.0` fica para quem quer pinar exato. As features seguem o major: ficam em
+`ghcr.io/huldlabs/endurance/<feature>:1` (o `devcontainers/action` deriva o canal
+do `devcontainer-feature.json`, não da tag).
+
+Para republicar sem criar tag nova (retry de job que falhou), use
+**Actions → publish → Run workflow**.
+
+### Usar numa máquina
+
+As imagens e features são **privadas** (GHCR privado é gratuito). Uma vez por
+máquina, antes do primeiro `devcontainer up`:
+
+```bash
+# PAT do cache sops, com escopo `read:packages`
+gh auth token                     # ou: sops -d ~/.cache/huld/dev.env.sops | ...
+echo "$PAT" | docker login ghcr.io -u <seu-usuario> --password-stdin
+```
+
+O login fica em `~/.docker/config.json` e vale para a imagem base e para todas as
+features. Depois disso o `devcontainer.json` funciona sem nada a mais — o `image`
+e os `features` apontam para `ghcr.io/huldlabs/endurance/...` e o Docker usa a
+credencial já guardada.
+
+O PAT vem do cache sops (`~/.cache/segtools/dev.env.sops` / `~/.cache/huld/...`,
+ver `secrets/dev.env.tpl`); nunca é versionado aqui.
 
 ## Estado
 
