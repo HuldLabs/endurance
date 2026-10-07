@@ -7,13 +7,11 @@
 name: publish
 
 on:
+  # So tag `v*` publica: a main pode quebrar a vontade que nada vai para o GHCR.
+  # A tag e o numero da versao — `git tag v1.2.0 && git push origin v1.2.0`.
   push:
-    branches: [main]
-    paths:
-      - "src/**"
-      - "images/base/**"
-      - ".github/workflows/publish.yml"
-  # Permite republicar sem commit (ex.: apos um bump manual de tag).
+    tags: ["v*"]
+  # Permite republicar sem criar tag (ex.: apos um retry de job que falhou).
   workflow_dispatch:
 
 permissions:
@@ -36,12 +34,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # A versao sai da TAG, nao do arquivo: `v1.2.0` publica `base:1.2.0` e `base:1`.
+      # O `:1` continua sendo o que os projetos consomem; o `:1.2.0` fica para pinar.
+      - name: Version from tag
+        id: version
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          echo "full=${tag#v}" >> "$GITHUB_OUTPUT"
+          echo "major=${tag#v}" | cut -d. -f1 | sed 's/^/major=/' >> "$GITHUB_OUTPUT"
+
       - uses: docker/build-push-action@v6
         with:
           context: images/base
           file: images/base/Dockerfile
           push: true
-          tags: ghcr.io/huldlabs/endurance/base:1
+          tags: |
+            ghcr.io/huldlabs/endurance/base:${{ steps.version.outputs.full }}
+            ghcr.io/huldlabs/endurance/base:${{ steps.version.outputs.major }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
