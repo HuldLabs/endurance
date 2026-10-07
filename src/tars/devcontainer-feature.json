@@ -1,0 +1,20 @@
+{
+  "id": "tars",
+  "version": "1.0.0",
+  "name": "TARS",
+  "description": "Baixa o binario do TARS do Release do HuldLabs/tars e o coloca no PATH.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/tars",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "latest",
+      "description": "Tag do Release (ex.: v1.2.0) ou 'latest'."
+    },
+    "repo": {
+      "type": "string",
+      "default": "HuldLabs/tars",
+      "description": "Owner/repo de onde o binario e' baixado."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

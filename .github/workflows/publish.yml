@@ -1,0 +1,63 @@
+# Publica as features e a imagem base no GHCR.
+#
+# Sem segredo extra: o GITHUB_TOKEN do proprio repositorio basta, com `packages: write`.
+# As features saem em ghcr.io/huldlabs/endurance/<feature> e a base em
+# ghcr.io/huldlabs/endurance/base — o mesmo namespace, para o projeto nao ter de saber
+# de onde cada peca veio.
+name: publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "images/base/**"
+      - ".github/workflows/publish.yml"
+  # Permite republicar sem commit (ex.: apos um bump manual de tag).
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  # A imagem base primeiro: as features sao instaladas SOBRE ela, entao publicar uma
+  # feature que a base nao suporta deixaria o projeto quebrado sem aviso.
+  base:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: images/base
+          file: images/base/Dockerfile
+          push: true
+          tags: ghcr.io/huldlabs/endurance/base:1
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  features:
+    needs: base
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # `publish` publica CADA pasta em src/* como uma feature. O owner/namespace sai do
+      # GITHUB_TOKEN — nao ha string de registry escrita a mao aqui que possa divergir.
+      - name: Publish features
+        uses: devcontainers/action@v1
+        with:
+          publish-features: "true"
+          base-path-to-features: "./src"
+          generate-docs: "true"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

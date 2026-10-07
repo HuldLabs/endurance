@@ -1,0 +1,15 @@
+{
+  "id": "postgres-client",
+  "version": "1.0.0",
+  "name": "PostgreSQL client",
+  "description": "psql e pg_dump do major pedido, do repositorio PGDG assinado. O major TEM de casar com o servidor: pg_dump recusa um servidor mais novo que ele.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/postgres-client",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "18",
+      "description": "Major do cliente (psql/pg_dump). Precisa ser >= o major do servidor."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

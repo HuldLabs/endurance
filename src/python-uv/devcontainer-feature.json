@@ -1,0 +1,25 @@
+{
+  "id": "python-uv",
+  "version": "1.0.0",
+  "name": "Python + uv",
+  "description": "Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/python-uv",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "3.13",
+      "description": "Versao do Python (major.minor). Vira o python3 do sistema e a base do venv."
+    },
+    "uvVersion": {
+      "type": "string",
+      "default": "0.12.19",
+      "description": "Versao do uv (instalador oficial astral.sh)."
+    },
+    "venvPath": {
+      "type": "string",
+      "default": "/workspace/.venv",
+      "description": "Caminho do venv criado pelo uv."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

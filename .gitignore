@@ -1,0 +1,12 @@
+# Segredo e material de chave NUNCA entram: a fonte e' o 1Password e o cache e' local.
+*.sops
+*.key
+*.pem
+.env
+.env.*
+
+# Cache local do devcontainer CLI e artefatos de teste.
+.devcontainer/**/devcontainer-lock.json
+*.log
+.cache/
+node_modules/
