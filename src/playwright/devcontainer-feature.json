@@ -1,0 +1,21 @@
+{
+  "id": "playwright",
+  "version": "1.0.0",
+  "name": "Playwright",
+  "description": "Bibliotecas de sistema do Chromium (por `install-deps` da versao pedida) e o browser instalado nas pastas de cache do container. Exige a feature node-bun para ter Node/npx.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/playwright",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "1.63.0",
+      "description": "Versao do Playwright. A lista de bibliotecas e' resolvida POR ESTA versao (`install-deps`), nunca copiada a mao: sao ~40 nomes que mudam de forma por distro e a cada bump."
+    },
+    "browser": {
+      "type": "string",
+      "enum": ["chromium", "firefox", "webkit", "chromium,firefox,webkit"],
+      "default": "chromium",
+      "description": "Browser instalado. Chromium e' o do e2e do ecossistema; a lista completa existe para quem testa nos tres."
+    }
+  },
+  "installsAfter": ["ghcr.io/huldlabs/endurance/node-bun", "ghcr.io/devcontainers/features/common-utils"]
+}
