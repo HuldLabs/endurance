@@ -1,0 +1,20 @@
+# Regras minimas: o default do gitleaks cobre as credenciais conhecidas. Aqui so' o que
+# e' especifico deste repositorio — nao ha motivo para reescrever a lista inteira.
+title = "endurance"
+
+[extend]
+# Herda o conjunto padrao (AWS, GitHub, chaves privadas etc.). Sem isso o arquivo
+# SUBSTITUIRIA as regras padrao por nada, e o scan passaria sempre.
+useDefault = true
+
+[allowlist]
+description = "Falsos positivos conhecidos deste repositorio"
+# Referencias op:// sao PONTEIROS para o cofre, nunca o valor — e aparecem de proposito
+# na documentacao e nos exemplos. O aviso que denuncia uma referencia errada e' de
+# runtime, nao do scan.
+paths = [
+  '''README\.md$''',
+]
+regexes = [
+  '''op://[A-Za-z0-9._/-]+''',
+]

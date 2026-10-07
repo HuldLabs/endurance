@@ -1,0 +1,25 @@
+{
+  "id": "node-bun",
+  "version": "1.0.0",
+  "name": "Node + bun",
+  "description": "Node (versao por option) e o bun. O bun e' o gerenciador de pacotes do ecossistema; o npm vem junto com o Node.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/node-bun",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "22",
+      "description": "Major do Node. O projeto declara em .node-version; a feature obedece."
+    },
+    "bunVersion": {
+      "type": "string",
+      "default": "1.4.2",
+      "description": "Versao do bun (instalador oficial)."
+    },
+    "install": {
+      "type": "boolean",
+      "default": true,
+      "description": "Rodar 'bun install --frozen-lockfile' no fim, se houver bun.lock."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
