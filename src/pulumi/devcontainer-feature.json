@@ -1,0 +1,15 @@
+{
+  "id": "pulumi",
+  "version": "1.0.0",
+  "name": "Pulumi CLI",
+  "description": "CLI do Pulumi (instalador oficial, versao pinada). O SDK de cada linguagem fica com o projeto — aqui entra so a CLI.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/pulumi",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "3.263.0",
+      "description": "Versao da CLI. Bump junto do requirements.txt do programa se o minimo suportado pelo SDK mudar."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
