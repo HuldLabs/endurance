@@ -39,13 +39,109 @@ projeto liga no `devcontainer.json` com uma linha.
 O `image` dá a base; cada `features` acrescenta um runtime; o resto (compose,
 Postgres, portas, mounts, variáveis de ambiente) é do projeto.
 
+### Qual projeto usa o quê
+
+Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVersion`,
+`packageManager`); a feature obedece. Três recortes reais:
+
+**Stack Python só** (farmega, seo-expert, nexus-x — Python 3.13, Postgres 18):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "features": {
+    "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
+    "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
+    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+  }
+}
+```
+
+**Next só** (segtools, bulario — Node 22 e bun 1.4.2):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "features": {
+    "ghcr.io/huldlabs/endurance/node-bun:1": {
+      "nodeVersion": "22",
+      "packageManager": "bun"
+    },
+    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+  }
+}
+```
+
+**Python + React** (fabber — Python 3.14 para a infra, Node 24 com pnpm 11.1.1, e o
+Pulumi da infra; `playwright` porque há e2e de browser):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "features": {
+    "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.14" },
+    "ghcr.io/huldlabs/endurance/node-bun:1": {
+      "nodeVersion": "24.21.0",
+      "packageManager": "pnpm",
+      "pnpmVersion": "11.1.1"
+    },
+    "ghcr.io/huldlabs/endurance/playwright:1": { "version": "1.63.0", "browser": "chromium" },
+    "ghcr.io/huldlabs/endurance/pulumi:1": { "version": "3.263.0" },
+    "ghcr.io/huldlabs/endurance/signing:1": { "allowedSigners": "eu@exemplo ssh-ed25519 AAAA..." },
+    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+  }
+}
+```
+
+### Caches em `.cache/` (recomendação, não padrão)
+
+Caches de ferramenta (`uv`, `bun`, `pnpm`, `ms-playwright`, `pycache`) ficam **fora** da
+árvore versionada, em `.cache/`, e o diretório **não** entra no git. É o que as features
+já fazem por perfil de shell; declarar no projeto torna o ganho explícito e sobrevive a
+quem roda o comando sem shell de login:
+
+```jsonc
+{
+  "containerEnv": {
+    "UV_CACHE_DIR": "${containerWorkspaceFolder}/.cache/uv",
+    "UV_LINK_MODE": "hardlink",
+    "UV_PYTHON_PREFERENCE": "only-managed",
+    "PYTHONPYCACHEPREFIX": "${containerWorkspaceFolder}/.cache/pycache",
+    "BUN_INSTALL_CACHE_DIR": "${containerWorkspaceFolder}/.cache/bun",
+    "PLAYWRIGHT_BROWSERS_PATH": "${containerWorkspaceFolder}/.cache/ms-playwright"
+  }
+}
+```
+
+O `UV_LINK_MODE=hardlink` só rende se o cache estiver no **mesmo filesystem** do repo; num
+mount de rede o uv cai para cópia e o ganho evapora.
+
+### Ciclo de vida (opcional)
+
+Dois scripts prontos em `src/lifecycle/scripts/`, ligados no `devcontainer.json` — o
+segundo cobre o buraco do segtools, que só tinha `post-create`:
+
+```jsonc
+{
+  "initializeCommand": "bash .devcontainer/scripts/initialize.sh",
+  "updateContentCommand": "bash .devcontainer/scripts/update-content.sh"
+}
+```
+
+- **`initialize.sh`** roda no HOST e remove container órfão deste devcontainer (parado,
+  com bind apontando para caminho que sumiu).
+- **`update-content.sh`** valida o `.venv` de volume antes do `uv sync` e recria quando o
+  interpretador por dentro não executa mais.
+
 ## O que é genérico (aqui) × o que fica no projeto
 
 | Aqui (`endurance`) | No projeto |
 | --- | --- |
-| `images/base`: git, curl, sops, age, op, gitleaks, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
+| `images/base`: git, curl, sops, age, op, gitleaks, task, docker CLI, claude-code, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
 | Features de runtime: `node-bun`, `python-uv`, `postgres-client` | Versões exatas exigidas pelo projeto (`.node-version`, `.python-version`, lockfiles) |
 | `secrets`: os scripts `op-sops`, `git-credential-op`, `gh-op`, parametrizados por projeto | Os mounts, os nomes de volume e as portas publicadas |
+| `signing`: ssh-agent de caminho fixo, `allowed_signers`, `gpg.format=ssh` | A referência `op://` da chave de assinatura e o arquivo `allowed_signers` |
+| `lifecycle/scripts`: limpeza de órfão e validação de `.venv` | Ligar os hooks, as portas e o `containerEnv` de cache |
 | `tars`: o binário do assistente | As referências `op://` do cofre e os campos de cada projeto |
 | Workflow de publicação das features e da imagem base | `post-create`/`post-start` do projeto (hooks, stamps, subir o app) |
 
@@ -57,11 +153,15 @@ ferramenta, nunca o conteúdo.
 
 | Feature | O que traz |
 | --- | --- |
-| [`node-bun`](src/node-bun) | Node (versão por option) + bun + `bun install` idempotente |
-| [`python-uv`](src/python-uv) | Python (versão por option) + `uv`, venv e `uv sync` |
-| [`secrets`](src/secrets) | `op-sops.sh`, `git-credential-op.sh`, `gh-op.sh`, chave de assinatura SSH |
+| [`node-bun`](src/node-bun) | Node (`nodeVersion`) + bun 1.4.2 ou pnpm 11.1.1 (`packageManager`), install congelado idempotente |
+| [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`) + `uv`, venv e `uv sync` |
+| [`secrets`](src/secrets) | `op-sops.sh` (com fallback Connect → Service Account), `git-credential-op.sh`, `gh-op.sh` |
+| [`signing`](src/signing) | `ssh-agent-init` (chave em agente, nunca em disco), `signing-git-config`, `allowed_signers` |
+| [`playwright`](src/playwright) | Bibliotecas de sistema do Chromium (`install-deps`) + browser no cache do container |
+| [`pulumi`](src/pulumi) | CLI do Pulumi (3.263.0), versão pinada |
 | [`tars`](src/tars) | Binário do [HuldLabs/tars](https://github.com/HuldLabs/tars), do Release |
 | [`postgres-client`](src/postgres-client) | `psql`/`pg_dump` do major pedido (repo PGDG assinado) |
+| [`lifecycle`](src/lifecycle) | Scripts de `initializeCommand`/`updateContentCommand` (órfãos) |
 
 ## Publicação
 
