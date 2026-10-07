@@ -10,7 +10,7 @@
 set -euo pipefail
 
 # As options chegam por env, com o nome em CAIXA ALTA do id (spec containers.dev).
-PYTHON_VERSION="${VERSION:-3.13}"
+PYTHON_VERSION="${PYTHONVERSION:-3.13}"
 UV_VERSION="${UVVERSION:-0.12.19}"
 VENV_PATH="${VENVPATH:-/workspace/.venv}"
 
@@ -28,6 +28,14 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 
 PY="$PYTHON_VERSION"
+# O intervalo e' o que os projetos do ecossistema REALMENTE declaram hoje:
+# 3.12 (nexus-x, farmega.v2) .. 3.15 (imagem do fabber). Fora disso e' engano de
+# digitacao ou projeto novo — falha ALTO aqui em vez de baixar um interpretador que
+# ninguem vai usar.
+case "$PY" in
+  3.1[2-5]) ;;
+  *) echo "python-uv: pythonVersion fora do intervalo suportado (3.12-3.15): $PY" >&2; exit 1 ;;
+esac
 # O uv ja sabe instalar e fixar o interpretador; nao ha razao para compilar Python a mao.
 # O uv fica FORA do apt (binario oficial, versao fixa) porque o da distro e' antigo.
 if ! command -v uv >/dev/null 2>&1; then
