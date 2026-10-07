@@ -1,0 +1,25 @@
+{
+  "id": "signing",
+  "version": "1.0.0",
+  "name": "Assinatura de commit (SSH)",
+  "description": "Chave de assinatura carregada num ssh-agent de caminho FIXO (nunca toca o disco), `allowed_signers` versionado por projeto e `git config gpg.format=ssh`. Exige a feature secrets para ler a chave do cache sops.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/signing",
+  "options": {
+    "agentSocket": {
+      "type": "string",
+      "default": "/tmp/endurance-ssh-agent.sock",
+      "description": "Caminho do socket do ssh-agent. TEM de casar com o remoteEnv.SSH_AUTH_SOCK do projeto."
+    },
+    "allowedSigners": {
+      "type": "string",
+      "default": "",
+      "description": "Linhas do arquivo allowed_signers (ex.: 'eu@exemplo ssh-ed25519 AAAA...'). Vazio = o projeto versiona o proprio arquivo e aponta por allowedSignersFile."
+    },
+    "allowedSignersFile": {
+      "type": "string",
+      "default": ".allowed_signers",
+      "description": "Caminho (relativo a' raiz do projeto) do arquivo allowed_signers. E' este que o git consulta em `git log --show-signature`."
+    }
+  },
+  "installsAfter": ["ghcr.io/huldlabs/endurance/secrets", "ghcr.io/devcontainers/features/common-utils"]
+}
