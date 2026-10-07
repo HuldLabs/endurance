@@ -78,6 +78,28 @@ TOKEN="$(cat "$TOKEN_FILE")"
 # `env -u OP_CONNECT_HOST -u OP_CONNECT_TOKEN` SO' nesta chamada: o `op` NAO cai sozinho
 # para a service account quando OP_CONNECT_HOST esta setado mas o Connect nao responde —
 # ele FALHA. Aqui nao usamos Connect, entao as duas saem, e so' para este processo.
+# FALLBACK Connect -> Service Account (ideia do fabber, infra/scripts/lib/op-with-fallback.sh).
+#
+# O `op` NAO cai sozinho para a service account quando OP_CONNECT_HOST esta setado e o
+# Connect nao responde — ele FALHA com um erro de DNS/conexao. Numa maquina nova isso e'
+# o estado NORMAL (o Connect ainda nao subiu), e o log do bootstrap vira uma cascata de
+# erros que nao sao erros.
+#
+# Sonda primeiro, nao adivinha: se a health do Connect responde, o Connect E' o caminho
+# (e uma recusa dele e' erro de verdade — nao ha resgate silencioso pela service account,
+# que mascararia para sempre um Connect quebrado). Se nao responde, vai direto para a
+# service account com UMA linha INFO.
+if [ -n "${OP_CONNECT_HOST:-}" ] && [ -n "${OP_CONNECT_TOKEN:-}" ]; then
+  if curl -sf -o /dev/null --max-time 2 "${OP_CONNECT_HOST%/}/health" 2>/dev/null; then
+    # Connect vivo: usa ele. Sem `env -u` — e' o transporte pedido.
+    exec env OP_SERVICE_ACCOUNT_TOKEN="$TOKEN" op "$@"
+  fi
+  echo "[op] INFO: 1Password Connect em ${OP_CONNECT_HOST} ainda nao responde; usando a service account nesta chamada (esperado em maquina nova)." >&2
+fi
+
+# Sem Connect (ou Connect fora do ar): as duas variaveis saem SO' neste processo — a
+# service account e' o unico transporte, e `env -u` em vez de `unset` deixa o ambiente do
+# chamador intacto para um `docker compose`/`op run` posterior.
 exec env -u OP_CONNECT_HOST -u OP_CONNECT_TOKEN \
   OP_SERVICE_ACCOUNT_TOKEN="$TOKEN" op "$@"
 OP_SOPS
