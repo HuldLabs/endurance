@@ -29,6 +29,13 @@ ARG GITLEAKS_VERSION=8.30.1
 # ULTIMA versao publicada. Fixar a versao faz o build quebrar sozinho quando ela sai do
 # repo (aconteceu: o pin 2.39.0-1 sumiu e derrubou o rebuild). Nao ha o que fixar aqui.
 ARG OP_CLI_VERSION=latest
+# Repositorio apt PROPRIO de cada um (cadeia de assinatura verificavel), versao EXATA:
+# sem o `=` o apt stable sobe a ferramenta sozinho num rebuild e a tabela do topo mente.
+ARG DOCKER_CE_CLI_VERSION=5:29.8.1-1~debian.13~trixie
+ARG DOCKER_COMPOSE_PLUGIN_VERSION=5.5.1-1~debian.13~trixie
+# go-task (instalador oficial) e Claude Code (pacote npm; entra DEPOIS do Node da feature).
+ARG TASK_VERSION=3.49.1
+ARG CLAUDE_CODE_VERSION=2.1.278
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -48,6 +55,28 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         "sudo=${SUDO_VERSION}" \
     && rm -rf /var/lib/apt/lists/* \
     && git --version
+
+# task: o runner de tarefas do ecossistema, instalador oficial com versao explicita.
+# Nao ha "task" no apt da trixie, e o binario solto de um repositorio de terceiros
+# trocaria de versao sem aviso.
+RUN sh -c "$(curl -fsSL https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin "v${TASK_VERSION}" \
+    && task --version
+
+# Docker CLI + compose plugin (SEM daemon). O socket do host e' montado pelo PROJETO,
+# entao `docker`/`docker compose` aqui agem no MESMO daemon do host. Daemon nunca entra:
+# exigiria privileged e mataria a premissa de "um container, nao uma VM".
+RUN install -m 0755 -d /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/debian/gpg \
+        | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
+    && chmod a+r /etc/apt/keyrings/docker.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+        > /etc/apt/sources.list.d/docker.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        "docker-ce-cli=${DOCKER_CE_CLI_VERSION}" "docker-compose-plugin=${DOCKER_COMPOSE_PLUGIN_VERSION}" \
+    && rm -rf /var/lib/apt/lists/* \
+    && docker --version && docker compose version
 
 # Usuario `dev` (uid 1000, gid 1000). O uid 1000 e o que o host normalmente usa, e o
 # devcontainer CLI remapeia este uid para o dono da arvore montada — criar o usuario JA
@@ -114,7 +143,73 @@ https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable
 # e' o alvo padrao e casa com o workspaceFolder dos projetos.
 RUN mkdir -p /workspace && chown dev:dev /workspace
 
+# ------------------------------------------------------------------------------- git
+# As quatro configuracoes que TODA arvore montada precisa, num script so'. Elas sao
+# config de REPO (nao versionada), entao uma arvore/container novo nao as tem e o defeito
+# que cada uma evita so' aparece depois:
+#
+#   safe.directory     o bind pertence ao uid do HOST; sem isto o git recusa a arvore
+#                      ("dubious ownership") antes de qualquer comando. E' a UNICA em
+#                      ~/.gitconfig (nao e' por repo).
+#   core.hooksPath     RELATIVO (.githooks), nunca /workspace/.githooks: o path absoluto
+#                      desliga os hooks em SILENCIO para o git rodando no HOST, onde
+#                      esse caminho nao existe.
+#   core.filemode      o host (Windows) e o container discordam do exec bit em todo
+#                      arquivo compartilhado; sem isso dezenas de arquivos vao ao stage
+#                      como 755->644 com conteudo identico (churn puro), que e' o
+#                      caminho para um diff so-de-modo esconder uma mudanca real.
+#   bit executavel     com filemode desligado o git deixa de versionar/restaurar o bit;
+#                      o pre-commit e' a UNICA protecao, e ele cobra o bit. Um clone ou
+#                      checkout pode perde-lo em silencio — este passo o repoe.
+#
+# Nada de credencial, host ou nome de projeto aqui: o script e' do AMBIENTE e roda contra
+# a arvore que o projeto montar (por default /workspace).
+# O conteudo vem DEPOIS do heredoc (forma `RUN <<EOF`), e nao colado no `RUN`: o parser
+# do Docker exige o heredoc na ULTIMA linha da instrucao, e a forma colada so' e' valida
+# em versoes recentes do BuildKit (o hadolint reprova). Aqui o heredoc carrega `sh` DIRETO
+# (o shebang escolhe o interpretador), sem depender de uma linha anterior terminar em `\`.
+RUN <<'INIT' sh
+#!/usr/bin/env bash
+# Chamado no post-create do projeto (ou na mao). Idempotente.
+set -euo pipefail
+
+TREE="${1:-/workspace}"
+
+if ! git -C "$TREE" rev-parse --git-dir >/dev/null 2>&1; then
+  echo "endurance-init: $TREE nao e' uma arvore git — nada a configurar." >&2
+  exit 0
+fi
+
+# Global: o projeto pode estar em /workspace ou em qualquer caminho montado.
+git config --global --add safe.directory "$TREE"
+
+# Por repo. `-C` em vez de cd: nao muda o diretorio de quem chamou.
+git -C "$TREE" config core.hooksPath .githooks
+git -C "$TREE" config core.filemode false
+
+# Repoe o bit executavel dos hooks (ver comentario no Dockerfile).
+if [ -d "$TREE/.githooks" ]; then
+  find "$TREE/.githooks" -maxdepth 1 -type f -exec chmod +x {} +
+fi
+
+echo "endurance-init: pronto ($TREE: hooksPath=.githooks, filemode=false, hooks +x)"
+INIT
+RUN chmod 0755 /usr/local/bin/endurance-init
+
 USER dev
+
+# Claude Code CLI para o WORKER de despacho; e' ferramenta de desenvolvimento deste
+# ecossistema, como o git. Fica DEPOIS do `useradd` (global, nao por usuario) e nao
+# carrega ANTHROPIC_*: credencial e base URL sao por execucao, lidas do cofre pelo
+# launcher — a imagem nunca guarda segredo.
+#
+# O npm vem DEPOIS da feature node-bun (que instala o Node); o PATH do npm -g ja' esta em
+# /usr/local/bin, o mesmo diretorio do node, entao o binario aparece para todo usuario.
+RUN sh -c 'command -v npm >/dev/null 2>&1 \
+    && npm install -g "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" \
+    && claude --version' \
+    || echo "base: npm ausente — ligue a feature node-bun e rode 'npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}'" >&2
+
 WORKDIR /workspace
 
 # tini como PID 1: o container recebe sinais (docker stop, restart) e sem um init eles
