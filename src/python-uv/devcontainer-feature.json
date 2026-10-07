@@ -5,10 +5,10 @@
   "description": "Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/python-uv",
   "options": {
-    "version": {
+    "pythonVersion": {
       "type": "string",
       "default": "3.13",
-      "description": "Versao do Python (major.minor). Vira o python3 do sistema e a base do venv."
+      "description": "Versao do Python (major.minor). Aceita 3.12 a 3.15, que e' o intervalo declarado pelos projetos do ecossistema. Vira a base do venv."
     },
     "uvVersion": {
       "type": "string",
