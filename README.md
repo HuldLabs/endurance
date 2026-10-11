@@ -210,3 +210,9 @@ ver `secrets/dev.env.tpl`); nunca é versionado aqui.
 
 Rascunho. As versões fixadas estão em `images/base/Dockerfile` e no
 `devcontainer-feature.json` de cada feature.
+
+## Decisões
+
+`docs/decisoes-20261008.md` — sequência de uso (segurar a tag `v0.1.0` até o Tars
+dev.10), features `secrets`/`signing` enxutas delegando ao `tars`, e a cobertura
+de tooling por projeto (o que falta: php, mysql-client, redis-client, pwsh).
