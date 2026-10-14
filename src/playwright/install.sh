@@ -26,12 +26,11 @@ command -v npx >/dev/null 2>&1 || {
 # no log e a lista completa raramente e' querida.
 IFS=',' read -r -a BROWSERS <<< "$BROWSER"
 for b in "${BROWSERS[@]}"; do
-  [ -n "$b" ] || continue
+  case "$b" in ""|chrome|msedge) continue ;; esac
   apt-get update
   npx --yes "playwright@${PLAYWRIGHT_VERSION}" install-deps "$b"
   rm -rf /var/lib/apt/lists/*
 done
-npm cache clean --force
 
 # Browser em pasta de CACHE do container, a mesma que o projeto usa. Sem
 # PLAYWRIGHT_BROWSERS_PATH o Playwright escreve em ~/.cache/ms-playwright do usuario que
@@ -44,12 +43,46 @@ chmod 0644 /etc/profile.d/endurance-playwright.sh
 mkdir -p /workspace/.cache/ms-playwright
 chown -R "$USERNAME:$USERNAME" /workspace/.cache 2>/dev/null || true
 
+# Chrome REAL (google-chrome-stable) e' do SISTEMA, nao do cache: o `install chrome` do
+# Playwright roda o script oficial do Google (apt, /opt/google/chrome) e por isso exige
+# ROOT — e' aqui, no build, nunca a mao com sudo (somem no rebuild). Motivo de existir: o
+# coletor de SERP do seo-brain usa channel="chrome"; com o Chromium o Google responde
+# blocked_by_google (portado do remendo segtools `22f4f5e6`). So' amd64: o Google nao
+# publica .deb arm64.
+#
+# EXCECAO DELIBERADA de versao (como o `op` da base): os repos apt do Google e da Microsoft
+# so' guardam a ULTIMA stable, entao nao ha' o que fixar — um pino quebraria o build quando
+# ela sai do repo. A integridade vem da assinatura de cada repo (o .deb oficial registra a
+# chave do fornecedor).
+CACHE_BROWSERS=()
+for b in "${BROWSERS[@]}"; do
+  case "$b" in
+    chrome|msedge)
+      # Canais de SISTEMA (Google Chrome / Microsoft Edge estaveis): o `install <canal>` do
+      # Playwright roda o .deb oficial de cada fornecedor. So' amd64.
+      [ "$(dpkg --print-architecture)" = amd64 ] || {
+        echo "playwright: browser=$b so' existe em amd64 (sem .deb arm64 do fornecedor)" >&2
+        exit 1
+      }
+      bin=google-chrome; [ "$b" = msedge ] && bin=microsoft-edge
+      if ! command -v "$bin" >/dev/null 2>&1; then
+        apt-get update
+        npx --yes "playwright@${PLAYWRIGHT_VERSION}" install --with-deps "$b"
+        rm -rf /var/lib/apt/lists/*
+      fi
+      "$bin" --version ;;
+    "") ;;
+    *) CACHE_BROWSERS+=("$b") ;;
+  esac
+done
+npm cache clean --force
+
 # Browser ja' instalado: roda como o usuario do container — o dono dos arquivos tem de ser
 # quem vai usa-los, senao a primeira execucao do e2e falha por permissao no cache.
-if [ -w /workspace/.cache ]; then
+if [ "${#CACHE_BROWSERS[@]}" -gt 0 ] && [ -w /workspace/.cache ]; then
   su "$USERNAME" -c "PLAYWRIGHT_BROWSERS_PATH=/workspace/.cache/ms-playwright \
-    npx --yes 'playwright@${PLAYWRIGHT_VERSION}' install ${BROWSER//,/ }" || \
-    echo "playwright: AVISO: o download do browser falhou (rode 'npx playwright install ${BROWSER//,/ }' na mao)" >&2
+    npx --yes 'playwright@${PLAYWRIGHT_VERSION}' install ${CACHE_BROWSERS[*]}" || \
+    echo "playwright: AVISO: o download do browser falhou (rode 'npx playwright install ${CACHE_BROWSERS[*]}' na mao)" >&2
 fi
 
 echo "playwright: pronto (playwright $PLAYWRIGHT_VERSION, browser=$BROWSER, cache=/workspace/.cache/ms-playwright)"

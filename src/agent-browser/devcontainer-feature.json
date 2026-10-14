@@ -1,0 +1,22 @@
+{
+  "id": "agent-browser",
+  "version": "1.0.0",
+  "name": "agent-browser",
+  "description": "CLI agent-browser (vercel-labs, npm) dirigindo o Google Chrome do sistema por CDP, para subagentes abrirem paginas atras de Cloudflare. Exige node-bun e playwright com browser=chrome.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/agent-browser",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "0.39.1",
+      "description": "Versao do pacote npm agent-browser."
+    }
+  },
+  "installsAfter": [
+    "ghcr.io/huldlabs/endurance/node-bun",
+    "ghcr.io/huldlabs/endurance/playwright"
+  ],
+  "containerEnv": {
+    "AGENT_BROWSER_EXECUTABLE_PATH": "/usr/bin/google-chrome",
+    "AGENT_BROWSER_ARGS": "--no-sandbox"
+  }
+}

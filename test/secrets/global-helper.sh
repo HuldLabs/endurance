@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+source dev-container-features-test-lib
+
+check "helper no git do sistema" bash -c 'git config --system --get credential.https://github.com.helper | grep -qx "!/usr/local/bin/git-credential-op.sh"'
+# Repo QUALQUER (nao o do projeto): o git tem de chegar ao helper do Endurance. Sem cache
+# semeado ele recusa alto, nomeando o cache — e' essa recusa que prova o caminho.
+check "helper atende fora do repo do projeto" bash -c 'd=$(mktemp -d) && git -C "$d" init -q && cd "$d" && printf "protocol=https\nhost=github.com\n\n" | GIT_TERMINAL_PROMPT=0 git credential fill 2>&1 | grep -q "git-credential-op: NAO consegui o PAT do cache"'
+
+reportResults

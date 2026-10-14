@@ -22,27 +22,7 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "matcher": "manual|auto",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/precompact-persist-state.sh\""
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "startup|resume|clear|compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/sessionstart-context-digest.sh\""
-          }
-        ]
-      }
-    ]
+    "PreCompact": [],
+    "SessionStart": []
   }
 }

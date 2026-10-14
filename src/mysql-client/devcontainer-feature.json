@@ -1,0 +1,16 @@
+{
+  "id": "mysql-client",
+  "version": "1.0.0",
+  "name": "MySQL client",
+  "description": "mysql e mysqldump da Oracle (repo apt oficial, assinado), compativeis com o MySQL 8 do compose (TLS autoassinado). O servidor fica no compose do projeto.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/mysql-client",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": ["8.4", "9.7"],
+      "default": "8.4",
+      "description": "Trilha LTS do cliente (componente mysql-<versao>-lts). O 8.4 fala com servidor 8.0 e 8.4."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
