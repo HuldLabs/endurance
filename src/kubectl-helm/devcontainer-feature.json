@@ -1,0 +1,20 @@
+{
+  "id": "kubectl-helm",
+  "version": "1.0.0",
+  "name": "kubectl + helm",
+  "description": "kubectl (dl.k8s.io) e helm (get.helm.sh), binarios oficiais com sha256 conferido. O cluster nao vem junto.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/kubectl-helm",
+  "options": {
+    "kubectlVersion": {
+      "type": "string",
+      "default": "1.37.1",
+      "description": "Versao do kubectl (sem o v)."
+    },
+    "helmVersion": {
+      "type": "string",
+      "default": "4.3.0",
+      "description": "Versao do helm (sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

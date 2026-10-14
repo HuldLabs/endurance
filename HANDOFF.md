@@ -9,7 +9,7 @@ a entrada no lugar.
 2.0.0 são finas e a feature `tars` saiu (F8, D19). O `.ai` está no lock da dev.21 (o sync não apaga mais a `lib-json.sh`).
 PRs #8 (F16) e #9 (revisão adversarial) mergeados.
 
-**Proximo passo:** features das lacunas de `docs/ecossistema.md` (branch `w/lacunas`). Depois, mapear o ecossistema inteiro (D18), e aí o dono cria a tag.
+**Proximo passo:** ecossistema mapeado (`docs/ecossistema.md`, D18) e lacunas cobertas (F17). Falta a dev.22 do Tars (guards fail-closed) na base e no lock; depois o dono cria a tag `v0.0.1-dev.3`.
 
 **Limites conhecidos:**
 - A primeira tag é a `v0.0.1-dev.3` e só sai com o ecossistema mapeado (D18).
