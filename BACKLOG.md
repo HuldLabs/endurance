@@ -34,7 +34,7 @@
 | F9 | Tag `v0.0.1-dev.3` (D18): o merge do dono no PR final é o aval; o coord corta a tag (D20) | F8, mapeamento do ecossistema | publicação no GHCR pela tag, imagem referenciada por digest |
 | F10 | Migrar o segtools (D7), tirando o remendo do Chrome do Dockerfile dele (`22f4f5e6`) | F9 | segtools sobe pelas features; remendos do Dockerfile dele removidos |
 | F16 | ~~Login duplo no `publish.yml`~~ — **feito:** o build da base roda só com o login de leitura (`load: true`), e o login de push (`GITHUB_TOKEN`) vem depois, só para o `docker push` | F9 | `publish.yml` builda a base com o `COPY --from` do tars |
-| F13 | **(seo-brain)** Acesso ao Forgejo do NUC (`nuc.czul.net:3300`): helper de credencial para esse host pelo `tars secrets` (a ref `op://` é do projeto, nunca deste repo) | F3, homelab | `git clone` do `HuldLabs/seo-expert` no Forgejo de dentro do container, sem senha em argv/URL |
+| F13 | **(seo-brain)** Acesso ao Forgejo do homelab (host declarado pelo projeto): helper de credencial para esse host pelo `tars secrets` (a ref `op://` é do projeto, nunca deste repo) | F3, homelab | `git clone` do `HuldLabs/seo-expert` no Forgejo de dentro do container, sem senha em argv/URL |
 | F14 | **(seo-brain, dono)** Egress/proxy (`EXTERNAL_PROXY_URL`, `ZYTE_API_KEYS`): é **configuração**, não feature — `containerEnv` do projeto + `tars secrets exec`. Só vira feature se precisar de binário (ex.: cliente VPN) | decisão do dono sobre egress | coleta passa pelo proxy sem chave em argv/log |
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
@@ -118,10 +118,8 @@
 
 ## Segurança (importante, para depois — dono, 14/10)
 
-- **Daneel com sudo NOPASSWD total no NUC, no hermes e no pve** (`docs/decisoes-20261008.md` §SSH). O pve vira a base
-  de produção, então a chave do bot fica equivalente a root em produção. Proposta: sudo total só no NUC (dev) e lista
-  de comandos no pve e em produção. É frente homelab: repassado ao coord segtools em 14/10 para a seção Segurança do
-  BACKLOG do huldlabs.
+- Acesso do bot às máquinas do homelab: frente homelab, tratado na seção Segurança do BACKLOG do huldlabs (coord
+  segtools, 14/10).
 - Os 11 itens de segurança multiusuário (D10) entram antes de qualquer máquina compartilhada ou runner consumir o
   Endurance.
 
