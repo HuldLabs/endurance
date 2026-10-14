@@ -20,12 +20,14 @@ WPCLI_VERSION="${WPCLIVERSION:-2.12.0}"
 
 # Repositorio Sury (uma vez). A chave e' conferida pela impressao digital COMPLETA antes de
 # virar `signed-by`: e' ela que valida todo pacote php que entra como root.
-SURY_KEY_FPR="15058500A0235D97F5D10063B188E2B695BD4743"
+SURY_KEY_FPR="15058500A0235D97F5D10063B188E2B695BD4743"  # gitleaks:allow (impressao digital de chave PUBLICA)
 if [ ! -f /etc/apt/sources.list.d/sury-php.list ]; then
   apt-get update
   apt-get install -y --no-install-recommends ca-certificates curl gnupg
   curl -fsSL https://packages.sury.org/php/apt.gpg -o /tmp/sury.gpg
-  gpg --show-keys --with-colons /tmp/sury.gpg | grep -q "^fpr:::::::::${SURY_KEY_FPR}:" || {
+  # Exatamente UMA chave PRIMARIA no arquivo, e e' a esperada (subchaves nao contam): uma
+  # chave extra viraria confiavel junto.
+  [ "$(gpg --show-keys --with-colons /tmp/sury.gpg | awk -F: '/^pub/{p=1;next} p&&/^fpr/{print $10;p=0}' | sort -u)" = "${SURY_KEY_FPR}" ] || {
     echo "php: impressao digital da chave do Sury NAO confere (esperada ${SURY_KEY_FPR})" >&2
     exit 1
   }

@@ -9,8 +9,6 @@ useDefault = true
 
 [allowlist]
 description = "Falsos positivos conhecidos deste repositorio"
-# Os regexes casam a LINHA (o nome da variavel e' o que distingue fingerprint de segredo).
-regexTarget = "line"
 # Referencias op:// sao PONTEIROS para o cofre, nunca o valor — e aparecem de proposito
 # na documentacao e nos exemplos. O aviso que denuncia uma referencia errada e' de
 # runtime, nao do scan.
@@ -19,7 +17,4 @@ paths = [
 ]
 regexes = [
   '''op://[A-Za-z0-9._/-]+''',
-  # Impressao digital de chave PUBLICA de repositorio apt (Sury, Oracle): e' o que as
-  # features conferem antes de confiar na chave — publica por definicao, nao segredo.
-  '''[A-Z_]+_KEY_FPR="[0-9A-F]{40}"''',
 ]
