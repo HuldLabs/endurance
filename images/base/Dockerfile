@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Imagem base do ecossistema HuldLabs: SO o que todo projeto usa.
 #
 # Regra do ecossistema: nada exige um runtime de quem nao o usa. Aqui nao ha Node,
@@ -36,6 +37,8 @@ ARG DOCKER_COMPOSE_PLUGIN_VERSION=5.5.1-1~debian.13~trixie
 # go-task (instalador oficial) e Claude Code (instalador nativo oficial, sem Node).
 ARG TASK_VERSION=3.49.1
 ARG CLAUDE_CODE_VERSION=2.1.278
+ARG CLAUDE_CODE_SHA256_AMD64=5c4735937844e84f8a93306e841a5b0e12252909b07870f789b190468da147ab
+ARG CLAUDE_CODE_SHA256_ARM64=7de6cab134e48321148e30182c98614118e8f4666819412bead45865190b34ed
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -215,8 +218,11 @@ case "$acao" in
     echo $! >"$DIR/$nome.pid"
     echo "endurance-bg: $nome iniciado (pid $!, log $DIR/$nome.log)" ;;
   stop)
-    vivo "$nome" && kill -TERM -- "-$(cat "$DIR/$nome.pid")" && echo "endurance-bg: $nome parado" || echo "endurance-bg: $nome nao roda"
-    rm -f "$DIR/$nome.pid" ;;
+    if ! vivo "$nome"; then echo "endurance-bg: $nome nao roda"; rm -f "$DIR/$nome.pid"; exit 0; fi
+    # O pid gravado e' o LIDER do grupo: sem job control o `setsid` roda sem fork, entao
+    # `$!` = pid = pgid. TERM no grupo inteiro; falha do kill mantem o pidfile e sai != 0.
+    kill -TERM -- "-$(cat "$DIR/$nome.pid")" || { echo "endurance-bg: falha ao parar $nome" >&2; exit 1; }
+    rm -f "$DIR/$nome.pid"; echo "endurance-bg: $nome parado" ;;
   status)
     for f in "$DIR"/${nome:-*}.pid; do
       [ -e "$f" ] || continue; n="$(basename "$f" .pid)"
@@ -227,19 +233,26 @@ case "$acao" in
 esac
 BG
 
-USER dev
-
 # Claude Code CLI para o WORKER de despacho; e' ferramenta de desenvolvimento deste
-# ecossistema, como o git. Fica DEPOIS do `useradd` (global, nao por usuario) e nao
-# carrega ANTHROPIC_*: credencial e base URL sao por execucao, lidas do cofre pelo
-# launcher — a imagem nunca guarda segredo.
+# ecossistema, como o git. Nao carrega ANTHROPIC_*: credencial e base URL sao por execucao,
+# lidas do cofre pelo launcher — a imagem nunca guarda segredo.
 #
-# Instalador NATIVO oficial (claude.ai/install.sh, binario sem Node), versao fixa, em
-# ~/.local/bin do `dev`. O caminho por `npm -g` dependia do Node de uma FEATURE, que roda
-# DEPOIS da base: o RUN caia sempre no ramo "npm ausente" e a base saia sem `claude`.
-ENV PATH="/home/dev/.local/bin:${PATH}"
-RUN curl -fsSL https://claude.ai/install.sh | bash -s "$CLAUDE_CODE_VERSION" \
-    && claude --version
+# Binario NATIVO da versao fixa (sem Node), conferido contra o sha256 FIXADO aqui (o mesmo
+# do manifest.json da versao). Nao por `curl install.sh | bash`: o script remoto muda sem
+# aviso. Nem por `npm -g`: o Node vem de FEATURE, que roda DEPOIS da base, e o passo caia
+# calado no ramo "npm ausente". Bump: trocar a versao e os dois sha256 do manifest dela.
+RUN set -eu; \
+    case "$(dpkg --print-architecture)" in \
+      amd64) plat=linux-x64;   sum="$CLAUDE_CODE_SHA256_AMD64" ;; \
+      arm64) plat=linux-arm64; sum="$CLAUDE_CODE_SHA256_ARM64" ;; \
+      *) echo "claude: arquitetura nao suportada" >&2; exit 1 ;; \
+    esac; \
+    curl -fsSL "https://downloads.claude.ai/claude-code-releases/${CLAUDE_CODE_VERSION}/${plat}/claude" -o /tmp/claude; \
+    echo "${sum}  /tmp/claude" | sha256sum -c -; \
+    install -m 0755 /tmp/claude /usr/local/bin/claude; rm -f /tmp/claude; \
+    claude --version
+
+USER dev
 
 WORKDIR /workspace
 
