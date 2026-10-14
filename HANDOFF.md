@@ -21,6 +21,7 @@ PRs #8 (F16) e #9 (revisão adversarial) mergeados.
 
 **Como operar:**
 - Worker por worktree em `.worktrees/<slot>`, `tars sync` antes do 1º commit.
+- Tars na base: bump obrigatório a cada Release do Tars (README "Rotina do Tars na base"); `bash tools/tars-atual.sh` diz se está em dia, e a tag falha se não estiver.
 - Mudou versão/option/ferramenta da base: `bash tools/gen-catalogo.sh` (o `test.yml` cobra o `docs/catalogo.md`).
 - Testes: `docker build -t endurance-base:local images/base && ENDURANCE_UNPUBLISHED=1 tools/test-features.sh`
   (o build precisa do login de leitura no GHCR).

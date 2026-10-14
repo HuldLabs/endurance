@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Catalogo em dia
         run: bash tools/gen-catalogo.test.sh
+      - name: Gate do Tars (casos simulados)
+        run: bash tools/tars-atual.test.sh
 
   features:
     runs-on: ubuntu-latest
@@ -36,6 +38,11 @@ jobs:
           registry: ghcr.io
           username: ${{ vars.GHCR_READ_USER }}
           password: ${{ secrets.GHCR_READ_TOKEN }}
+      # Rotina do Tars (README): base atrasada em relacao a ultima Release do Tars AVISA alto no PR;
+      # digest fixado diferente do da tag declarada falha sempre.
+      - name: Tars em dia na base
+        if: matrix.feature == 'node-bun'
+        run: bash tools/tars-atual.sh
       - name: Build base
         run: docker build -t endurance-base:local images/base
       # ENDURANCE_UNPUBLISHED=1 ate a primeira tag: o installsAfter das features do proprio
