@@ -131,15 +131,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Provar a base (por digest) e cada feature (pela versao do json)
+      # Feature: a versao cheia E a tag curta `:<major>` (a que o projeto usa) tem de existir e
+      # apontar para o MESMO digest; major atrasado = projeto recebendo a versao velha calado.
+      - name: Provar a base (por digest) e cada feature (versao cheia e major, mesmo digest)
         run: |
           set -euo pipefail
           [ -n "$BASE_DIGEST" ] || { echo "job base nao entregou o digest" >&2; exit 1; }
-          docker run --rm "${BASE}@${BASE_DIGEST}" sh -c 'tars --version && git --version && op --version'
+          docker run --rm "${BASE}@${BASE_DIGEST}" sh -c 'tars --version && git --version && op --version && rg --version'
+          digest() { docker buildx imagetools inspect "$1" --format '{{json .Manifest.Digest}}' | tr -d '"'; }
           for f in src/*/devcontainer-feature.json; do
-            ref="ghcr.io/huldlabs/endurance/$(jq -r .id "$f"):$(jq -r .version "$f")"
-            docker buildx imagetools inspect --raw "$ref" >/dev/null || { echo "feature ausente no GHCR: $ref" >&2; exit 1; }
-            echo "ok $ref"
+            id="$(jq -r .id "$f")"; v="$(jq -r .version "$f")"
+            cheia="ghcr.io/huldlabs/endurance/${id}:${v}"; curta="ghcr.io/huldlabs/endurance/${id}:${v%%.*}"
+            dc="$(digest "$cheia")" || { echo "feature ausente no GHCR: $cheia" >&2; exit 1; }
+            dm="$(digest "$curta")" || { echo "feature ausente no GHCR: $curta" >&2; exit 1; }
+            if [ -z "$dc" ] || [ "$dc" != "$dm" ]; then echo "digest diverge: $cheia=$dc $curta=$dm" >&2; exit 1; fi
+            echo "ok $cheia = $curta ($dc)"
           done
 
       - name: Artefatos (catalogo gerado + sha256sums)

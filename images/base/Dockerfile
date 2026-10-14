@@ -30,7 +30,6 @@ FROM ${TARS_IMAGE} AS tars
 # catalogo: debian | sistema base (trixie-slim, por digest)
 FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
 
-ARG DEBIAN_VERSION=trixie
 # Versoes fixas. O bloco abaixo e a fonte de verdade de cada uma.
 # catalogo: git | controle de versao (apt, versao exata)
 ARG GIT_VERSION=1:2.47.3-0+deb13u1
@@ -38,6 +37,8 @@ ARG GIT_VERSION=1:2.47.3-0+deb13u1
 ARG PYTHON_VERSION=3.13.5-1
 # catalogo: sudo | NOPASSWD restrito a groupadd/usermod/chown (gid do socket Docker em runtime)
 ARG SUDO_VERSION=1.9.16p2-3+deb13u2
+# catalogo: rg | ripgrep, busca de texto que todo agente usa (apt da trixie, versao exata)
+ARG RIPGREP_VERSION=14.1.1-1+b4
 # catalogo: sops | decifra o cache local de segredo com a chave age
 ARG SOPS_VERSION=3.9.4
 # catalogo: age | cripto do cache de segredo (age e age-keygen)
@@ -75,13 +76,23 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Sem esta lista fechada, o sudoer vira root livre dentro de um container que ja monta o
 # socket do host. `visudo -c` no build: regra de sudoers errada em SILENCIO e pior do que
 # build quebrado.
-# catalogo: ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini | utilitarios de trabalho e transporte; tini e' o PID 1 | apt da trixie, sem pin
+# `locales` + `tzdata`: o ecossistema e' brasileiro; sem locale gerado o bash/python caem
+# em POSIX (acento vira `?`) e sem tzdata o `date` fica em UTC.
+# catalogo: ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini locales tzdata | utilitarios de trabalho e transporte; tini e' o PID 1 | apt da trixie, sem pin
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini \
+        ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini locales tzdata \
         "git=${GIT_VERSION}" "python3=${PYTHON_VERSION}" \
-        "sudo=${SUDO_VERSION}" \
+        "sudo=${SUDO_VERSION}" "ripgrep=${RIPGREP_VERSION}" \
     && rm -rf /var/lib/apt/lists/* \
-    && git --version
+    && git --version && rg --version
+
+# Locale e fuso do ecossistema (configuracao da base; o projeto pode sobrescrever por containerEnv).
+RUN sed -i 's/^# *\(pt_BR.UTF-8 UTF-8\)/\1/' /etc/locale.gen \
+    && locale-gen \
+    && ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
+    && echo America/Sao_Paulo > /etc/timezone
+# catalogo: locale e fuso | configuracao da base: LANG e TZ, sem LC_ALL (projeto sobrescreve LANG/LC_* por containerEnv) | `pt_BR.UTF-8`, `America/Sao_Paulo`
+ENV LANG=pt_BR.UTF-8 TZ=America/Sao_Paulo
 
 # task: o runner de tarefas do ecossistema, instalador oficial com versao explicita.
 # Nao ha "task" no apt da trixie, e o binario solto de um repositorio de terceiros
