@@ -8,7 +8,7 @@
 | D2 | Só tag `v*` publica; versão sai da tag | `6ae08cf` |
 | D3 | ~~Tag espera `tars identity` no Tars~~ — cumprido: dev.18 do Tars (`f6e1b05`, 14/10). O gatilho da tag agora é a D18 | `docs/decisoes-20261008.md` §Sequence 1 |
 | D4 | `secrets` e `signing` finas: chamam `tars secrets refresh/exec`, `tars secrets git-credential`, `tars identity sign-setup` e `tars identity verify` (postStart). O `identity provision` é só do dono (TTY, uma vez por máquina); automação nunca se auto-provisiona | idem §Sequence 2, corrigido em 14/10 (dono + coord segtools) |
-| D5 | Feature `tars` central, options `version` (digest), `autoSync` (default true), `actor`, `profileMount` | idem §Sequence 3 |
+| D5 | ~~Feature `tars` central, options `version` (digest), `autoSync` (default true), `actor`, `profileMount`~~ — superada pela D17/D19: a versão (digest) é ARG da base; `autoSync`/`actor`/`profileMount` voltam como feature só quando houver comportamento a ligar | idem §Sequence 3 |
 | D6 | `tars up` dispara onCreate/postCreate/postStart/updateContent | idem §Sequence 4 |
 | D7 | Migração: segtools → demais projetos → mini PC e runners | idem §Sequence 5 |
 | D8 | Serviços ficam no compose do projeto, nunca na imagem | idem §Coverage |
@@ -19,9 +19,10 @@
 | D13 | Até a primeira tag: `0.0.1-dev.N` + `CHANGELOG.md` (doutrina `novo-repo`) | dono, 13/10 |
 | D14 | Tarefa longa = `endurance-bg` (`setsid` com nome/log/pidfile) **dentro** do container, nunca no host | `docs/adr/0001-tarefas-longas.md` |
 | D15 | `mysql-client` = cliente da Oracle (repo apt oficial, trilha LTS), não o MariaDB da distro | prova de 13/10 contra `mysql:8.0.46` (`src/mysql-client/install.sh`) |
-| D16 | Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17 | `gh release list -R HuldLabs/tars` vazio (13/10) |
+| D16 | ~~Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17~~ — ponte encerrada pela D19 | `gh release list -R HuldLabs/tars` vazio (13/10) |
 | D18 | A primeira tag publicada é a **`v0.0.1-dev.3`** (numeração da D13; `v0.1.0` só quando o Endurance virar produto) e só sai depois que **todo o ecossistema** estiver mapeado e ajustado no Endurance, para evitar tags desnecessárias (substitui o gatilho da D3) | dono, 14/10 |
-| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build | dono, 14/10 |
+| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.19 `sha256:ac9dca58…` | dono, 14/10 |
+| D19 | Feature `tars` **removida** (não depreciada): com o binário na base o shim não tem o que fazer, e não há option de comportamento implementada (D5). Mínimo = apagar; quem a usava tira a linha do `devcontainer.json` e o mount do checkout | worker F8, 14/10 |
 
 ## Fila
 
@@ -29,14 +30,20 @@
 | --- | --- | --- | --- |
 | F3 | Segredos do seo-brain (`SERP_DSN`, `DEEPSEEK_API_KEY`) por ref `op://`: o **seo-brain** declara o template e o `[secrets] source=automation` no `.ai/tars.toml` e roda `tars secrets exec -- …`. Do lado do Endurance basta a feature `tars` + o volume do token | coord seo-brain; desenho do `[secrets]` com o coord do Tars | o coletor roda por `tars secrets exec` sem colar valor à mão; nada em argv/log |
 | F5 | Devcontainer próprio do seo-brain consumindo as features (exemplo no `README.md`) | F9, F3 | o seo-brain sobe com `devcontainer up` sem o do segtools |
-| F8 | `secrets`/`signing` finas (D4) e options da `tars` (D5) | Tars dev.19: imagem OCI (F11), `tars secrets git-credential` e `tars identity sign-setup` (prometidos pelo coord segtools, 14/10) | `install.sh` das duas sem lógica de segredo própria |
 | F9 | Tag `v0.0.1-dev.3` (D18), criada **pelo dono** (tag é ato humano) | F8, mapeamento do ecossistema | publicação no GHCR pela tag, imagem referenciada por digest |
 | F10 | Migrar o segtools (D7), tirando o remendo do Chrome do Dockerfile dele (`22f4f5e6`) | F9 | segtools sobe pelas features; remendos do Dockerfile dele removidos |
-| F11 | **(frente Tars, pedido em 14/10)** O CI do Tars publica `ghcr.io/huldlabs/tars:<versão>` (multi-arch, `FROM scratch` com `/tars`) e dá leitura ao repo endurance; depois o Endurance põe o `COPY --from` na base (D17) e a feature `tars` fica só com options de comportamento | coord do Tars | `docker run --rm endurance-base tars --version` sem montar nada |
+| F16 | `publish.yml`: o login de LEITURA (`GHCR_READ_*`, pull do tars privado) e o de PUSH (`GITHUB_TOKEN`) são no mesmo `ghcr.io`, e o segundo substitui o primeiro. Resolver antes da tag: dar ao repo endurance acesso de leitura ao pacote tars (Manage Actions access) e tirar o login de leitura, ou um token só com read+write | F9 | `publish.yml` builda a base com o `COPY --from` do tars |
 | F13 | **(seo-brain)** Acesso ao Forgejo do NUC (`nuc.czul.net:3300`): helper de credencial para esse host pelo `tars secrets` (a ref `op://` é do projeto, nunca deste repo) | F3, homelab | `git clone` do `HuldLabs/seo-expert` no Forgejo de dentro do container, sem senha em argv/URL |
 | F14 | **(seo-brain, dono)** Egress/proxy (`EXTERNAL_PROXY_URL`, `ZYTE_API_KEYS`): é **configuração**, não feature — `containerEnv` do projeto + `tars secrets exec`. Só vira feature se precisar de binário (ex.: cliente VPN) | decisão do dono sobre egress | coleta passa pelo proxy sem chave em argv/log |
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
+
+### Feito (14/10, branch `w/f8`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F8 | `secrets` 2.0.0 e `signing` 2.0.0 finas (D4): só `tars secrets git-credential` (helper do sistema) e `tars identity sign-setup`/`verify` (postStart); `op-sops`, `git-credential-op`, `gh-op`, `secrets-refresh/exec`, `signing-write-key`, `ssh-agent-init`, `signing-git-config` apagados | `test/secrets`, `test/signing` |
+| F11 | `tars` 0.0.1-dev.19 na base por digest (D17); login de leitura do GHCR no `test.yml`/`publish.yml` | `docker run --rm endurance-base:local tars --version` → `0.0.1-dev.19` |
 
 ### Feito (13/10, branch `w/features`)
 
@@ -69,6 +76,8 @@
   as libs de sistema (root); `firefox`/`webkit`/`chromium` o usuário baixa com `npx playwright install` (sem sudo).
   Chrome/Edge vão para `/opt` e não somem.
 - `hashes.sha256` do PowerShell é UTF-16 com CRLF: converter antes do `sha256sum -c`.
+- `tars secrets git-credential` sem `git_hosts`/`git_credential` no `[secrets]` do projeto não entrega nada (dev.19):
+  o helper do sistema está ligado, mas o projeto tem de declarar os hosts.
 
 ## Segurança (importante, para depois — dono, 14/10)
 
