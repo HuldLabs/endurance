@@ -126,10 +126,19 @@ compose, front em Node com `package-lock.json`):
     // Sessão do agent-browser (cookies logados = CREDENCIAL): volume por usuário E projeto.
     "source=${localEnv:USER}-seo-brain-agent-browser,target=/home/dev/.agent-browser,type=volume",
     // Checkout do Tars, somente leitura (a feature `tars` roda dele).
-    "source=${localEnv:HOME}/projects/tars,target=/opt/tars,type=bind,readonly"
+    "source=${localEnv:HOME}/projects/tars,target=/opt/tars,type=bind,readonly",
+    // Estado do `tars secrets` (chave age, op-token, cache cifrado) fica FORA do repo, em
+    // ~/.config/tars/<projeto>/. Sem volume, todo rebuild apaga a chave e obriga a refazer o
+    // refresh. Contem CREDENCIAL: volume por usuario E projeto, nunca compartilhado (D10).
+    "source=${localEnv:USER}-seo-brain-tars,target=/home/dev/.config/tars/seo-brain,type=volume"
   ]
 }
 ```
+
+Ferramenta de desenvolvimento do Python (pytest, import-linter…) vai em
+`[dependency-groups] dev` (PEP 735) no `pyproject.toml`, não em `optional-dependencies`: o
+`uv sync` instala o grupo `dev` por padrão, e um extra `dev` fica de fora calado (o gate que
+dependia dele "passa" sem rodar).
 
 Segredo do projeto (`SERP_DSN`, `DEEPSEEK_API_KEY`) não passa à mão: o projeto declara as
 refs `op://` no template do `tars secrets` (`[secrets]` do `.ai/tars.toml`) e roda
