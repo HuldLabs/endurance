@@ -5,12 +5,12 @@ a entrada no lugar.
 
 ## Endurance — 14/10/2026 (coord Endurance)
 
-**Onde estamos:** `main` com os PRs #1–#5 mergeados. Nove features testadas e o CI de teste em todo PR. A branch
-`w/versao` alinha a numeração: a primeira tag é a `v0.0.1-dev.3`, e quem cria a tag é o dono.
+**Onde estamos:** `main` com os PRs #1–#7 mergeados. A base traz o `tars` dev.20 por digest, `secrets`/`signing`
+2.0.0 são finas e a feature `tars` saiu (F8, D19). O `.ai` está no lock da dev.20, com o `lib-json.sh` mantido à mão
+(o `sync --upgrade` da dev.20 o apaga — bug com o Tars). A branch `w/f16` separa o login de leitura do de push no
+`publish.yml`.
 
-**Proximo passo:** revisar e mergear a `w/f8` (F8 + D17: `tars` dev.20 na base por digest, `secrets`/`signing`
-2.0.0 finas, feature `tars` removida — D19). Antes da tag: resolver o login duplo do `publish.yml` (F16). Depois,
-mapear o ecossistema inteiro (D18), e aí o dono cria a tag.
+**Proximo passo:** mergear a `w/f16`. Depois, mapear o ecossistema inteiro (D18), e aí o dono cria a tag.
 
 **Limites conhecidos:**
 - A primeira tag é a `v0.0.1-dev.3` e só sai com o ecossistema mapeado (D18).
