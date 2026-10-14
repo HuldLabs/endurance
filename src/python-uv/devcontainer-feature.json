@@ -1,6 +1,6 @@
 {
   "id": "python-uv",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "name": "Python + uv",
   "description": "Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/python-uv",
