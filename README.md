@@ -367,8 +367,8 @@ O `tars` é parte da base (D17), então **o bump do Tars é obrigatório**:
   `ARG TARS_IMAGE` (`ghcr.io/huldlabs/tars:<versão>@sha256:…`) do `images/base/Dockerfile`.
 - **Release do Tars com correção de segurança** (guards, gates, segredos — o `CHANGELOG` do Tars diz) **corta imagem
   nova do Endurance logo**: bump + tag, sem esperar outra mudança.
-- **Gate (`tools/tars-atual.sh`)**: lê a lista de tags de `ghcr.io/huldlabs/tars` no registry (com o login de leitura
-  do GHCR que o docker já tem; token nunca em argv/log), pega a maior versão (pré-release antes da final) e confere
+- **Gate (`tools/tars-atual.sh`)**: lê a lista de tags de `ghcr.io/huldlabs/tars` no registry (token anônimo: a imagem do
+  Tars é pública desde a dev.27; token nunca em argv/log), pega a maior versão (pré-release antes da final) e confere
   pelo `docker buildx imagetools inspect` que o digest fixado é o da tag declarada.
   - `test.yml` (PR): atrasado vira `::warning::` alto, sem reprovar;
   - `publish.yml` (tag): `--strict`, atrasado **falha** antes de buildar/publicar;

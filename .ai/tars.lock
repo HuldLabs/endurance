@@ -1,7 +1,7 @@
 {
   "lockfileVersion": 1,
   "tars": {
-    "version": "0.0.1-dev.26",
+    "version": "0.0.1-dev.28",
     "commit": null
   },
   "files": {
@@ -26,8 +26,8 @@
     "governance/release.md": {
       "area": "governance",
       "item": "release",
-      "sha256": "388a34991878628c4e00cfb0b1953d84916cc45679f6bcfafb83a6abd3ff0cb0",
-      "origem": "388a34991878628c4e00cfb0b1953d84916cc45679f6bcfafb83a6abd3ff0cb0"
+      "sha256": "05e6e4f1cedf57f16da2a71d25e418485ec0547ec787b953bf91dc38bd27dcb3",
+      "origem": "05e6e4f1cedf57f16da2a71d25e418485ec0547ec787b953bf91dc38bd27dcb3"
     },
     "governance/segredos-e-identidade.md": {
       "area": "governance",
