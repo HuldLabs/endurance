@@ -132,8 +132,16 @@ compose, front em Node com `package-lock.json`):
     "ghcr.io/huldlabs/endurance/restic-rclone:1": {}
   },
   // Serviço do HOST por nome estável (host.docker.internal), sem IP no repo.
-  "runArgs": ["--add-host=host.docker.internal:host-gateway"],
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+    // GPU no PROPRIO devcontainer, so' para quem roda o extra pesado (`rerank`: torch) ou um
+    // llama-server aqui dentro. O Ollama continua no compose do projeto.
+    // , "--gpus", "all"
+  ],
   "containerEnv": { "OLLAMA_HOST": "http://ollama:11434" },
+  // `all` do seo-brain NAO inclui os extras pesados (research, rerank/torch): `--extra all`, nunca
+  // `--all-extras`. Quem precisa do pesado acrescenta `--extra rerank`.
+  "postCreateCommand": "endurance-init /workspace && uv sync --extra all",
   "mounts": [
     // venv FORA do bind do repo: o `.venv` do bind é o do host, e um `uv` no host o recria com o
     // Python do host. O python-uv exporta UV_PROJECT_ENVIRONMENT=<venvPath> (default

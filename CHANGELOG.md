@@ -16,7 +16,8 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
   (`libgomp.so.1`); acaba o `.deb` extraído em `/tmp` com `LD_LIBRARY_PATH` no seo-brain.
 - **`postgres-client` testado no CI.** Cenários `default` (18) e `pg17` provam `psql` e `pg_dump` no major da option;
   a feature entra na matriz do `test.yml`.
-- **README: exemplo do seo-brain refeito.** Base por digest, só features do Endurance (`gh` no lugar do
+- **README: exemplo do seo-brain refeito.** `postCreateCommand` com `endurance-init` e `uv sync --extra all`, GPU
+  opcional (`--gpus all` comentado) para o extra `rerank`. Base por digest, só features do Endurance (`gh` no lugar do
   `github-cli` externo), `runArgs` com `host.docker.internal`, venv em volume nomeado e trecho do `compose.yaml` do
   projeto com `ollama` (GPU NVIDIA) e Postgres `serp`; serviço e backup são do projeto.
 
