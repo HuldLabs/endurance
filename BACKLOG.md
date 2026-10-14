@@ -38,6 +38,12 @@
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
 
+### Feito (14/10, branch `w/release`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F18 | Release completa igual à do Tars: job `release` no `publish.yml` (prova base por digest + features no GHCR, notas por `tars release-notes`, anexos `catalogo.md` + `sha256sums`, pré-release com `-`, por último) e `docs/catalogo.md` gerado por `tools/gen-catalogo.sh` (marcadores `# catalogo:` do Dockerfile + `devcontainer-feature.json`), cobrado no `test.yml`; CHANGELOG dev.3 no formato do `tars release-notes` | `tars release-notes --version 0.0.1-dev.3` local; `gen-catalogo.sh --check`; actionlint limpo |
+
 ### Feito (14/10, branch `w/lacunas`)
 
 | # | item | prova |

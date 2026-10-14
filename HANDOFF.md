@@ -9,7 +9,7 @@ a entrada no lugar.
 2.0.0 são finas e a feature `tars` saiu (F8, D19). O `.ai` está no lock da dev.21 (o sync não apaga mais a `lib-json.sh`).
 PRs #8 (F16) e #9 (revisão adversarial) mergeados.
 
-**Proximo passo:** ecossistema mapeado (`docs/ecossistema.md`, D18) e lacunas cobertas (F17). Falta a dev.22 do Tars (guards fail-closed) na base e no lock; depois o dono cria a tag `v0.0.1-dev.3`.
+**Proximo passo:** ecossistema mapeado (`docs/ecossistema.md`, D18) e lacunas cobertas (F17). Falta a dev.22 do Tars (guards fail-closed) na base e no lock; depois o dono cria a tag `v0.0.1-dev.3`. A tag publica base, features e, por último, a Release (notas do `tars release-notes`, catálogo anexo; F18).
 
 **Limites conhecidos:**
 - A primeira tag é a `v0.0.1-dev.3` e só sai com o ecossistema mapeado (D18).
@@ -21,6 +21,7 @@ PRs #8 (F16) e #9 (revisão adversarial) mergeados.
 
 **Como operar:**
 - Worker por worktree em `.worktrees/<slot>`, `tars sync` antes do 1º commit.
+- Mudou versão/option/ferramenta da base: `bash tools/gen-catalogo.sh` (o `test.yml` cobra o `docs/catalogo.md`).
 - Testes: `docker build -t endurance-base:local images/base && ENDURANCE_UNPUBLISHED=1 tools/test-features.sh`
   (o build precisa do login de leitura no GHCR).
 - Push/PR como Daneel de dentro do `segtools-dev`, a partir de `/projects/endurance` (o worktree tem gitdir do host):
