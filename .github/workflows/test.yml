@@ -12,6 +12,15 @@ permissions:
   contents: read
 
 jobs:
+  # docs/catalogo.md e' GERADO (tools/gen-catalogo.sh) do Dockerfile e dos devcontainer-feature.json:
+  # mudou versao/option sem regenerar, o PR cai aqui (R3).
+  catalogo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Catalogo em dia
+        run: bash tools/gen-catalogo.sh --check
+
   features:
     runs-on: ubuntu-latest
     strategy:
