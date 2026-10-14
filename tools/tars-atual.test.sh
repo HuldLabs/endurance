@@ -7,7 +7,7 @@ t="$(mktemp)"; trap 'rm -f "$t"' EXIT
 D1=sha256:1111111111111111111111111111111111111111111111111111111111111111
 D2=sha256:2222222222222222222222222222222222222222222222222222222222222222
 printf 'ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.22@%s\n' "$D1" > "$t"
-run() { ENDURANCE_DOCKERFILE="$t" TARS_LATEST="$1" TARS_LATEST_DIGEST="$D2" TARS_DECLARED_DIGEST="$2" bash tools/tars-atual.sh "${@:3}"; }
+run() { ENDURANCE_DOCKERFILE="$t" TARS_GATE_OFFLINE=1 TARS_LATEST="$1" TARS_LATEST_DIGEST="$D2" TARS_DECLARED_DIGEST="$2" bash tools/tars-atual.sh "${@:3}"; }
 espera() { # rc esperado, texto esperado, args...
   local rc=0 out; out="$(run "${@:3}" 2>&1)" || rc=$?
   [ "$rc" = "$1" ] && grep -q -- "$2" <<<"$out" || { echo "FALHOU ($*): rc=$rc saida=$out" >&2; exit 1; }
@@ -22,4 +22,6 @@ espera 1 '::error::ARG TARS_IMAGE fixa' 0.0.1-dev.22 "$D2"
 espera 1 '::error::ARG TARS_IMAGE fixa' 0.0.1-dev.23 "$D2"  # digest divergente falha mesmo sem --strict
 printf 'ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.22\n' > "$t"
 espera 1 'sem tag+digest' 0.0.1-dev.22 "$D1"
+printf 'ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.22@%s\nARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.23@%s\n' "$D1" "$D2" > "$t"
+espera 1 'mais de um ARG TARS_IMAGE' 0.0.1-dev.22 "$D1"
 echo "tars-atual.test: ok"
