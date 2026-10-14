@@ -19,7 +19,8 @@
 | D13 | Até a primeira tag: `0.0.1-dev.N` + `CHANGELOG.md` (doutrina `novo-repo`) | dono, 13/10 |
 | D14 | Tarefa longa = `endurance-bg` (`setsid` com nome/log/pidfile) **dentro** do container, nunca no host | `docs/adr/0001-tarefas-longas.md` |
 | D15 | `mysql-client` = cliente da Oracle (repo apt oficial, trilha LTS), não o MariaDB da distro | prova de 13/10 contra `mysql:8.0.46` (`src/mysql-client/install.sh`) |
-| D16 | Feature `tars` = shim que roda o checkout montado em `TARS_HOME` até o Tars publicar artefato versionado | `gh release list -R HuldLabs/tars` vazio (13/10) |
+| D16 | Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17 | `gh release list -R HuldLabs/tars` vazio (13/10) |
+| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build | dono, 14/10 |
 
 ## Fila
 
@@ -30,7 +31,7 @@
 | F8 | `secrets`/`signing` finas (D4) e options da `tars` (D5) | `tars identity` + artefato versionado do Tars (F11) | `install.sh` das duas sem lógica de segredo própria |
 | F9 | Tag `v0.1.0` | F8, ordem do dono | publicação no GHCR pela tag, imagem referenciada por digest |
 | F10 | Migrar o segtools (D7), tirando o remendo do Chrome do Dockerfile dele (`22f4f5e6`) | F9 | segtools sobe pelas features; remendos do Dockerfile dele removidos |
-| F11 | **(frente Tars)** Tars publicar artefato versionado (release/OCI) para a feature fixar por digest (D5) | coord do Tars | `tars` instalado por versão/digest, sem checkout montado |
+| F11 | **(frente Tars, pedido em 14/10)** O CI do Tars publica `ghcr.io/huldlabs/tars:<versão>` (multi-arch, `FROM scratch` com `/tars`) e dá leitura ao repo endurance; depois o Endurance põe o `COPY --from` na base (D17) e a feature `tars` fica só com options de comportamento | coord do Tars | `docker run --rm endurance-base tars --version` sem montar nada |
 [removido: dado do homelab, 14/10]
 | F14 | **(seo-brain, dono)** Egress/proxy (`EXTERNAL_PROXY_URL`, `ZYTE_API_KEYS`): é **configuração**, não feature — `containerEnv` do projeto + `tars secrets exec`. Só vira feature se precisar de binário (ex.: cliente VPN) | decisão do dono sobre egress | coleta passa pelo proxy sem chave em argv/log |
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
