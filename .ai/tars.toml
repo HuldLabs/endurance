@@ -1,0 +1,22 @@
+# Manifesto do consumidor do Tars (docs/TARS.md §Modelo). So' o DECLARADO vem.
+# As listas abaixo estao vazias de proposito: descomente e preencha o que este projeto
+# usa. O MOTOR vem sempre (ai-memory, ai-layer-check, o sync e os hooks), sem declarar.
+[tars]
+version = "0.0.1-dev.17"
+skills  = ["agent-coordination", "root-cause-debugging"]                                        # ex.: ["agent-coordination", "segtools-sdd"]
+rules   = ["principles"]                                        # ex.: ["base"]
+memory  = []                                        # fatias da memoria base por tema, ex.: ["git", "db"]
+guards  = ["block-destructive-commands", "block-secret-dump"]
+governance = ["novo-repo", "segredos-e-identidade"]                                     # ex.: ["EVOLUTION", "source-of-truth"]
+
+# Ambiente extra do agente (opcional). O sync SEMPRE injeta o nao interativo
+# (GIT_TERMINAL_PROMPT=0, GCM_INTERACTIVE=never, GIT_SSH_COMMAND com BatchMode).
+# Descomente so' o que este projeto acrescenta:
+# [env]
+# MINHA_CHAVE = "valor"
+
+[gates]
+pre-commit = ["gitleaks"]
+commit-msg = ["commit-msg"]                                     # do catalogo: commit-msg, gitleaks, no-add-all, layout-check, ds-gate
+pre-push   = []                                     # do catalogo: full-check
+local      = []                                     # do PROJETO (moradia propria, nao entra no lock): ex.: ["tools/gates/meu.sh"]

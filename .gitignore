@@ -10,3 +10,6 @@
 *.log
 .cache/
 node_modules/
+
+# Worktrees dos workers (um por frente).
+.worktrees/
