@@ -70,6 +70,11 @@ if ! su "$USERNAME" -c "'$VENV_PATH/bin/python' -V" >/dev/null 2>&1; then
   chown -R "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
 fi
 
+# UV_PROJECT_ENVIRONMENT: sem ela o `uv sync` usa o `.venv` do DIRETORIO do projeto, que no bind
+# do repo e' o mesmo do host — um `uv` no host recria esse `.venv` com o Python do host e o
+# container fica sem interpretador (seo-brain, 14/10). Com ela, o uv usa o venvPath. Fora de shell
+# de login vale o `containerEnv` do devcontainer-feature.json; ele nao interpola option (spec), entao
+# e' fixo no default e o profile abaixo corrige para o venvPath pedido.
 # Caches FORA da arvore do repo: build output grande e milhares de arquivos; num mount de
 # rede (9p/DrvFs) isso pesa no IO de todo mundo.
 PROFILE="/etc/profile.d/endurance-python.sh"
@@ -78,13 +83,14 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-\$HOME/.cache/uv}"
 export PYTHONPYCACHEPREFIX="${PYTHONPYCACHEPREFIX:-\$HOME/.cache/pycache}"
 export PYTHONDONTWRITEBYTECODE=1
 export VIRTUAL_ENV="$VENV_PATH"
+export UV_PROJECT_ENVIRONMENT="$VENV_PATH"
 EOF
 chmod 0644 "$PROFILE"
 
 # `uv sync` quando o projeto ja tem uv.lock — idempotente e barato quando esta em dia.
 # Roda como o usuario do container para o venv nao nascer root.
 if [ -f /workspace/uv.lock ] && [ -w "$VENV_PATH" ]; then
-  su "$USERNAME" -c "cd /workspace && uv sync --frozen" || \
+  su "$USERNAME" -c "cd /workspace && UV_PROJECT_ENVIRONMENT='$VENV_PATH' uv sync --frozen" || \
     echo "python-uv: AVISO: uv sync --frozen falhou (rode 'uv sync' na mao)" >&2
 fi
 
