@@ -21,7 +21,7 @@
 | D15 | `mysql-client` = cliente da Oracle (repo apt oficial, trilha LTS), não o MariaDB da distro | prova de 13/10 contra `mysql:8.0.46` (`src/mysql-client/install.sh`) |
 | D16 | ~~Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17~~ — ponte encerrada pela D19 | `gh release list -R HuldLabs/tars` vazio (13/10) |
 | D18 | A primeira tag publicada é a **`v0.0.1-dev.3`** (numeração da D13; `v0.1.0` só quando o Endurance virar produto) e só sai depois que **todo o ecossistema** estiver mapeado e ajustado no Endurance, para evitar tags desnecessárias (substitui o gatilho da D3) | dono, 14/10 |
-| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.22 `sha256:76d91cf2…` | dono, 14/10 |
+| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.24 `sha256:eacd4847…` | dono, 14/10 |
 | D20 | **Quem corta a tag é o coord**: o merge do dono no PR final da versão é o aval; o coord corta a tag anotada como Daneel, acompanha o CI e confere a Release. Tag com Release publicada nunca se move (substitui "tag é do dono"). Regra do Tars: `.ai/governance/versionamento-de-extracao.md` §"Quem corta a tag" (HuldLabs/tars#25, dev.24) | dono, 14/10 |
 | D19 | Feature `tars` **removida** (não depreciada): com o binário na base o shim não tem o que fazer, e não há option de comportamento implementada (D5). Mínimo = apagar; quem a usava tira a linha do `devcontainer.json` e o mount do checkout | worker F8, 14/10 |
 
@@ -38,7 +38,7 @@
 | F14 | **(seo-brain, dono)** Egress/proxy (`EXTERNAL_PROXY_URL`, `ZYTE_API_KEYS`): é **configuração**, não feature — `containerEnv` do projeto + `tars secrets exec`. Só vira feature se precisar de binário (ex.: cliente VPN) | decisão do dono sobre egress | coleta passa pelo proxy sem chave em argv/log |
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
-| F26 | Trocar o `sed` do job `release` (texto de verificação do `notes.md`) pelo `tars release-notes --kind image` | dev.24 do Tars | notas da Release sem pós-processamento |
+| F26 | ~~Trocar o `sed` do job `release` pelo `tars release-notes --kind image`~~ — **feito** no PR final da `v0.0.1-dev.3` (Tars dev.24) | dev.24 do Tars | notas da Release sem pós-processamento |
 
 ### Feito (14/10, branch `w/tarsgate`)
 
@@ -80,7 +80,7 @@
 | # | item | prova |
 | --- | --- | --- |
 | F8 | `secrets` 2.0.0 e `signing` 2.0.0 finas (D4): só `tars secrets git-credential` (helper do sistema) e `tars identity sign-setup`/`verify` (postStart); `op-sops`, `git-credential-op`, `gh-op`, `secrets-refresh/exec`, `signing-write-key`, `ssh-agent-init`, `signing-git-config` apagados | `test/secrets`, `test/signing` |
-| F11 | `tars` 0.0.1-dev.22 na base por digest (D17); login de leitura do GHCR no `test.yml`/`publish.yml` | `docker run --rm endurance-base:local tars --version` → `0.0.1-dev.22` |
+| F11 | `tars` 0.0.1-dev.24 na base por digest (D17); login de leitura do GHCR no `test.yml`/`publish.yml` | `docker run --rm endurance-base:local tars --version` → `0.0.1-dev.24` |
 
 ### Feito (13/10, branch `w/features`)
 
