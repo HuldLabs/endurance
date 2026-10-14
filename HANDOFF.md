@@ -9,7 +9,7 @@ a entrada no lugar.
 2.0.0 são finas e a feature `tars` saiu (F8, D19). O `.ai` está no lock da dev.22 (guards falham fechados sem a `lib-json.sh`).
 PRs #8 (F16) e #9 (revisão adversarial) mergeados.
 
-**Proximo passo:** ecossistema mapeado (`docs/ecossistema.md`, D18) e lacunas cobertas (F17). Falta a dev.22 do Tars (guards fail-closed) na base e no lock; depois o dono cria a tag `v0.0.1-dev.3`. A tag publica base, features e, por último, a Release (notas do `tars release-notes`, catálogo anexo; F18).
+**Proximo passo:** ecossistema mapeado (`docs/ecossistema.md`, D18) e lacunas cobertas (F17). Falta a dev.22 do Tars (guards fail-closed) na base e no lock; depois o PR final da `v0.0.1-dev.3` (Tars dev.24), que o dono mergeia (o merge é o aval); o coord corta a tag (D20). A tag publica base, features e, por último, a Release (notas do `tars release-notes`, catálogo anexo; F18).
 
 **Limites conhecidos:**
 - A primeira tag é a `v0.0.1-dev.3` e só sai com o ecossistema mapeado (D18).
