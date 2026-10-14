@@ -10,7 +10,7 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 
 | Ferramenta | Versão | Para que serve |
 | --- | --- | --- |
-| `tars` | `ghcr.io/huldlabs/tars:0.0.1-dev.25` @ `sha256:2b7bdb889a80…` | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest |
+| `tars` | `ghcr.io/huldlabs/tars:0.0.1-dev.26` @ `sha256:51de0d473e26…` | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest |
 | `debian` | `debian:trixie-slim` @ `sha256:a29215f6a35e…` | sistema base (trixie-slim, por digest) |
 | `git` | `1:2.47.3-0+deb13u1` | controle de versao (apt, versao exata) |
 | `python3` | `3.13.5-1` | interpretador do SISTEMA (scripts de feature e `op`); runtime de projeto e' a feature python-uv |
@@ -50,7 +50,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`postgres-client`](#postgres-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/postgres-client:1` | PostgreSQL client |
 | [`pulumi`](#pulumi) | 1.0.0 | `ghcr.io/huldlabs/endurance/pulumi:1` | Pulumi CLI |
 | [`pwsh`](#pwsh) | 1.0.0 | `ghcr.io/huldlabs/endurance/pwsh:1` | PowerShell |
-| [`python-uv`](#python-uv) | 1.1.1 | `ghcr.io/huldlabs/endurance/python-uv:1` | Python + uv |
+| [`python-uv`](#python-uv) | 1.2.0 | `ghcr.io/huldlabs/endurance/python-uv:1` | Python + uv |
 | [`redis-client`](#redis-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/redis-client:1` | Redis/Valkey client |
 | [`restic-rclone`](#restic-rclone) | 1.0.0 | `ghcr.io/huldlabs/endurance/restic-rclone:1` | restic + rclone |
 | [`secrets`](#secrets) | 2.0.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
@@ -279,7 +279,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 
 ### python-uv
 
-**Python + uv** — versão 1.1.1. Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.
+**Python + uv** — versão 1.2.0. Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/python-uv:1": {} }
@@ -289,9 +289,10 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | --- | --- | --- | --- | --- |
 | `pythonVersion` | string | `3.13` | livre | Versao do Python: major.minor (3.12) ou exata, inclusive pre-release (3.15.0rc2). Aceita 3.12 a 3.15, que e' o intervalo declarado pelos projetos do ecossistema. Vira a base do venv. |
 | `uvVersion` | string | `0.12.19` | livre | Versao do uv (instalador oficial astral.sh). |
-| `venvPath` | string | `/workspace/.venv` | livre | Caminho do venv criado pelo uv. |
+| `venvPath` | string | `/workspace/.venv` | livre | Caminho do venv criado pelo uv. Vira UV_PROJECT_ENVIRONMENT no profile; fora de shell de login vale o containerEnv, que e' fixo no default (/workspace/.venv): quem muda esta option declara UV_PROJECT_ENVIRONMENT igual no containerEnv do projeto. |
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
+- **containerEnv:** `UV_PROJECT_ENVIRONMENT=/workspace/.venv`
 - **Fonte:** [`src/python-uv/`](../src/python-uv)
 
 ### redis-client
