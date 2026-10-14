@@ -5,8 +5,8 @@ a entrada no lugar.
 
 ## Endurance — 14/10/2026 (coord Endurance)
 
-**Onde estamos:** `main` com os PRs #1–#16 mergeados. A base traz o `tars` dev.24 por digest; o `.ai` está no lock da
-dev.24, com a doutrina `release`. Branch `w/dev3` = PR final da `v0.0.1-dev.3`.
+**Onde estamos:** `main` com os PRs #1–#16 mergeados. A base traz o `tars` dev.25 por digest; o `.ai` está no lock da
+dev.25, com a doutrina `release`. Branch `w/dev3` = PR final da `v0.0.1-dev.3`.
 
 **Proximo passo:** o dono mergeia o PR final (o merge é o aval); o coord corta a tag anotada `v0.0.1-dev.3` como
 Daneel, acompanha o `publish.yml` e confere a Release (D20, `.ai/base/governance/release.md`). Depois: avisar os

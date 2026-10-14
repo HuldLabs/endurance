@@ -17,7 +17,7 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 - **Catálogo gerado (`docs/catalogo.md`).** Cada ferramenta da base (versão e para que serve) e cada feature (id,
   versão, ref de uso, todas as options, `installsAfter`), gerado por `tools/gen-catalogo.sh` dos
   `devcontainer-feature.json` e dos marcadores `# catalogo:` do `Dockerfile`; o `test.yml` falha se divergir.
-- **`tars` 0.0.1-dev.24 na base.** Binário copiado da imagem do Tars por digest (D17); `.ai` no lock da dev.24, com
+- **`tars` 0.0.1-dev.25 na base.** Binário copiado da imagem do Tars por digest (D17); `.ai` no lock da dev.25, com
   a doutrina `release` declarada (o processo desta tag: PR final, merge do dono como aval, coord corta a tag, D20).
   As notas da Release saem do `tars release-notes --kind image`, sem pós-processamento.
 - **`secrets` 2.0.0 e `signing` 2.0.x finas.** Só `tars secrets git-credential` (helper do git do sistema) e
@@ -58,7 +58,7 @@ imagem com tag de versão antes da Release (gate deste repo, 14/10, dev.24).
 `docs/ecossistema.md`, `docs/catalogo.md` (novo, gerado), `tools/gen-catalogo.sh` (novo),
 `src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv,opencode}/`, `.githooks/`,
 `images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
-`.github/workflows/{test,publish}.yml`, `tools/tars-atual.sh` (novo), `.ai/tars.toml`, `.ai/tars.lock`, `.ai/base/`.
+`.github/workflows/{test,publish}.yml`, `tools/tars-atual.sh` (novo), `.ai/tars.toml`, `.ai/tars.lock`, `.ai/base/`, `VERSION` (novo: fonte da versão), `lifecycle/` (antes `src/lifecycle/`).
 
 ### O que o consumidor faz
 - Fixe a base como `base:0.0.1-dev.3`, de preferência por digest (o digest está nas notas da Release); não use `:1`.
