@@ -8,7 +8,7 @@ name: publish
 
 on:
   # So tag `v*` publica: a main pode quebrar a vontade que nada vai para o GHCR.
-  # A tag e o numero da versao — `git tag v1.2.0 && git push origin v1.2.0`.
+  # A tag e o numero da versao, e so' o dono cria: `git tag v0.0.1-dev.3 && git push origin v0.0.1-dev.3`.
   push:
     tags: ["v*"]
   # Permite republicar sem criar tag (ex.: apos um retry de job que falhou).
@@ -28,31 +28,23 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
-      # O pacote ghcr.io/huldlabs/tars e' PRIVADO e a base o copia por digest (D17): login de
-      # LEITURA antes de qualquer build. Token so' por secret do repo; nunca em log nem argv.
-      # ATENCAO: o login de PUSH logo abaixo e' no MESMO registry e substitui este; o pull do
-      # tars no build so' passa se o GITHUB_TOKEN tambem ler o pacote (ver HANDOFF).
+      # O pacote ghcr.io/huldlabs/tars e' PRIVADO e a base o copia por digest (D17). Dois
+      # logins no mesmo registry se substituem (F16), entao o build roda SO' com o de leitura
+      # e carrega a imagem no docker local; o login de push vem depois, so' para o push.
+      # Token so' por secret do repo; nunca em log nem argv.
       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ vars.GHCR_READ_USER }}
           password: ${{ secrets.GHCR_READ_TOKEN }}
 
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      # A versao sai da TAG, nao do arquivo: `v1.2.0` publica `base:1.2.0` e `base:1`.
-      # O `:1` continua sendo o que os projetos consomem; o `:1.2.0` fica para pinar.
+      # A versao sai da TAG, nao do arquivo: `v0.0.1-dev.3` publica `base:0.0.1-dev.3`.
+      # Pre-release (versao com `-`) NAO move a tag curta (`:0`): as duas viram a versao cheia.
       - name: Version from tag
         id: version
         run: |
           full="${GITHUB_REF_NAME#v}"
           major="${full%%.*}"
-          # Pre-release (v1.2.0-rc1) NAO move o `:1` que os projetos consomem: as duas tags
-          # viram a versao cheia.
           case "$full" in *-*) major="$full" ;; esac
           echo "full=${full}" >> "$GITHUB_OUTPUT"
           echo "major=${major}" >> "$GITHUB_OUTPUT"
@@ -61,12 +53,27 @@ jobs:
         with:
           context: images/base
           file: images/base/Dockerfile
-          push: true
+          load: true
+          push: false
           tags: |
             ghcr.io/huldlabs/endurance/base:${{ steps.version.outputs.full }}
             ghcr.io/huldlabs/endurance/base:${{ steps.version.outputs.major }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push base
+        env:
+          FULL: ${{ steps.version.outputs.full }}
+          MAJOR: ${{ steps.version.outputs.major }}
+        run: |
+          docker push "ghcr.io/huldlabs/endurance/base:${FULL}"
+          [ "$MAJOR" = "$FULL" ] || docker push "ghcr.io/huldlabs/endurance/base:${MAJOR}"
 
   features:
     needs: base
