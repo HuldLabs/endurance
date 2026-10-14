@@ -111,20 +111,42 @@ compose, front em Node com `package-lock.json`):
 }
 ```
 
-**Pesquisa com browser real** (seo-brain — Python, Chrome REAL para o coletor de SERP e
-`agent-browser` para os subagentes):
+**Pesquisa com browser real** (seo-brain — Python, Chrome REAL para o coletor de SERP,
+`agent-browser` e `opencode` para os subagentes, Postgres e ollama do compose do projeto):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  // Base por DIGEST: copie o digest das notas da Release (seção "Base"); a tag é só legível.
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3@sha256:<digest das notas da Release>",
+  "remoteUser": "dev",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
-    "ghcr.io/huldlabs/endurance/node-bun:1": { "install": false },
-    "ghcr.io/huldlabs/endurance/playwright:1": { "browser": "chrome,msedge,firefox,webkit" },
-    "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/huldlabs/endurance/agent-browser:1": {}
+    "ghcr.io/huldlabs/endurance/node-bun:1": {},
+    "ghcr.io/huldlabs/endurance/playwright:1": { "browser": "chrome" },
+    "ghcr.io/huldlabs/endurance/agent-browser:1": {},
+    "ghcr.io/huldlabs/endurance/opencode:1": {},
+    "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
+    "ghcr.io/huldlabs/endurance/gh:1": {},
+    "ghcr.io/huldlabs/endurance/secrets:2": {},
+    "ghcr.io/huldlabs/endurance/signing:2": {},
+    "ghcr.io/huldlabs/endurance/restic-rclone:1": {}
   },
+  // Serviço do HOST por nome estável (host.docker.internal), sem IP no repo.
+  "runArgs": [
+    "--add-host=host.docker.internal:host-gateway"
+    // GPU no PROPRIO devcontainer, so' para quem roda o extra pesado (`rerank`: torch) ou um
+    // llama-server aqui dentro. O Ollama continua no compose do projeto.
+    // , "--gpus", "all"
+  ],
+  "containerEnv": { "OLLAMA_HOST": "http://ollama:11434" },
+  // `all` do seo-brain NAO inclui os extras pesados (research, rerank/torch): `--extra all`, nunca
+  // `--all-extras`. Quem precisa do pesado acrescenta `--extra rerank`.
+  "postCreateCommand": "endurance-init /workspace && uv sync --extra all",
   "mounts": [
+    // venv FORA do bind do repo: o `.venv` do bind é o do host, e um `uv` no host o recria com o
+    // Python do host. O python-uv exporta UV_PROJECT_ENVIRONMENT=<venvPath> (default
+    // /workspace/.venv); o volume nomeado sobre esse caminho esconde o `.venv` do host.
+    "source=${localEnv:USER}-seo-brain-venv,target=/workspace/.venv,type=volume",
     // Sessão do agent-browser (cookies logados = CREDENCIAL): volume por usuário E projeto.
     "source=${localEnv:USER}-seo-brain-agent-browser,target=/home/dev/.agent-browser,type=volume",
     // Estado do `tars secrets` (chave age, op-token, cache cifrado) fica FORA do repo, em
@@ -134,6 +156,41 @@ compose, front em Node com `package-lock.json`):
   ]
 }
 ```
+
+Serviço é do **compose do projeto**, nunca da imagem nem de feature (R4). Trecho do
+`compose.yaml` do projeto (o devcontainer precisa estar na mesma rede para `ollama` e `serp`
+resolverem; com `dockerComposeFile` + `service`, o `runArgs` acima vira
+`extra_hosts: ["host.docker.internal:host-gateway"]` no serviço do devcontainer):
+
+```yaml
+services:
+  ollama:
+    image: ollama/ollama:<versão fixada>
+    volumes:
+      - ollama-models:/root/.ollama        # modelos sobrevivem a rebuild
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]          # exige NVIDIA Container Toolkit no host
+
+  serp:
+    image: postgres:18                     # major casa com o postgres-client acima
+    environment:
+      POSTGRES_PASSWORD: ${SERP_PASSWORD:?} # valor pelo `tars secrets exec`, nunca no repo
+    volumes:
+      - serp-data:/var/lib/postgresql
+
+volumes:
+  ollama-models:
+  serp-data:
+```
+
+Volume nomeado não é backup: o dump do `serp` (`pg_dump`, da feature `postgres-client`) e o
+envio dele (`restic`/`rclone`, da feature `restic-rclone`) são responsabilidade do projeto —
+agenda, destino e credencial ficam no projeto, nunca aqui.
 
 Ferramenta de desenvolvimento do Python (pytest, import-linter…) vai em
 `[dependency-groups] dev` (PEP 735) no `pyproject.toml`, não em `optional-dependencies`: o

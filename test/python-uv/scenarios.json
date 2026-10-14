@@ -16,5 +16,12 @@
         "pythonVersion": "3.15.0rc2"
       }
     }
+  },
+  "uvsync": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "python-uv": {}
+    }
   }
 }

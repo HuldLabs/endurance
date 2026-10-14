@@ -1,0 +1,18 @@
+{
+  "default": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "postgres-client": {}
+    }
+  },
+  "pg17": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "postgres-client": {
+        "version": "17"
+      }
+    }
+  }
+}

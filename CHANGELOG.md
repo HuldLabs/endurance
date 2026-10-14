@@ -4,6 +4,36 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
 Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho) com as 4 subseções `###` do Tars, e
 `- **Destaque.** …` em "O que mudou": é o que o `tars release-notes` lê para gerar as notas da Release.
 
+## 0.0.1-dev.4
+
+### O que mudou
+- **`tars` 0.0.1-dev.26 na base.** Por digest (`sha256:51de0d47…`), pela rotina do Tars na base; `.ai` no lock da
+  dev.26 (cada guard só no seu evento).
+- **`python-uv` 1.2.0 exporta `UV_PROJECT_ENVIRONMENT`.** O `uv sync` passa a usar o `venvPath` em vez do `.venv`
+  do diretório do projeto. Vale fora de shell de login pelo `containerEnv` (fixo no default `/workspace/.venv`: a
+  spec não interpola option) e em shell de login pelo profile, com o valor da option.
+- **`python-uv` 1.3.0 traz a `libgomp1`.** Runtime OpenMP que wheels como lightgbm, xgboost e scikit-learn carregam
+  (`libgomp.so.1`); acaba o `.deb` extraído em `/tmp` com `LD_LIBRARY_PATH` no seo-brain.
+- **`postgres-client` testado no CI.** Cenários `default` (18) e `pg17` provam `psql` e `pg_dump` no major da option;
+  a feature entra na matriz do `test.yml`.
+- **README: exemplo do seo-brain refeito.** `postCreateCommand` com `endurance-init` e `uv sync --extra all`, GPU
+  opcional (`--gpus all` comentado) para o extra `rerank`. Base por digest, só features do Endurance (`gh` no lugar do
+  `github-cli` externo), `runArgs` com `host.docker.internal`, venv em volume nomeado e trecho do `compose.yaml` do
+  projeto com `ollama` (GPU NVIDIA) e Postgres `serp`; serviço e backup são do projeto.
+
+### Por que
+Pedido do coord seo-brain (14/10): um `uv` no host recriou o `.venv` do bind com o Python do host e o container
+ficou sem Python; o `postgres-client` não tinha teste; o exemplo do README não batia com o projeto.
+
+### Arquivos impactados
+`src/python-uv/`, `test/python-uv/`, `test/postgres-client/` (novo), `.github/workflows/test.yml`, `README.md`,
+`docs/catalogo.md`, `BACKLOG.md`, `CHANGELOG.md`, `VERSION`.
+
+### O que o consumidor faz
+Nada obrigatório: `python-uv:1` pega a 1.3.0. Quem usa `venvPath` fora do default declara
+`"containerEnv": { "UV_PROJECT_ENVIRONMENT": "<venvPath>" }` no próprio devcontainer. Recomendado: volume nomeado
+por usuário e projeto no `venvPath` (exemplo no README) e apagar o `.venv` antigo do repo no host.
+
 ## 0.0.1-dev.3
 
 ### O que mudou
