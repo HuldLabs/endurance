@@ -38,6 +38,12 @@
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
 
+### Feito (14/10, branch `w/lacunas`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F17 | Lacunas de `docs/ecossistema.md` (L1–L7): features `gh` 2.102.0, `lint` (shellcheck 0.11.0 + actionlint 1.7.12), `opentofu` 1.13.1 (não terraform: nenhum `.tf` versionado), `duckdb` 1.5.6, `kubectl-helm` (1.37.1 + 4.3.0), `restic-rclone` (0.19.1 + 1.75.2); `node-bun` aceita Node 20/24/26 (libatomic1); `python-uv` aceita 3.12 e `3.15.0rc2` e deixa de apontar o venv para o `/root` | `test/<feature>`; `test/node-bun` cenários `node20/24/26`; `test/python-uv` cenários `py312`/`py315rc2` |
+
 ### Feito (14/10, branch `w/f8`)
 
 | # | item | prova |

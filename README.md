@@ -175,6 +175,23 @@ montado. As features `secrets` e `signing` são finas e só ligam o `tars`:
 }
 ```
 
+**GitHub CLI, lint e IaC** (farmega — Node 26 com pnpm, `gh`, `shellcheck`/`actionlint` e OpenTofu no lugar
+do terraform):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "features": {
+    "ghcr.io/huldlabs/endurance/node-bun:1": { "nodeVersion": "26", "packageManager": "pnpm" },
+    "ghcr.io/huldlabs/endurance/gh:1": {},
+    "ghcr.io/huldlabs/endurance/lint:1": {},
+    "ghcr.io/huldlabs/endurance/opentofu:1": {}
+  }
+}
+```
+
+Outros recortes: `duckdb:1` (nexus), `restic-rclone:1` (homelab-infra), `kubectl-helm:1` (tars, dotfiles).
+
 ### Tarefa longa (`endurance-bg`)
 
 O harness do agente mata o **grupo de processos** do comando quando ele termina: `cmd &` e
@@ -250,7 +267,7 @@ ferramenta, nunca o conteúdo.
 | Feature | O que traz |
 | --- | --- |
 | [`node-bun`](src/node-bun) | Node (`nodeVersion`) + bun 1.4.2, pnpm 11.1.1 (corepack) ou npm (`packageManager`), install congelado idempotente |
-| [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`) + `uv`, venv e `uv sync` |
+| [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`, major.minor ou exata, inclusive rc como `3.15.0rc2`) + `uv`, venv e `uv sync` |
 | [`secrets`](src/secrets) | `tars secrets git-credential` como helper do git do **sistema** (vale em qualquer repo; só hosts de `git_hosts`) |
 | [`signing`](src/signing) | postStart: `tars identity sign-setup`, `commit.gpgsign=true`, `tars identity verify` |
 | [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome`/`msedge` instalam o Chrome/Edge reais; `firefox`/`webkit` = motores do Playwright (o WebKit é o motor do Safari, não o Safari) |
@@ -261,6 +278,12 @@ ferramenta, nunca o conteúdo.
 | [`mysql-client`](src/mysql-client) | `mysql`/`mysqldump` da Oracle (repo apt assinado, trilha 8.4 LTS; fala com MySQL 8.0 de TLS autoassinado) |
 | [`redis-client`](src/redis-client) | `valkey-cli` (também como `redis-cli`) |
 | [`pwsh`](src/pwsh) | PowerShell 7.6.6 (tarball oficial, sha256 conferido) |
+| [`gh`](src/gh) | GitHub CLI 2.102.0 (repo apt oficial cli.github.com, chave GPG) |
+| [`lint`](src/lint) | `shellcheck` 0.11.0 + `actionlint` 1.7.12 (binários oficiais, sha256 conferido) |
+| [`opentofu`](src/opentofu) | `tofu` 1.13.1 (binário oficial, `SHA256SUMS` do release) |
+| [`duckdb`](src/duckdb) | CLI do `duckdb` 1.5.6 (binário oficial, sha256 do asset) |
+| [`kubectl-helm`](src/kubectl-helm) | `kubectl` 1.37.1 (dl.k8s.io) + `helm` 4.3.0 (get.helm.sh), sha256 conferido |
+| [`restic-rclone`](src/restic-rclone) | `restic` 0.19.1 + `rclone` 1.75.2 (binários oficiais, `SHA256SUMS`) |
 | [`agent-browser`](src/agent-browser) | CLI `agent-browser` dirigindo o Chrome do sistema; sessão em volume por usuário/projeto |
 
 ### Testar

@@ -15,13 +15,24 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
   - a feature `tars` (shim de `TARS_HOME`) é removida (D19);
   - `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build;
   - `signing` 2.0.1: `commit.gpgsign` ligado no sistema já no build, e postStart com `timeout`;
-  - `publish.yml`: build só com o login de leitura (F16), actions pinadas por SHA, dispatch só em tag.
+  - `publish.yml`: build só com o login de leitura (F16), actions pinadas por SHA, dispatch só em tag;
+  - feature nova `gh` 1.0.0: GitHub CLI 2.102.0 pelo repo apt oficial (L1 de `docs/ecossistema.md`);
+  - feature nova `lint` 1.0.0: shellcheck 0.11.0 + actionlint 1.7.12 (L2);
+  - feature nova `opentofu` 1.0.0: OpenTofu 1.13.1 (L3);
+  - feature nova `duckdb` 1.0.0: CLI 1.5.6 (L5);
+  - feature nova `kubectl-helm` 1.0.0: kubectl 1.37.1 + helm 4.3.0 (L7);
+  - feature nova `restic-rclone` 1.0.0: restic 0.19.1 + rclone 1.75.2 (L6);
+  - `node-bun`: Node 26 instala a `libatomic1` (L4);
+  - `python-uv`: aceita versão exata e rc (`3.15.0rc2`); interpretadores do uv em `/usr/local/share/uv/python`
+    (antes iam para `/root` e o venv do `dev` dava "Permission denied") (L4).
 - **Por quê:**
   - decisões do dono de 14/10 (D18 e versão);
   - correção do desenho combinada com o coord segtools (D4);
   - pedidos do seo-brain;
+  - lacunas L1–L7 do mapeamento do ecossistema (`docs/ecossistema.md`);
   - F8: lógica de segredo própria no consumidor é defeito (R5), e o Tars dev.19 publicou a imagem e os comandos.
-- **Arquivos impactados:** `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`,
+- **Arquivos impactados:** `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`, `docs/ecossistema.md`,
+  `src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv}/`,
   `.githooks/`, `images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
   `.github/workflows/{test,publish}.yml`.
 - **O que o consumidor faz:**
