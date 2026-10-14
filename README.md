@@ -24,7 +24,7 @@ projeto liga no `devcontainer.json` com uma linha.
 ```jsonc
 {
   "name": "meu-projeto",
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": {
     "ghcr.io/huldlabs/endurance/node-bun:1": {},
     "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
@@ -48,7 +48,7 @@ Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVe
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
     "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
@@ -61,7 +61,7 @@ Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVe
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": {
     "ghcr.io/huldlabs/endurance/node-bun:1": {
       "nodeVersion": "22",
@@ -77,7 +77,7 @@ Pulumi da infra; `playwright` porque há e2e de browser):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.14" },
     "ghcr.io/huldlabs/endurance/node-bun:1": {
@@ -98,7 +98,7 @@ compose, front em Node com `package-lock.json`):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": {
     "ghcr.io/huldlabs/endurance/php:1": { "version": "8.3" },
     "ghcr.io/huldlabs/endurance/mysql-client:1": {},
@@ -113,7 +113,7 @@ compose, front em Node com `package-lock.json`):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
     "ghcr.io/huldlabs/endurance/node-bun:1": { "install": false },
@@ -148,7 +148,7 @@ refs `op://` no template do `tars secrets` (`[secrets]` do `.ai/tars.toml`) e ro
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
   "features": { "ghcr.io/huldlabs/endurance/pwsh:1": {} }
 }
 ```
@@ -263,18 +263,24 @@ extra é necessário. **Só tag publica** — push na `main` não toca o registr
 
 ### Publicar uma versão
 
-Criar a tag é o ato de publicar; a versão da imagem sai do nome dela:
+Criar a tag é o ato de publicar, e **quem cria é o dono** (humano, metodologia do Tars). A versão da
+imagem sai do nome da tag:
 
 ```bash
-git tag v1.2.0
-git push origin v1.2.0
+git tag v0.0.1-dev.3
+git push origin v0.0.1-dev.3
 ```
 
-A tag `v1.2.0` publica `ghcr.io/huldlabs/endurance/base:1.2.0` **e**
-`ghcr.io/huldlabs/endurance/base:1` — o `:1` é o que os projetos consomem, o
-`:1.2.0` fica para quem quer pinar exato. As features seguem o major: ficam em
-`ghcr.io/huldlabs/endurance/<feature>:1` (o `devcontainers/action` deriva o canal
-do `devcontainer-feature.json`, não da tag).
+**Numeração (D13, D18):** `0.0.1-dev.N` enquanto o Endurance não é produto, a versão do
+`CHANGELOG.md`. A tag `v0.0.1-dev.3` publica `ghcr.io/huldlabs/endurance/base:0.0.1-dev.3`.
+Por ser pré-release, ela **não** move nenhuma tag curta (`:0`, `:1`). O projeto fixa a
+base pela versão cheia e, de preferência, por **digest** (`base@sha256:…`, segurança
+multiusuário item 8). A tag curta `:N` só passa a existir a partir da primeira versão
+sem sufixo (`v0.1.0`, quando o Endurance virar produto).
+
+As features têm versão própria (spec containers.dev): ficam em
+`ghcr.io/huldlabs/endurance/<feature>:1`, com o canal derivado do
+`devcontainer-feature.json`, não da tag do repo.
 
 Para republicar sem criar tag nova (retry de job que falhou), use
 **Actions → publish → Run workflow**.
@@ -305,6 +311,6 @@ Rascunho. As versões fixadas estão em `images/base/Dockerfile` e no
 
 ## Decisões
 
-`BACKLOG.md` (decisões em vigor e fila) e `docs/adr/`. Histórico: `docs/decisoes-20261008.md` — sequência de uso (segurar a tag `v0.1.0` até o Tars
-ter `tars identity`), features `secrets`/`signing` enxutas delegando ao `tars`, e a cobertura
+`BACKLOG.md` (decisões em vigor e fila) e `docs/adr/`. Histórico: `docs/decisoes-20261008.md` — sequência de uso (a tag esperava o `tars identity`; hoje a
+primeira publicação é a `v0.0.1-dev.3`, quando o ecossistema estiver mapeado — D18), features `secrets`/`signing` enxutas delegando ao `tars`, e a cobertura
 de tooling por projeto (o que falta: php, mysql-client, redis-client, pwsh).
