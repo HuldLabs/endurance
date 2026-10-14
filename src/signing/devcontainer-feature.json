@@ -1,10 +1,10 @@
 {
   "id": "signing",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "name": "Assinatura de commit (tars identity)",
-  "description": "Fina (D4/R5): no postStart roda `tars identity sign-setup` (gpg.format=ssh, signingkey, allowedSignersFile do `[identity]`/`[secrets]` do projeto), liga commit.gpgsign e roda `tars identity verify`. O tars vem da base. `identity provision` e' do DONO, nunca daqui.",
+  "description": "Fina (D4/R5): liga commit.gpgsign no sistema (build); no postStart roda `tars identity sign-setup` (gpg.format=ssh, signingkey, allowedSignersFile do `[identity]`/`[secrets]` do projeto), roda `tars identity verify`. O tars vem da base. `identity provision` e' do DONO, nunca daqui.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/signing",
   "options": {},
-  "postStartCommand": "tars identity sign-setup && git config commit.gpgsign true; tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); commit assinado vai falhar ate o DONO rodar `tars identity provision` (TTY)' >&2",
+  "postStartCommand": "timeout 30 tars identity sign-setup && timeout 30 tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); commit assinado vai falhar ate o DONO rodar `tars identity provision` (TTY)' >&2",
   "installsAfter": ["ghcr.io/huldlabs/endurance/secrets", "ghcr.io/devcontainers/features/common-utils"]
 }
