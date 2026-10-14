@@ -49,10 +49,19 @@ chown -R "$USERNAME:$USERNAME" /workspace/.cache 2>/dev/null || true
 # coletor de SERP do seo-brain usa channel="chrome"; com o Chromium o Google responde
 # blocked_by_google (portado do remendo segtools `22f4f5e6`). So' amd64: o Google nao
 # publica .deb arm64.
+#
+# EXCECAO DELIBERADA de versao (como o `op` da base): o repo apt do Google so' guarda a
+# ULTIMA stable, entao nao ha' o que fixar — um pino quebraria o build quando ela sai do
+# repo. A integridade vem da assinatura do repo do Google (o instalador do Playwright usa o
+# .deb oficial, que registra a chave).
 CACHE_BROWSERS=()
 for b in "${BROWSERS[@]}"; do
   case "$b" in
     chrome)
+      [ "$(dpkg --print-architecture)" = amd64 ] || {
+        echo "playwright: browser=chrome so' existe em amd64 (o Google nao publica .deb arm64)" >&2
+        exit 1
+      }
       if ! command -v google-chrome >/dev/null 2>&1; then
         apt-get update
         npx --yes "playwright@${PLAYWRIGHT_VERSION}" install --with-deps chrome

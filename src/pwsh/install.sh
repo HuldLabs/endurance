@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Feature pwsh: PowerShell 7 do tarball oficial (GitHub Releases), versao fixa, conferido
-# pelo `hashes.sha256` do proprio release. Para o dotfiles (~50 scripts .ps1).
+# pelo `hashes.sha256` do proprio release (protege de download corrompido; a confianca na
+# origem e' o TLS do GitHub). Para o dotfiles (~50 scripts .ps1).
 #
 # Tarball em vez do repositorio apt da Microsoft: um so' caminho para amd64 e arm64, e a
 # versao e' a da option, nao a ultima que o repo tiver.

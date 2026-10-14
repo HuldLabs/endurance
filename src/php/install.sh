@@ -5,10 +5,12 @@
 # (Fabber: `"php": "8.3"` no composer.json do WordPress). O repositorio do Ondrej Sury e'
 # o do mantenedor do PHP no Debian, assinado, e tem cada minor lado a lado.
 #
-# composer e wp-cli sao .phar de versao FIXA, conferidos contra o checksum publicado pela
-# propria fonte antes de entrar no PATH.
+# composer e wp-cli sao .phar de versao FIXA, conferidos contra o checksum que a propria
+# fonte publica junto (protege de download corrompido/truncado; nao de origem comprometida —
+# a confianca ai e' o TLS da fonte oficial).
 #
-# Idempotente: se o php pedido ja existe, so' confere composer/wp-cli.
+# Idempotente: repo uma vez, apt sempre (sem custo quando ja' esta tudo), .phar so' se a
+# versao mudou.
 set -euo pipefail
 
 PHP_VERSION="${VERSION:-8.3}"
@@ -16,19 +18,29 @@ EXTENSIONS="${EXTENSIONS:-mysql,curl,mbstring,xml,zip,intl,gd}"
 COMPOSER_VERSION="${COMPOSERVERSION:-2.10.3}"
 WPCLI_VERSION="${WPCLIVERSION:-2.12.0}"
 
-if ! command -v "php${PHP_VERSION}" >/dev/null 2>&1; then
+# Repositorio Sury (uma vez). A chave e' conferida pela impressao digital COMPLETA antes de
+# virar `signed-by`: e' ela que valida todo pacote php que entra como root.
+SURY_KEY_FPR="15058500A0235D97F5D10063B188E2B695BD4743"
+if [ ! -f /etc/apt/sources.list.d/sury-php.list ]; then
   apt-get update
   apt-get install -y --no-install-recommends ca-certificates curl gnupg
-  curl -fsSL https://packages.sury.org/php/apt.gpg -o /usr/share/keyrings/sury-php.gpg
+  curl -fsSL https://packages.sury.org/php/apt.gpg -o /tmp/sury.gpg
+  gpg --show-keys --with-colons /tmp/sury.gpg | grep -q "^fpr:::::::::${SURY_KEY_FPR}:" || {
+    echo "php: impressao digital da chave do Sury NAO confere (esperada ${SURY_KEY_FPR})" >&2
+    exit 1
+  }
+  install -m 0644 /tmp/sury.gpg /usr/share/keyrings/sury-php.gpg && rm -f /tmp/sury.gpg
   echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ \
 $(. /etc/os-release && echo "$VERSION_CODENAME") main" > /etc/apt/sources.list.d/sury-php.list
-  apt-get update
-  PKGS=("php${PHP_VERSION}-cli")
-  IFS=',' read -r -a EXTS <<< "$EXTENSIONS"
-  for e in "${EXTS[@]}"; do [ -n "$e" ] && PKGS+=("php${PHP_VERSION}-${e}"); done
-  apt-get install -y --no-install-recommends "${PKGS[@]}"
-  rm -rf /var/lib/apt/lists/*
 fi
+# Sempre: o apt e' idempotente, e uma extensao NOVA na option tem de entrar mesmo com o
+# php ja' instalado (pular pelo `command -v php` a perdia calada).
+PKGS=("php${PHP_VERSION}-cli")
+IFS=',' read -r -a EXTS <<< "$EXTENSIONS"
+for e in "${EXTS[@]}"; do [ -n "$e" ] && PKGS+=("php${PHP_VERSION}-${e}"); done
+apt-get update
+apt-get install -y --no-install-recommends "${PKGS[@]}"
+rm -rf /var/lib/apt/lists/*
 update-alternatives --set php "/usr/bin/php${PHP_VERSION}"
 php --version | head -1
 

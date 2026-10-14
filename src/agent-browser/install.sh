@@ -31,14 +31,14 @@ if ! agent-browser --version 2>/dev/null | grep -q " ${AB_VERSION}$"; then
   npm cache clean --force
 fi
 
-# Chrome do sistema por perfil de shell (o subagente chama por
-# CLI, de qualquer shell). Sem sandbox do Chrome: dentro do container nao ha user
-# namespaces para ele, e o isolamento e' o proprio container.
-cat > /etc/profile.d/endurance-agent-browser.sh <<EOF
-export AGENT_BROWSER_EXECUTABLE_PATH="\${AGENT_BROWSER_EXECUTABLE_PATH:-$(command -v google-chrome)}"
-export AGENT_BROWSER_ARGS="\${AGENT_BROWSER_ARGS:---no-sandbox}"
-EOF
-chmod 0644 /etc/profile.d/endurance-agent-browser.sh
+# O Chrome do sistema e o `--no-sandbox` vao pelo `containerEnv` do devcontainer-feature.json
+# (todo processo do container, inclusive shell NAO-login do agente) — nao por /etc/profile.d,
+# que so' shell de login le. Sem sandbox do Chrome: no container nao ha user namespaces para
+# ele, e o isolamento e' o proprio container. Aqui so' se confere que o caminho bate.
+[ "$(command -v google-chrome)" = /usr/bin/google-chrome ] || {
+  echo "agent-browser: google-chrome fora de /usr/bin (containerEnv aponta para la')" >&2
+  exit 1
+}
 # Pasta da sessao com o dono e o modo certos, para o volume montado por cima herdar.
 home="$(getent passwd "$USERNAME" | cut -d: -f6)"
 install -d -m 0700 -o "$USERNAME" -g "$USERNAME" "$home/.agent-browser"

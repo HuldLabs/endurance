@@ -40,8 +40,12 @@ jobs:
         id: version
         run: |
           full="${GITHUB_REF_NAME#v}"
+          major="${full%%.*}"
+          # Pre-release (v1.2.0-rc1) NAO move o `:1` que os projetos consomem: as duas tags
+          # viram a versao cheia.
+          case "$full" in *-*) major="$full" ;; esac
           echo "full=${full}" >> "$GITHUB_OUTPUT"
-          echo "major=${full%%.*}" >> "$GITHUB_OUTPUT"
+          echo "major=${major}" >> "$GITHUB_OUTPUT"
 
       - uses: docker/build-push-action@v6
         with:
