@@ -9,7 +9,7 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
   - o `tars identity provision` passa a ser só do dono (TTY);
   - o README ganha o volume do `tars secrets` e a regra do `[dependency-groups]`;
   - os `.githooks/` voltam a ser executáveis;
-  - a base traz o `tars` 0.0.1-dev.20 (binário, copiado da imagem do Tars por digest, D17);
+  - a base traz o `tars` 0.0.1-dev.21 (binário, copiado da imagem do Tars por digest, D17);
   - `secrets` 2.0.0 e `signing` 2.0.0 ficam finas: só `tars secrets git-credential` (helper do git do sistema) e
     `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem;
   - a feature `tars` (shim de `TARS_HOME`) é removida (D19);
