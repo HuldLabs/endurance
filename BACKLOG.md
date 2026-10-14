@@ -31,13 +31,16 @@
 | F9 | Tag `v0.1.0` | F8, ordem do dono | publicação no GHCR pela tag, imagem referenciada por digest |
 | F10 | Migrar o segtools (D7), tirando o remendo do Chrome do Dockerfile dele (`22f4f5e6`) | F9 | segtools sobe pelas features; remendos do Dockerfile dele removidos |
 | F11 | **(frente Tars)** Tars publicar artefato versionado (release/OCI) para a feature fixar por digest (D5) | coord do Tars | `tars` instalado por versão/digest, sem checkout montado |
+[removido: dado do homelab, 14/10]
+| F14 | **(seo-brain, dono)** Egress/proxy (`EXTERNAL_PROXY_URL`, `ZYTE_API_KEYS`): é **configuração**, não feature — `containerEnv` do projeto + `tars secrets exec`. Só vira feature se precisar de binário (ex.: cliente VPN) | decisão do dono sobre egress | coleta passa pelo proxy sem chave em argv/log |
+| F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da `v0.1.0`: tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
 
 ### Feito (13/10, branch `w/features`)
 
 | # | item | prova |
 | --- | --- | --- |
-| F1 | `playwright` `browser: chrome` (Google Chrome real, `playwright install --with-deps chrome`) | `test/playwright` cenário `chrome` |
+| F1 | `playwright` com motores reais: `chrome` e `msedge` (sistema) + `firefox`/`webkit` (Playwright) — pedido seo-brain P1 | `test/playwright` cenários `chrome` e `seo-brain` |
 | F2 | Helper do git ligado no git do **sistema** por caminho absoluto, vale em qualquer repo | `test/secrets` cenário `global-helper` |
 | F4 | `endurance-bg` na base + ADR-0001 | simulação do kill de grupo do harness (ADR-0001 §prova) |
 | F6 | Feature `agent-browser` 0.39.1 no Chrome do sistema | `test/agent-browser`: abre página e lê o título |
@@ -60,6 +63,9 @@
 - `nohup cmd &` não sobrevive ao harness do agente, que mata o grupo com TERM. Só `setsid`/`endurance-bg`.
 - Cliente MariaDB contra MySQL 8 do compose: recusa o TLS autoassinado. A chave `RPM-GPG-KEY-mysql-2023` da Oracle
   vem vencida; a renovada é a `-2025`, conferida por impressão digital.
+- Browsers baixados no BUILD em `/workspace/.cache` somem sob o bind mount do projeto em `/workspace`: a feature garante
+  as libs de sistema (root); `firefox`/`webkit`/`chromium` o usuário baixa com `npx playwright install` (sem sudo).
+  Chrome/Edge vão para `/opt` e não somem.
 - `hashes.sha256` do PowerShell é UTF-16 com CRLF: converter antes do `sha256sum -c`.
 
 ## Em aberto (decisão do dono)

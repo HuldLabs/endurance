@@ -1,6 +1,6 @@
 {
   "id": "playwright",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Playwright",
   "description": "Bibliotecas de sistema do browser (por `install-deps` da versao pedida) e o browser instalado nas pastas de cache do container. Exige a feature node-bun para ter Node/npx.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/playwright",
@@ -13,11 +13,11 @@
     "browser": {
       "type": "string",
       "default": "chromium",
-      "description": "Browsers, separados por virgula. 'chromium'/'firefox'/'webkit' vao para o cache do container; 'chrome' instala o Google Chrome REAL (google-chrome-stable, so' amd64) no sistema — para quem usa channel=\"chrome\" (ex.: coletor de SERP do seo-brain, que o Google bloqueia no Chromium).",
+      "description": "Browsers, separados por virgula. 'chromium'/'firefox'/'webkit' (motores do Playwright) vao para o cache do container; 'chrome' e 'msedge' instalam o Google Chrome / Microsoft Edge REAIS no sistema (so' amd64) — para quem usa channel=\"chrome\"/\"msedge\" e precisa do UA do proprio motor (coletor de SERP do seo-brain).",
       "proposals": [
         "chromium",
         "chrome",
-        "chromium,chrome",
+        "chrome,msedge,firefox,webkit",
         "firefox",
         "webkit",
         "chromium,firefox,webkit"
