@@ -1,0 +1,15 @@
+{
+  "id": "pwsh",
+  "version": "1.0.0",
+  "name": "PowerShell",
+  "description": "PowerShell 7 (tarball oficial do GitHub Releases, sha256 conferido). Para repos com scripts .ps1 (ex.: dotfiles).",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/pwsh",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "7.6.6",
+      "description": "Versao do PowerShell (tag do release, sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
