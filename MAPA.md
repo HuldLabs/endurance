@@ -34,3 +34,4 @@ oficial do upstream, versão por option.
 | L5 duckdb | `src/duckdb` | github.com/duckdb/duckdb |
 | L6 restic + rclone | `src/restic-rclone` | github.com/restic/restic, github.com/rclone/rclone |
 | L7 kubectl + helm | `src/kubectl-helm` | dl.k8s.io, get.helm.sh |
+| opencode (seo-brain) | `src/opencode` | github.com/anomalyco/opencode |

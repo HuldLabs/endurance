@@ -193,7 +193,7 @@ do terraform):
 }
 ```
 
-Outros recortes: `duckdb:1` (nexus), `restic-rclone:1` (homelab-infra), `kubectl-helm:1` (tars, dotfiles).
+Outros recortes: `duckdb:1` (nexus), `restic-rclone:1` (homelab-infra), `kubectl-helm:1` (tars, dotfiles), `opencode:1` (seo-brain).
 
 ### Tarefa longa (`endurance-bg`)
 
@@ -287,6 +287,7 @@ ferramenta, nunca o conteúdo.
 | [`duckdb`](src/duckdb) | CLI do `duckdb` 1.5.6 (binário oficial, sha256 do asset) |
 | [`kubectl-helm`](src/kubectl-helm) | `kubectl` 1.37.1 (dl.k8s.io) + `helm` 4.3.0 (get.helm.sh), sha256 conferido |
 | [`restic-rclone`](src/restic-rclone) | `restic` 0.19.1 + `rclone` 1.75.2 (binários oficiais, `SHA256SUMS`) |
+| [`opencode`](src/opencode) | CLI do `opencode` 1.18.29 (binário oficial, sha256 do asset) |
 | [`agent-browser`](src/agent-browser) | CLI `agent-browser` dirigindo o Chrome do sistema; sessão em volume por usuário/projeto |
 
 ### Testar
