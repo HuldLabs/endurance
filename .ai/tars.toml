@@ -7,7 +7,7 @@ skills  = ["agent-coordination", "root-cause-debugging"]                        
 rules   = ["principles"]                                        # ex.: ["base"]
 memory  = []                                        # fatias da memoria base por tema, ex.: ["git", "db"]
 guards  = ["block-destructive-commands", "block-secret-dump"]
-governance = ["novo-repo", "segredos-e-identidade"]                                     # ex.: ["EVOLUTION", "source-of-truth"]
+governance = ["novo-repo", "segredos-e-identidade", "release"]                                     # ex.: ["EVOLUTION", "source-of-truth"]
 
 # Ambiente extra do agente (opcional). O sync SEMPRE injeta o nao interativo
 # (GIT_TERMINAL_PROMPT=0, GCM_INTERACTIVE=never, GIT_SSH_COMMAND com BatchMode).
