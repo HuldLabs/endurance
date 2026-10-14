@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Catalogo em dia
-        run: bash tools/gen-catalogo.sh --check
+        run: bash tools/gen-catalogo.test.sh
 
   features:
     runs-on: ubuntu-latest

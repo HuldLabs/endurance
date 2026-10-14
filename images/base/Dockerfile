@@ -91,8 +91,8 @@ RUN sed -i 's/^# *\(pt_BR.UTF-8 UTF-8\)/\1/' /etc/locale.gen \
     && locale-gen \
     && ln -sf /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
     && echo America/Sao_Paulo > /etc/timezone
-# catalogo: locale e fuso | configuracao da base: LANG/LC_ALL e TZ (projeto sobrescreve por containerEnv) | `pt_BR.UTF-8`, `America/Sao_Paulo`
-ENV LANG=pt_BR.UTF-8 LC_ALL=pt_BR.UTF-8 TZ=America/Sao_Paulo
+# catalogo: locale e fuso | configuracao da base: LANG e TZ, sem LC_ALL (projeto sobrescreve LANG/LC_* por containerEnv) | `pt_BR.UTF-8`, `America/Sao_Paulo`
+ENV LANG=pt_BR.UTF-8 TZ=America/Sao_Paulo
 
 # task: o runner de tarefas do ecossistema, instalador oficial com versao explicita.
 # Nao ha "task" no apt da trixie, e o binario solto de um repositorio de terceiros

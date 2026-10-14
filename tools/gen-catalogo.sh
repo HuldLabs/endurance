@@ -90,7 +90,7 @@ H
 
 # Toda versao/imagem fixada tem de aparecer no catalogo: `ARG *_VERSION`/`*_IMAGE` sem
 # `# catalogo:` na linha IMEDIATAMENTE anterior reprova (senao a tabela a omite em silencio).
-sem_marcador="$(awk '/^ARG [A-Z0-9_]*(_VERSION|_IMAGE)=/ && ant !~ /^# catalogo: / { print FILENAME ":" NR ": " $0 } { ant = $0 }' "$DF")"
+sem_marcador="$(awk '/^[[:space:]]*ARG[[:space:]]+[A-Za-z0-9_]*(_VERSION|_IMAGE)([[:space:]]*=|[[:space:]]*$)/ && ant !~ /^# catalogo: / { print FILENAME ":" NR ": " $0 } { ant = $0 }' "$DF")"
 if [ -n "$sem_marcador" ]; then
   printf 'ARG de versao/imagem sem "# catalogo:" imediatamente antes:\n%s\n' "$sem_marcador" >&2
   exit 1

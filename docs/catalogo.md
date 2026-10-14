@@ -25,7 +25,7 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 | `task` | `3.49.1` | runner de tarefas do ecossistema (go-task) |
 | `claude` | `2.1.278` | Claude Code CLI nativo (sem Node), sha256 fixado por arquitetura |
 | `ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini locales tzdata` | apt da trixie, sem pin | utilitarios de trabalho e transporte; tini e' o PID 1 |
-| `locale e fuso` | `pt_BR.UTF-8`, `America/Sao_Paulo` | configuracao da base: LANG/LC_ALL e TZ (projeto sobrescreve por containerEnv) |
+| `locale e fuso` | `pt_BR.UTF-8`, `America/Sao_Paulo` | configuracao da base: LANG e TZ, sem LC_ALL (projeto sobrescreve LANG/LC_* por containerEnv) |
 | `endurance-init` | script da imagem | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x) |
 | `endurance-bg` | script da imagem | tarefa longa dentro do container (setsid com nome, log e pidfile; ADR-0001) |
 

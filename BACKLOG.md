@@ -43,7 +43,7 @@
 | # | item | prova |
 | --- | --- | --- |
 | F20 | `rg` 14.1.1 na base (apt trixie `14.1.1-1+b4`, versão exata, marcador `# catalogo:`) | `docker build` ok; `rg --version` na imagem |
-| F21 | Locale `pt_BR.UTF-8` + fuso `America/Sao_Paulo` na base (`locales`/`locale-gen`, `LANG`/`LC_ALL`, `tzdata`/`TZ`), no catálogo | `locale` todo `pt_BR.UTF-8`; `date +%Z` = `-03` |
+| F21 | Locale `pt_BR.UTF-8` + fuso `America/Sao_Paulo` na base (`locales`/`locale-gen`, `LANG` (sem `LC_ALL`), `tzdata`/`TZ`), no catálogo | `locale` todo `pt_BR.UTF-8`; `date +%Z` = `-03` |
 | F22 | `gen-catalogo.sh` reprova `ARG *_VERSION`/`*_IMAGE` sem `# catalogo:` imediatamente antes (`ENDURANCE_DOCKERFILE` para teste); `ARG DEBIAN_VERSION` órfão removido | teste negativo com Dockerfile temporário: rc=1 com a linha apontada |
 | F23 | Job `release` prova `:<versão>` e `:<major>` de cada feature com o mesmo digest | actionlint limpo |
 | F24 | README "Como o projeto sobe a base e as features" (digest/major, bump por PR do projeto, `GHCR_READ_TOKEN` pelo `tars adopt`, Renovate/Dependabot como opção) | — |
