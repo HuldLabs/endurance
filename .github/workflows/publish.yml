@@ -46,6 +46,11 @@ jobs:
       - name: Tars em dia na base (gate)
         run: bash tools/tars-atual.sh --strict
 
+      # O job features publica TODA pasta de src/; sem devcontainer-feature.json ele falha depois
+      # de a base ja' ter subido (v0.0.1-dev.3). Barra aqui, antes de qualquer push.
+      - name: Toda pasta de src/ e' feature
+        run: bash tools/src-features.test.sh
+
       # A versao sai da TAG, nao do arquivo: `v0.0.1-dev.3` publica `base:0.0.1-dev.3`.
       # Pre-release (versao com `-`) NAO move a tag curta (`:0`): as duas viram a versao cheia.
       - name: Version from tag

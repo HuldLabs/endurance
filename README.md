@@ -235,7 +235,7 @@ mount de rede o uv cai para cópia e o ganho evapora.
 
 ### Ciclo de vida (opcional)
 
-Dois scripts prontos em `src/lifecycle/scripts/`, ligados no `devcontainer.json` — o
+Dois scripts prontos em `lifecycle/scripts/` (fora de `src/`: não é feature), ligados no `devcontainer.json` — o
 segundo cobre o buraco do segtools, que só tinha `post-create`:
 
 ```jsonc
@@ -258,7 +258,7 @@ segundo cobre o buraco do segtools, que só tinha `post-create`:
 | Features de runtime: `node-bun`, `python-uv`, `php`, `pwsh`, clientes `postgres`/`mysql`/`redis`, `playwright`, `agent-browser` | Versões exatas exigidas pelo projeto (`.node-version`, `.python-version`, lockfiles) |
 | `secrets`: `tars secrets git-credential` como helper do git do sistema | O `[secrets]` (refs `op://`, `git_hosts`, `git_credential`), os mounts, os volumes e as portas |
 | `signing`: `tars identity sign-setup` + `verify` no postStart | O `[identity]` (ator, ref `op://` da chave) e o `allowed_signers` |
-| `lifecycle/scripts`: limpeza de órfão e validação de `.venv` | Ligar os hooks, as portas e o `containerEnv` de cache |
+| `lifecycle/scripts` (raiz do repo): limpeza de órfão e validação de `.venv` | Ligar os hooks, as portas e o `containerEnv` de cache |
 | Workflow de publicação das features e da imagem base | `post-create`/`post-start` do projeto (hooks, stamps, subir o app) |
 
 **Fronteira dura:** nada de credencial, host, dado de cliente ou referência de cofre
@@ -276,7 +276,7 @@ ferramenta, nunca o conteúdo.
 | [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome`/`msedge` instalam o Chrome/Edge reais; `firefox`/`webkit` = motores do Playwright (o WebKit é o motor do Safari, não o Safari) |
 | [`pulumi`](src/pulumi) | CLI do Pulumi (3.263.0), versão pinada |
 | [`postgres-client`](src/postgres-client) | `psql`/`pg_dump` do major pedido (repo PGDG assinado) |
-| [`lifecycle`](src/lifecycle) | Scripts de `initializeCommand`/`updateContentCommand` (órfãos) |
+| [`lifecycle`](lifecycle) | Scripts (não é feature; fica fora de `src/`) de `initializeCommand`/`updateContentCommand` (órfãos) |
 | [`php`](src/php) | php-cli do minor pedido (Sury) + composer 2.10.3 + wp-cli 2.12.0, checksums conferidos |
 | [`mysql-client`](src/mysql-client) | `mysql`/`mysqldump` da Oracle (repo apt assinado, trilha 8.4 LTS; fala com MySQL 8.0 de TLS autoassinado) |
 | [`redis-client`](src/redis-client) | `valkey-cli` (também como `redis-cli`) |

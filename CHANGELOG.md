@@ -67,6 +67,7 @@ imagem com tag de versão antes da Release (gate deste repo, 14/10, dev.24).
   `git_credential` no `[secrets]` e o `[identity]` no `.ai/tars.toml`.
 - Troque `secrets-refresh`/`secrets-exec`/`gh-op` por `tars secrets refresh`/`tars secrets exec -- …`.
 - Quem tem o venv do `python-uv` num volume nomeado criado pela 1.0.0: apague esse volume uma vez.
+- Os scripts de ciclo de vida ficam em `lifecycle/scripts/` (antes `src/lifecycle/scripts/`, que não é feature).
 - Consulte `docs/catalogo.md` (também anexo à Release) para as options de cada feature.
 
 ## 0.0.1-dev.2

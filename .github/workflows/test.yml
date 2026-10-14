@@ -22,6 +22,8 @@ jobs:
         run: bash tools/gen-catalogo.test.sh
       - name: Gate do Tars (casos simulados)
         run: bash tools/tars-atual.test.sh
+      - name: Toda pasta de src/ e' feature
+        run: bash tools/src-features.test.sh
 
   features:
     runs-on: ubuntu-latest
