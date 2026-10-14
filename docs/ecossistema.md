@@ -52,7 +52,7 @@ do thood, não o código dele.
 | L5 | Feature **`duckdb`** (CLI) | nexus (e pg_duckdb, sem clone) | Média |
 | L6 | Feature **`backup`**: restic e rclone | homelab-infra | Baixa |
 | L7 | Feature **`kube`**: kubectl e helm | dotfiles, tars | Baixa |
-| L8 | `go`, `deno`, `az`, `minio mc` | segtools, seo-brain, farmega.v2 (uso esparso) | Baixa; esperar pedido |
+| L8 | `deno`, `minio mc` (`go`, `az`: retirado: sem uso real) | segtools, seo-brain, farmega.v2 (uso esparso) | Baixa; esperar pedido |
 | — | ollama, caddy, cloudflared, rabbitmq, minio, postgres, redis | — | Não são lacunas: são serviços do compose (R4) |
 
 ## 3. Repos sem dado suficiente
