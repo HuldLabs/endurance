@@ -21,7 +21,7 @@
 | D15 | `mysql-client` = cliente da Oracle (repo apt oficial, trilha LTS), não o MariaDB da distro | prova de 13/10 contra `mysql:8.0.46` (`src/mysql-client/install.sh`) |
 | D16 | ~~Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17~~ — ponte encerrada pela D19 | `gh release list -R HuldLabs/tars` vazio (13/10) |
 | D18 | A primeira tag publicada é a **`v0.0.1-dev.3`** (numeração da D13; `v0.1.0` só quando o Endurance virar produto) e só sai depois que **todo o ecossistema** estiver mapeado e ajustado no Endurance, para evitar tags desnecessárias (substitui o gatilho da D3) | dono, 14/10 |
-| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.21 `sha256:b0711a0d…` | dono, 14/10 |
+| D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.22 `sha256:76d91cf2…` | dono, 14/10 |
 | D19 | Feature `tars` **removida** (não depreciada): com o binário na base o shim não tem o que fazer, e não há option de comportamento implementada (D5). Mínimo = apagar; quem a usava tira a linha do `devcontainer.json` e o mount do checkout | worker F8, 14/10 |
 
 ## Fila
@@ -38,6 +38,12 @@
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
 
+### Feito (14/10, branch `w/release`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F18 | Release completa igual à do Tars: job `release` no `publish.yml` (prova base por digest + features no GHCR, notas por `tars release-notes`, anexos `catalogo.md` + `sha256sums`, pré-release com `-`, por último) e `docs/catalogo.md` gerado por `tools/gen-catalogo.sh` (marcadores `# catalogo:` do Dockerfile + `devcontainer-feature.json`), cobrado no `test.yml`; CHANGELOG dev.3 no formato do `tars release-notes` | `tars release-notes --version 0.0.1-dev.3` local; `gen-catalogo.sh --check`; actionlint limpo |
+
 ### Feito (14/10, branch `w/lacunas`)
 
 | # | item | prova |
@@ -49,7 +55,7 @@
 | # | item | prova |
 | --- | --- | --- |
 | F8 | `secrets` 2.0.0 e `signing` 2.0.0 finas (D4): só `tars secrets git-credential` (helper do sistema) e `tars identity sign-setup`/`verify` (postStart); `op-sops`, `git-credential-op`, `gh-op`, `secrets-refresh/exec`, `signing-write-key`, `ssh-agent-init`, `signing-git-config` apagados | `test/secrets`, `test/signing` |
-| F11 | `tars` 0.0.1-dev.21 na base por digest (D17); login de leitura do GHCR no `test.yml`/`publish.yml` | `docker run --rm endurance-base:local tars --version` → `0.0.1-dev.21` |
+| F11 | `tars` 0.0.1-dev.22 na base por digest (D17); login de leitura do GHCR no `test.yml`/`publish.yml` | `docker run --rm endurance-base:local tars --version` → `0.0.1-dev.22` |
 
 ### Feito (13/10, branch `w/features`)
 
