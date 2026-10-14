@@ -1,0 +1,11 @@
+{
+  "npm": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "node-bun": {
+        "packageManager": "npm"
+      }
+    }
+  }
+}

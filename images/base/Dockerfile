@@ -33,7 +33,7 @@ ARG OP_CLI_VERSION=latest
 # sem o `=` o apt stable sobe a ferramenta sozinho num rebuild e a tabela do topo mente.
 ARG DOCKER_CE_CLI_VERSION=5:29.8.1-1~debian.13~trixie
 ARG DOCKER_COMPOSE_PLUGIN_VERSION=5.5.1-1~debian.13~trixie
-# go-task (instalador oficial) e Claude Code (pacote npm; entra DEPOIS do Node da feature).
+# go-task (instalador oficial) e Claude Code (instalador nativo oficial, sem Node).
 ARG TASK_VERSION=3.49.1
 ARG CLAUDE_CODE_VERSION=2.1.278
 
@@ -164,11 +164,9 @@ RUN mkdir -p /workspace && chown dev:dev /workspace
 #
 # Nada de credencial, host ou nome de projeto aqui: o script e' do AMBIENTE e roda contra
 # a arvore que o projeto montar (por default /workspace).
-# O conteudo vem DEPOIS do heredoc (forma `RUN <<EOF`), e nao colado no `RUN`: o parser
-# do Docker exige o heredoc na ULTIMA linha da instrucao, e a forma colada so' e' valida
-# em versoes recentes do BuildKit (o hadolint reprova). Aqui o heredoc carrega `sh` DIRETO
-# (o shebang escolhe o interpretador), sem depender de uma linha anterior terminar em `\`.
-RUN <<'INIT' sh
+# O script entra por `COPY <<EOF` (heredoc do BuildKit), que GRAVA o arquivo. `RUN <<EOF sh`
+# EXECUTA o conteudo no build — o arquivo nunca existia e o build quebrava no chmod.
+COPY --chmod=0755 <<'INIT' /usr/local/bin/endurance-init
 #!/usr/bin/env bash
 # Chamado no post-create do projeto (ou na mao). Idempotente.
 set -euo pipefail
@@ -194,7 +192,40 @@ fi
 
 echo "endurance-init: pronto ($TREE: hooksPath=.githooks, filemode=false, hooks +x)"
 INIT
-RUN chmod 0755 /usr/local/bin/endurance-init
+
+# endurance-bg: o mecanismo CANONICO de tarefa longa (ADR-0001). O harness do agente mata o
+# GRUPO de processos do comando quando ele termina: `cmd &` e `nohup cmd &` morrem juntos
+# (nohup so' ignora HUP; o harness manda TERM). `setsid` abre sessao/grupo proprio e
+# sobrevive — DENTRO do container, sem ir ao host. Este script e' o `setsid` com nome,
+# log e pidfile, para ninguem reescrever a mesma linha em cada Taskfile.
+COPY --chmod=0755 <<'BG' /usr/local/bin/endurance-bg
+#!/usr/bin/env bash
+# Uso: endurance-bg start <nome> -- <cmd...> | stop <nome> | status [<nome>] | log <nome>
+set -euo pipefail
+DIR="${ENDURANCE_BG_DIR:-${XDG_STATE_HOME:-$HOME/.local/state}/endurance-bg}"
+mkdir -p "$DIR"
+vivo() { [ -f "$DIR/$1.pid" ] && kill -0 "$(cat "$DIR/$1.pid")" 2>/dev/null; }
+acao="${1:-}"; nome="${2:-}"
+case "$acao" in
+  start)
+    [ -n "$nome" ] && [ "${3:-}" = "--" ] && [ $# -ge 4 ] || { echo "uso: endurance-bg start <nome> -- <cmd...>" >&2; exit 2; }
+    shift 3
+    if vivo "$nome"; then echo "endurance-bg: $nome ja' roda (pid $(cat "$DIR/$nome.pid"))"; exit 0; fi
+    setsid "$@" >"$DIR/$nome.log" 2>&1 </dev/null &
+    echo $! >"$DIR/$nome.pid"
+    echo "endurance-bg: $nome iniciado (pid $!, log $DIR/$nome.log)" ;;
+  stop)
+    vivo "$nome" && kill -TERM -- "-$(cat "$DIR/$nome.pid")" && echo "endurance-bg: $nome parado" || echo "endurance-bg: $nome nao roda"
+    rm -f "$DIR/$nome.pid" ;;
+  status)
+    for f in "$DIR"/${nome:-*}.pid; do
+      [ -e "$f" ] || continue; n="$(basename "$f" .pid)"
+      vivo "$n" && echo "$n: rodando (pid $(cat "$f"))" || echo "$n: parado"
+    done ;;
+  log) exec tail -n 100 -f "$DIR/$nome.log" ;;
+  *) echo "uso: endurance-bg start <nome> -- <cmd...> | stop <nome> | status [<nome>] | log <nome>" >&2; exit 2 ;;
+esac
+BG
 
 USER dev
 
@@ -203,12 +234,12 @@ USER dev
 # carrega ANTHROPIC_*: credencial e base URL sao por execucao, lidas do cofre pelo
 # launcher — a imagem nunca guarda segredo.
 #
-# O npm vem DEPOIS da feature node-bun (que instala o Node); o PATH do npm -g ja' esta em
-# /usr/local/bin, o mesmo diretorio do node, entao o binario aparece para todo usuario.
-RUN sh -c 'command -v npm >/dev/null 2>&1 \
-    && npm install -g "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" \
-    && claude --version' \
-    || echo "base: npm ausente — ligue a feature node-bun e rode 'npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}'" >&2
+# Instalador NATIVO oficial (claude.ai/install.sh, binario sem Node), versao fixa, em
+# ~/.local/bin do `dev`. O caminho por `npm -g` dependia do Node de uma FEATURE, que roda
+# DEPOIS da base: o RUN caia sempre no ramo "npm ausente" e a base saia sem `claude`.
+ENV PATH="/home/dev/.local/bin:${PATH}"
+RUN curl -fsSL https://claude.ai/install.sh | bash -s "$CLAUDE_CODE_VERSION" \
+    && claude --version
 
 WORKDIR /workspace
 

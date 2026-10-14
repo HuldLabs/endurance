@@ -39,9 +39,9 @@ jobs:
       - name: Version from tag
         id: version
         run: |
-          tag="${GITHUB_REF_NAME}"
-          echo "full=${tag#v}" >> "$GITHUB_OUTPUT"
-          echo "major=${tag#v}" | cut -d. -f1 | sed 's/^/major=/' >> "$GITHUB_OUTPUT"
+          full="${GITHUB_REF_NAME#v}"
+          echo "full=${full}" >> "$GITHUB_OUTPUT"
+          echo "major=${full%%.*}" >> "$GITHUB_OUTPUT"
 
       - uses: docker/build-push-action@v6
         with:
