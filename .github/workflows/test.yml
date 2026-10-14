@@ -1,0 +1,30 @@
+# Testa as features (scenarios em test/<feature>/) sobre a imagem base buildada no proprio
+# job — a mesma tag local que os scenarios.json referenciam (endurance-base:local).
+# Roda em PR e na main; a publicacao (publish.yml) e' so' por tag.
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  features:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        feature: [node-bun, playwright, agent-browser, php, mysql-client, redis-client, pwsh, secrets, tars]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build base
+        run: docker build -t endurance-base:local images/base
+      # ENDURANCE_UNPUBLISHED=1 ate a primeira tag: o installsAfter das features do proprio
+      # repo ainda nao resolve no GHCR (ver tools/test-features.sh). Tirar apos a v0.1.0.
+      - name: Test feature
+        env:
+          ENDURANCE_UNPUBLISHED: "1"
+        run: tools/test-features.sh ${{ matrix.feature }}

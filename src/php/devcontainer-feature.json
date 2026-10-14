@@ -1,0 +1,31 @@
+{
+  "id": "php",
+  "version": "1.0.0",
+  "name": "PHP + composer + wp-cli",
+  "description": "php-cli do minor pedido (repositorio Sury, assinado), composer e wp-cli de versao fixa com checksum conferido. Para projetos WordPress/PHP (ex.: Fabber).",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/php",
+  "options": {
+    "version": {
+      "type": "string",
+      "proposals": ["8.3", "8.4", "8.2"],
+      "default": "8.3",
+      "description": "Minor do PHP. O projeto declara o seu (ex.: config.platform.php do composer.json); a feature obedece."
+    },
+    "extensions": {
+      "type": "string",
+      "default": "mysql,curl,mbstring,xml,zip,intl,gd",
+      "description": "Extensoes (sufixo do pacote php<versao>-<ext>), separadas por virgula."
+    },
+    "composerVersion": {
+      "type": "string",
+      "default": "2.10.3",
+      "description": "Versao do composer ('none' para nao instalar)."
+    },
+    "wpCliVersion": {
+      "type": "string",
+      "default": "2.12.0",
+      "description": "Versao do wp-cli ('none' para nao instalar)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
