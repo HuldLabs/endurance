@@ -8,7 +8,7 @@ a entrada no lugar.
 **Onde estamos:** `main` em `f0e260e`, sem tag, nenhum consumidor. Branch `w/bootstrap` acrescenta `AGENTS.md`,
 `BACKLOG.md`, `HANDOFF.md` e o consumo do Tars (`.ai/tars.toml`, `.ai/tars.lock`, `.githooks/`, `.claude/`).
 
-**Próximo:** F1 do `BACKLOG.md` (option `browser: chrome` na `playwright`), depois F2 (helper git global).
+**Proximo passo:** F1 do `BACKLOG.md` (option `browser: chrome` na `playwright`), depois F2 (helper git global).
 
 **Limites conhecidos:**
 - `tars identity` não existe no Tars `0.0.1-dev.17`: a tag `v0.1.0` (D3) e o F8 ficam presos.
