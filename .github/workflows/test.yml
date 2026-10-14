@@ -50,4 +50,4 @@ jobs:
       - name: Test feature
         env:
           ENDURANCE_UNPUBLISHED: "1"
-        run: tools/test-features.sh ${{ matrix.feature }}
+        run: bash tools/test-features.sh ${{ matrix.feature }}

@@ -177,19 +177,14 @@ jobs:
           case "$tars_image" in *@sha256:*) ;; *) echo "ARG TARS_IMAGE sem digest" >&2; exit 1 ;; esac
           prev="$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)"
           docker run --rm -u "$(id -u):$(id -g)" -e TARS_EMBED_CACHE=/tmp/tars-cache -v "$PWD:/w" -w /w "$tars_image" \
-            release-notes --version "$versao" --bin endurance --dist dist --repo "$GITHUB_REPOSITORY" \
+            release-notes --version "$versao" --kind image --image "${BASE}@${BASE_DIGEST}" --bin endurance \
+            --dist dist --repo "$GITHUB_REPOSITORY" \
             --run "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
             ${prev:+--prev "$prev"} --out notes.md
-          # O texto de verificacao do tars fala de "binario por libc" (do Tars); aqui o provado e' a base e as features.
-          sed -i 's/ — cada binário provado rodando na sua libc e arquitetura antes de publicar\./ — base e features provadas no GHCR antes de publicar./' notes.md
+          # `--kind image` (tars dev.24) ja' traz a base por digest e a verificacao da imagem; aqui so' as features.
           {
             echo
-            echo "## Imagem base e features"
-            echo
-            echo '```'
-            echo "${BASE}:${versao}"
-            echo "${BASE}@${BASE_DIGEST}"
-            echo '```'
+            echo "## Features"
             echo
             echo "Fixe a base por digest no \`devcontainer.json\`/\`Dockerfile\`. Features: \`ghcr.io/huldlabs/endurance/<id>:<major>\`;"
             echo "o catálogo anexo (\`catalogo.md\`) lista cada ferramenta da base e todas as options de cada feature."
