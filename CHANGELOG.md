@@ -1,48 +1,58 @@
 # CHANGELOG — Endurance
 
 Formato: o que mudou · por quê · arquivos impactados · o que o consumidor faz (doutrina `versionamento-de-extracao`).
+Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho) com as 4 subseções `###` do Tars, e
+`- **Destaque.** …` em "O que mudou": é o que o `tars release-notes` lê para gerar as notas da Release.
 
-## 0.0.1-dev.3 — em andamento (primeira tag publicada, D18)
+## 0.0.1-dev.3
 
-- **O que mudou:**
-  - a numeração ficou alinhada: a primeira publicação é a `v0.0.1-dev.3`, não a `v0.1.0`;
-  - o `tars identity provision` passa a ser só do dono (TTY);
-  - o README ganha o volume do `tars secrets` e a regra do `[dependency-groups]`;
-  - os `.githooks/` voltam a ser executáveis;
-  - a base traz o `tars` 0.0.1-dev.21 (binário, copiado da imagem do Tars por digest, D17);
-  - `secrets` 2.0.0 e `signing` 2.0.0 ficam finas: só `tars secrets git-credential` (helper do git do sistema) e
-    `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem;
-  - a feature `tars` (shim de `TARS_HOME`) é removida (D19);
-  - `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build;
-  - `signing` 2.0.1: `commit.gpgsign` ligado no sistema já no build, e postStart com `timeout`;
-  - `publish.yml`: build só com o login de leitura (F16), actions pinadas por SHA, dispatch só em tag;
-  - feature nova `gh` 1.0.0: GitHub CLI 2.102.0 pelo repo apt oficial (L1 de `docs/ecossistema.md`);
-  - feature nova `lint` 1.0.0: shellcheck 0.11.0 + actionlint 1.7.12 (L2);
-  - feature nova `opentofu` 1.0.0: OpenTofu 1.13.1 (L3);
-  - feature nova `duckdb` 1.0.0: CLI 1.5.6 (L5);
-  - feature nova `kubectl-helm` 1.0.0: kubectl 1.37.1 + helm 4.3.0 (L7);
-  - feature nova `restic-rclone` 1.0.0: restic 0.19.1 + rclone 1.75.2 (L6);
-  - `node-bun`: Node 26 instala a `libatomic1` (L4);
-  - `python-uv`: aceita versão exata e rc (`3.15.0rc2`); interpretadores do uv em `/usr/local/share/uv/python`
-    (antes iam para `/root` e o venv do `dev` dava "Permission denied") (L4). Quem tem o venv num volume nomeado criado pela 1.0.0 apaga esse volume uma vez.
-- **Por quê:**
-  - decisões do dono de 14/10 (D18 e versão);
-  - correção do desenho combinada com o coord segtools (D4);
-  - pedidos do seo-brain;
-  - lacunas L1–L7 do mapeamento do ecossistema (`docs/ecossistema.md`);
-  - F8: lógica de segredo própria no consumidor é defeito (R5), e o Tars dev.19 publicou a imagem e os comandos.
-- **Arquivos impactados:** `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`, `docs/ecossistema.md`,
-  `src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv}/`,
-  `.githooks/`, `images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
-  `.github/workflows/{test,publish}.yml`.
-- **O que o consumidor faz:**
-  - fixar a base como `base:0.0.1-dev.3` (ou por digest) quando a tag sair; não usar `:1`;
-  - tirar a feature `tars` e o mount do checkout em `/opt/tars` do `devcontainer.json`;
-  - `secrets:2` e `signing:2` sem options (`project`, `patRef`, `allowedSigners`… saíram); declarar `git_hosts` e
-    `git_credential` no `[secrets]` e o `[identity]` no `.ai/tars.toml`;
-  - trocar `secrets-refresh`/`secrets-exec`/`gh-op` por `tars secrets refresh`/`tars secrets exec -- …`.
+### O que mudou
+- **Primeira publicação, com Release completa.** A tag `v0.0.1-dev.3` publica a base e as features no GHCR e, por
+  último, a Release do GitHub com notas do `tars release-notes`, a base por digest e o `docs/catalogo.md` anexo
+  (com `sha256sums`). Versão com `-` sai como pré-release. A numeração ficou alinhada: é a `v0.0.1-dev.3`, não a `v0.1.0`.
+- **Catálogo gerado (`docs/catalogo.md`).** Cada ferramenta da base (versão e para que serve) e cada feature (id,
+  versão, ref de uso, todas as options, `installsAfter`), gerado por `tools/gen-catalogo.sh` dos
+  `devcontainer-feature.json` e dos marcadores `# catalogo:` do `Dockerfile`; o `test.yml` falha se divergir.
+- **`tars` 0.0.1-dev.21 na base.** Binário copiado da imagem do Tars por digest (D17).
+- **`secrets` 2.0.0 e `signing` 2.0.x finas.** Só `tars secrets git-credential` (helper do git do sistema) e
+  `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem. `signing` 2.0.1 liga
+  `commit.gpgsign` no sistema já no build e usa `timeout` no postStart. O `tars identity provision` é só do dono (TTY).
+- **Feature `tars` removida (D19).** O shim de `TARS_HOME` não tem mais o que fazer.
+- **Features novas (lacunas L1–L7 de `docs/ecossistema.md`).** `gh` 1.0.0 (GitHub CLI 2.102.0, apt oficial),
+  `lint` 1.0.0 (shellcheck 0.11.0 + actionlint 1.7.12), `opentofu` 1.0.0 (1.13.1), `duckdb` 1.0.0 (1.5.6),
+  `kubectl-helm` 1.0.0 (kubectl 1.37.1 + helm 4.3.0), `restic-rclone` 1.0.0 (restic 0.19.1 + rclone 1.75.2).
+- **`node-bun` e `python-uv` mais largos.** Node 26 instala a `libatomic1`; `python-uv` aceita versão exata e rc
+  (`3.15.0rc2`) e guarda os interpretadores em `/usr/local/share/uv/python` (antes iam para `/root` e o venv do
+  `dev` dava "Permission denied").
+- **CI.** `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build; o build da base roda só com esse
+  login (F16); actions pinadas por SHA; dispatch só em tag.
+- **Documentação.** O README ganha o volume do `tars secrets`, a regra do `[dependency-groups]` e o link do catálogo;
+  os `.githooks/` voltam a ser executáveis.
 
-## 0.0.1-dev.2 — 13/10/2026
+### Por que
+Decisões do dono de 14/10 (D18, numeração e "Release completa, igual ao Tars"); correção do desenho combinada com o
+coord segtools (D4); pedidos do seo-brain; lacunas L1–L7 do mapeamento do ecossistema; F8: lógica de segredo própria
+no consumidor é defeito (R5), e o Tars dev.19 publicou a imagem e os comandos.
+
+### Arquivos impactados
+`README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`,
+`docs/ecossistema.md`, `docs/catalogo.md` (novo, gerado), `tools/gen-catalogo.sh` (novo),
+`src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv}/`, `.githooks/`,
+`images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
+`.github/workflows/{test,publish}.yml`.
+
+### O que o consumidor faz
+- Fixe a base como `base:0.0.1-dev.3`, de preferência por digest (o digest está nas notas da Release); não use `:1`.
+- Tire a feature `tars` e o mount do checkout em `/opt/tars` do `devcontainer.json`.
+- `secrets:2` e `signing:2` sem options (`project`, `patRef`, `allowedSigners`… saíram); declare `git_hosts` e
+  `git_credential` no `[secrets]` e o `[identity]` no `.ai/tars.toml`.
+- Troque `secrets-refresh`/`secrets-exec`/`gh-op` por `tars secrets refresh`/`tars secrets exec -- …`.
+- Quem tem o venv do `python-uv` num volume nomeado criado pela 1.0.0: apague esse volume uma vez.
+- Consulte `docs/catalogo.md` (também anexo à Release) para as options de cada feature.
+
+## 0.0.1-dev.2
+
+_13/10/2026_
 
 - **O que mudou:**
   - features novas: `php`, `mysql-client`, `redis-client`, `pwsh`, `agent-browser`;
@@ -63,7 +73,9 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
   - a feature `tars` exige o checkout do Tars montado em `TARS_HOME` (padrão `/opt/tars`);
   - quem usava `setsid … &` no Taskfile troca por `endurance-bg start <nome> -- …`.
 
-## 0.0.1-dev.1 — 13/10/2026
+## 0.0.1-dev.1
+
+_13/10/2026_
 
 - **O que mudou:** o repo passa a consumir o Tars (`.ai/`, `.githooks/`, `.claude/`) e ganha `AGENTS.md`,
   `BACKLOG.md`, `HANDOFF.md` e este CHANGELOG. Base e features de `f0e260e` entram como estão.

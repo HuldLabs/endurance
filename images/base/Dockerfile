@@ -15,34 +15,50 @@
 #
 # Todas as versoes sao ARG de build fixadas. Versao que nao esta aqui nao existe: uma
 # tag solta (ex.: `latest`) muda sozinha num rebuild e a tabela do topo passa a mentir.
+#
+# `# catalogo: <nome> | <para que serve> [| <versao>]` antes de um ARG/FROM/RUN/COPY alimenta o
+# docs/catalogo.md (tools/gen-catalogo.sh): a versao sai do ARG/FROM da linha seguinte (R3).
 
 # tars (D17): binario compilado do HuldLabs/tars, copiado da imagem dele POR DIGEST. Fonte
 # unica da versao e' este ARG (R3); bump = trocar versao e digest juntos. Sem Node e sem
 # credencial no build da imagem (o pull do GHCR e' do runner, por docker login). O binario e'
 # glibc (bookworm) e roda na trixie (glibc mais nova).
+# catalogo: tars | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest
 ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.21@sha256:b0711a0d19448b361cde5b3ac86281cfd2e4d0bbb85ad64beea63569dd56a96b
 FROM ${TARS_IMAGE} AS tars
 
+# catalogo: debian | sistema base (trixie-slim, por digest)
 FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
 
 ARG DEBIAN_VERSION=trixie
 # Versoes fixas. O bloco abaixo e a fonte de verdade de cada uma.
+# catalogo: git | controle de versao (apt, versao exata)
 ARG GIT_VERSION=1:2.47.3-0+deb13u1
+# catalogo: python3 | interpretador do SISTEMA (scripts de feature e `op`); runtime de projeto e' a feature python-uv
 ARG PYTHON_VERSION=3.13.5-1
+# catalogo: sudo | NOPASSWD restrito a groupadd/usermod/chown (gid do socket Docker em runtime)
 ARG SUDO_VERSION=1.9.16p2-3+deb13u2
+# catalogo: sops | decifra o cache local de segredo com a chave age
 ARG SOPS_VERSION=3.9.4
+# catalogo: age | cripto do cache de segredo (age e age-keygen)
 ARG AGE_VERSION=1.2.0
+# catalogo: gitleaks | varredura de segredo, mesma versao do pre-commit dos projetos
 ARG GITLEAKS_VERSION=8.30.1
 # `op` em `latest` e' EXCECAO DELIBERADA: o repositorio apt da 1Password so' guarda a
 # ULTIMA versao publicada. Fixar a versao faz o build quebrar sozinho quando ela sai do
 # repo (aconteceu: o pin 2.39.0-1 sumiu e derrubou o rebuild). Nao ha o que fixar aqui.
+# catalogo: op | 1Password CLI (repo apt proprio); a versao e' a ultima do repo, por excecao deliberada
 ARG OP_CLI_VERSION=latest
 # Repositorio apt PROPRIO de cada um (cadeia de assinatura verificavel), versao EXATA:
 # sem o `=` o apt stable sobe a ferramenta sozinho num rebuild e a tabela do topo mente.
+# catalogo: docker | Docker CLI sem daemon; age no daemon do host pelo socket montado
 ARG DOCKER_CE_CLI_VERSION=5:29.8.1-1~debian.13~trixie
+# catalogo: docker compose | plugin compose da Docker CLI
 ARG DOCKER_COMPOSE_PLUGIN_VERSION=5.5.1-1~debian.13~trixie
 # go-task (instalador oficial) e Claude Code (instalador nativo oficial, sem Node).
+# catalogo: task | runner de tarefas do ecossistema (go-task)
 ARG TASK_VERSION=3.49.1
+# catalogo: claude | Claude Code CLI nativo (sem Node), sha256 fixado por arquitetura
 ARG CLAUDE_CODE_VERSION=2.1.278
 ARG CLAUDE_CODE_SHA256_AMD64=5c4735937844e84f8a93306e841a5b0e12252909b07870f789b190468da147ab
 ARG CLAUDE_CODE_SHA256_ARM64=7de6cab134e48321148e30182c98614118e8f4666819412bead45865190b34ed
@@ -59,6 +75,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Sem esta lista fechada, o sudoer vira root livre dentro de um container que ja monta o
 # socket do host. `visudo -c` no build: regra de sudoers errada em SILENCIO e pior do que
 # build quebrado.
+# catalogo: ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini | utilitarios de trabalho e transporte; tini e' o PID 1 | apt da trixie, sem pin
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini \
         "git=${GIT_VERSION}" "python3=${PYTHON_VERSION}" \
@@ -176,6 +193,7 @@ RUN mkdir -p /workspace && chown dev:dev /workspace
 # a arvore que o projeto montar (por default /workspace).
 # O script entra por `COPY <<EOF` (heredoc do BuildKit), que GRAVA o arquivo. `RUN <<EOF sh`
 # EXECUTA o conteudo no build — o arquivo nunca existia e o build quebrava no chmod.
+# catalogo: endurance-init | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x) | script da imagem
 COPY --chmod=0755 <<'INIT' /usr/local/bin/endurance-init
 #!/usr/bin/env bash
 # Chamado no post-create do projeto (ou na mao). Idempotente.
@@ -208,6 +226,7 @@ INIT
 # (nohup so' ignora HUP; o harness manda TERM). `setsid` abre sessao/grupo proprio e
 # sobrevive — DENTRO do container, sem ir ao host. Este script e' o `setsid` com nome,
 # log e pidfile, para ninguem reescrever a mesma linha em cada Taskfile.
+# catalogo: endurance-bg | tarefa longa dentro do container (setsid com nome, log e pidfile; ADR-0001) | script da imagem
 COPY --chmod=0755 <<'BG' /usr/local/bin/endurance-bg
 #!/usr/bin/env bash
 # Uso: endurance-bg start <nome> -- <cmd...> | stop <nome> | status [<nome>] | log <nome>

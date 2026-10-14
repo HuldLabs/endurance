@@ -19,6 +19,9 @@ Isso se resolve com **Dev Container Features** (a spec oficial do
 `install.sh` idempotente publicado em `ghcr.io/huldlabs/endurance/<feature>`, que o
 projeto liga no `devcontainer.json` com uma linha.
 
+**Catálogo completo** (cada ferramenta da base com versão e para que serve; cada feature com versão, ref de uso e
+todas as options): [`docs/catalogo.md`](docs/catalogo.md), gerado por `tools/gen-catalogo.sh` — o CI falha se divergir.
+
 ## Como um projeto usa
 
 ```jsonc
@@ -327,6 +330,20 @@ As features têm versão própria (spec containers.dev): ficam em
 
 Para republicar sem criar tag nova (retry de job que falhou), use
 **Actions → publish → Run workflow**.
+
+### Release (igual ao Tars)
+
+Depois da base e das features publicadas, o job `release` do `publish.yml` cria a Release do GitHub **por último**:
+
+1. prova no GHCR a base **por digest** (`tars`, `git`, `op` respondem) e cada feature na versão do seu `devcontainer-feature.json`;
+2. regenera e confere o catálogo (`tools/gen-catalogo.sh --check`) e anexa `catalogo.md` + `sha256sums`;
+3. gera as notas com `tars release-notes` (o `tars` da imagem do `ARG TARS_IMAGE`, por digest): destaques, a seção
+   da versão no `CHANGELOG.md`, verificação, comparação com a tag anterior, mais a base por digest;
+4. publica a Release; versão com `-` sai como **pré-release**.
+
+Antes da tag, a seção `## <versão>` do `CHANGELOG.md` tem de existir no formato do Tars (só a versão no cabeçalho,
+subseções `### O que mudou`/`Por que`/`Arquivos impactados`/`O que o consumidor faz`, destaques em `- **…**`).
+Confira local: `tars release-notes --version <versão> --bin endurance`.
 
 ### Usar numa máquina
 
