@@ -335,7 +335,8 @@ Para republicar sem criar tag nova (retry de job que falhou), use
 
 Depois da base e das features publicadas, o job `release` do `publish.yml` cria a Release do GitHub **por último**:
 
-1. prova no GHCR a base **por digest** (`tars`, `git`, `op` respondem) e cada feature na versão do seu `devcontainer-feature.json`;
+1. prova no GHCR a base **por digest** (`tars`, `git`, `op`, `rg` respondem) e cada feature pela versão cheia do seu
+   `devcontainer-feature.json` **e** pela tag curta `:<major>`, exigindo que as duas apontem para o **mesmo digest**;
 2. regenera e confere o catálogo (`tools/gen-catalogo.sh --check`) e anexa `catalogo.md` + `sha256sums`;
 3. gera as notas com `tars release-notes` (o `tars` da imagem do `ARG TARS_IMAGE`, por digest): destaques, a seção
    da versão no `CHANGELOG.md`, verificação, comparação com a tag anterior, mais a base por digest;
@@ -363,6 +364,24 @@ credencial já guardada.
 
 O PAT vem do cache sops (`~/.cache/segtools/dev.env.sops` / `~/.cache/huld/...`,
 ver `secrets/dev.env.tpl`); nunca é versionado aqui.
+
+## Como o projeto sobe a base e as features
+
+O Endurance **publica**; quem **adota** a versão nova é o próprio projeto. Nada aqui empurra mudança para um consumidor.
+
+- **Base por digest.** O projeto fixa `ghcr.io/huldlabs/endurance/base:0.0.1-dev.N@sha256:…` no `devcontainer.json`
+  (ou no `FROM` do Dockerfile dele). A tag é só legenda; quem manda é o digest, que não muda num rebuild.
+- **Features pelo major.** `ghcr.io/huldlabs/endurance/<id>:<major>` (ex.: `node-bun:1`). Patch e minor chegam
+  sozinhos no próximo rebuild; major novo é mudança de linha no `devcontainer.json`. A Release prova que `:<major>` e
+  a versão cheia apontam para o mesmo digest.
+- **O bump é PR do projeto**, depois que o Endurance publica a Release: as notas trazem `base:<versão>` e
+  `base@sha256:…` e o `catalogo.md` anexo diz o que mudou em cada ferramenta. O PR troca a linha da base, roda o CI do
+  projeto e entra como qualquer outra mudança.
+- **Acesso ao GHCR privado no CI do projeto:** o secret `GHCR_READ_TOKEN` (+ `GHCR_READ_USER`) por repositório é
+  passo do `tars adopt` — o Tars cuida; não se configura à mão a partir daqui.
+- **Opcional (não implementado):** Renovate tem o manager `devcontainer` (e `dockerfile`) que entende `imagem:tag@sha256`
+  e abre o PR do digest sozinho; o Dependabot cobre o ecossistema `devcontainers` (features) e o `docker` (FROM do
+  Dockerfile). Qualquer um dos dois só automatiza o PR — a decisão de mergear continua do projeto.
 
 ## Estado
 
