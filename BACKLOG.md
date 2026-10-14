@@ -20,6 +20,7 @@
 | D14 | Tarefa longa = `endurance-bg` (`setsid` com nome/log/pidfile) **dentro** do container, nunca no host | `docs/adr/0001-tarefas-longas.md` |
 | D15 | `mysql-client` = cliente da Oracle (repo apt oficial, trilha LTS), não o MariaDB da distro | prova de 13/10 contra `mysql:8.0.46` (`src/mysql-client/install.sh`) |
 | D16 | Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17 | `gh release list -R HuldLabs/tars` vazio (13/10) |
+| D18 | A tag `v0.1.0` só sai depois que **todo o ecossistema** estiver mapeado e ajustado no Endurance, para evitar tags desnecessárias (substitui o gatilho da D3) | dono, 14/10 |
 | D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build | dono, 14/10 |
 
 ## Fila
@@ -69,10 +70,15 @@
   Chrome/Edge vão para `/opt` e não somem.
 - `hashes.sha256` do PowerShell é UTF-16 com CRLF: converter antes do `sha256sum -c`.
 
+## Segurança (importante, para depois — dono, 14/10)
+
+[removido: dado do homelab, 14/10]
+  de produção, então a chave do bot fica equivalente a root em produção. Proposta: sudo total só no NUC (dev) e lista
+  de comandos no pve e em produção. É frente homelab: repassado ao coord segtools em 14/10 para a seção Segurança do
+  BACKLOG do huldlabs.
+- Os 11 itens de segurança multiusuário (D10) entram antes de qualquer máquina compartilhada ou runner consumir o
+  Endurance.
+
 ## Em aberto (decisão do dono)
 
-- **D3 × Tars:** o Tars `0.0.1-dev.17` **não tem** `tars identity` (verificado em 13/10). Recomendo manter a tag presa
-  ao `identity`.
-- **Tag antes do Tars?** O seo-brain (F5) e o segtools (F10) só consomem depois de uma tag. Se o `identity` demorar,
-  uma `v0.1.0` com `secrets`/`signing` como estão destrava o consumo; o enxugamento (F8) viraria `v0.2.0`.
-  Recomendação: segurar até o dono decidir, porque a D3 é dele.
+- **Egress do seo-brain (F14):** proxy próprio, Zyte ou nada.
