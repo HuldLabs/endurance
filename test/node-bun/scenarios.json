@@ -7,5 +7,38 @@
         "packageManager": "npm"
       }
     }
+  },
+  "node20": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "node-bun": {
+        "nodeVersion": "20",
+        "packageManager": "npm",
+        "install": false
+      }
+    }
+  },
+  "node24": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "node-bun": {
+        "nodeVersion": "24",
+        "packageManager": "npm",
+        "install": false
+      }
+    }
+  },
+  "node26": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "node-bun": {
+        "nodeVersion": "26",
+        "packageManager": "npm",
+        "install": false
+      }
+    }
   }
 }
