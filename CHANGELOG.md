@@ -13,7 +13,9 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
   - `secrets` 2.0.0 e `signing` 2.0.0 ficam finas: só `tars secrets git-credential` (helper do git do sistema) e
     `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem;
   - a feature `tars` (shim de `TARS_HOME`) é removida (D19);
-  - `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build.
+  - `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build;
+  - `signing` 2.0.1: `commit.gpgsign` ligado no sistema já no build, e postStart com `timeout`;
+  - `publish.yml`: build só com o login de leitura (F16), actions pinadas por SHA, dispatch só em tag.
 - **Por quê:**
   - decisões do dono de 14/10 (D18 e versão);
   - correção do desenho combinada com o coord segtools (D4);
