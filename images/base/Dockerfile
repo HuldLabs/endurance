@@ -20,7 +20,7 @@
 # unica da versao e' este ARG (R3); bump = trocar versao e digest juntos. Sem Node e sem
 # credencial no build da imagem (o pull do GHCR e' do runner, por docker login). O binario e'
 # glibc (bookworm) e roda na trixie (glibc mais nova).
-ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.20@sha256:665100d467ce6f69413fbc8770872425aa60d8642e6680083421fa2b67cc215f
+ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.21@sha256:b0711a0d19448b361cde5b3ac86281cfd2e4d0bbb85ad64beea63569dd56a96b
 FROM ${TARS_IMAGE} AS tars
 
 FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
