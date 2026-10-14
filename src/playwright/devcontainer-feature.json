@@ -1,8 +1,8 @@
 {
   "id": "playwright",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Playwright",
-  "description": "Bibliotecas de sistema do Chromium (por `install-deps` da versao pedida) e o browser instalado nas pastas de cache do container. Exige a feature node-bun para ter Node/npx.",
+  "description": "Bibliotecas de sistema do browser (por `install-deps` da versao pedida) e o browser instalado nas pastas de cache do container. Exige a feature node-bun para ter Node/npx.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/playwright",
   "options": {
     "version": {
@@ -12,10 +12,20 @@
     },
     "browser": {
       "type": "string",
-      "enum": ["chromium", "firefox", "webkit", "chromium,firefox,webkit"],
       "default": "chromium",
-      "description": "Browser instalado. Chromium e' o do e2e do ecossistema; a lista completa existe para quem testa nos tres."
+      "description": "Browsers, separados por virgula. 'chromium'/'firefox'/'webkit' vao para o cache do container; 'chrome' instala o Google Chrome REAL (google-chrome-stable, so' amd64) no sistema — para quem usa channel=\"chrome\" (ex.: coletor de SERP do seo-brain, que o Google bloqueia no Chromium).",
+      "proposals": [
+        "chromium",
+        "chrome",
+        "chromium,chrome",
+        "firefox",
+        "webkit",
+        "chromium,firefox,webkit"
+      ]
     }
   },
-  "installsAfter": ["ghcr.io/huldlabs/endurance/node-bun", "ghcr.io/devcontainers/features/common-utils"]
+  "installsAfter": [
+    "ghcr.io/huldlabs/endurance/node-bun",
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
 }

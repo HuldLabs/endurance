@@ -36,7 +36,7 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 node --version
 
-# Gerenciador de pacotes: um dos dois, nunca os dois. Instalar os dois "por via das
+# Gerenciador de pacotes: um so', nunca dois. Instalar os dois "por via das
 # duvidas" contradiz a regra do ecossistema (nada exige um runtime de quem nao o usa) —
 # e no caso do pnpm e' pior que peso: o corepack tem UM `pnpm` global, entao um pnpm
 # "extra" e' uma segunda versao do mesmo binario, com um segundo lugar de onde ele pode
@@ -53,6 +53,13 @@ if [ "$PACKAGE_MANAGER" = "pnpm" ]; then
   BUN_HOME=""
   cat > "$PROFILE" <<'EOF'
 export PNPM_STORE_DIR="${PNPM_STORE_DIR:-/workspace/.cache/pnpm-store}"
+EOF
+elif [ "$PACKAGE_MANAGER" = "npm" ]; then
+  # npm: o que ja' vem no tarball do Node — nada a instalar. Cache fora da arvore.
+  MANAGER="npm"
+  BUN_HOME=""
+  cat > "$PROFILE" <<'EOF'
+export npm_config_cache="${npm_config_cache:-/workspace/.cache/npm}"
 EOF
 else
   # bun: instalador oficial, versao fixa, em $BUN_INSTALL. O destino e' o HOME do usuario
@@ -80,8 +87,8 @@ EOF
 fi
 chmod 0644 "$PROFILE"
 
-# Install congelado quando ha lockfile DO GERENCIADOR ESCOLHIDO. `--frozen-lockfile` (bun)
-# / `--frozen-lockfile` (pnpm) : a feature NAO pode alterar o lock do projeto por conta
+# Install congelado quando ha lockfile DO GERENCIADOR ESCOLHIDO. `--frozen-lockfile` (bun,
+# pnpm) / `npm ci` : a feature NAO pode alterar o lock do projeto por conta
 # propria — divergencia entre lock e manifesto e' erro do projeto, nao da imagem. Roda
 # como o usuario do container para node_modules nascer com o dono certo.
 if [ "$DO_INSTALL" = "true" ]; then
@@ -94,6 +101,10 @@ if [ "$DO_INSTALL" = "true" ]; then
       [ -f /workspace/pnpm-lock.yaml ] && \
         { su "$USERNAME" -c "cd /workspace && pnpm install --frozen-lockfile" || \
           echo "node-bun: AVISO: pnpm install --frozen-lockfile falhou (rode 'pnpm install' na mao)" >&2; } ;;
+    npm)
+      [ -f /workspace/package-lock.json ] && \
+        { su "$USERNAME" -c "cd /workspace && npm ci" || \
+          echo "node-bun: AVISO: npm ci falhou (rode 'npm ci' na mao)" >&2; } ;;
   esac
 fi
 
