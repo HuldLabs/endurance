@@ -24,7 +24,7 @@
 # credencial no build da imagem (o pull do GHCR e' do runner, por docker login). O binario e'
 # glibc (bookworm) e roda na trixie (glibc mais nova).
 # catalogo: tars | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest
-ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.22@sha256:76d91cf23b73fdede14924035aa56f9315c7b34897f2f055f2f0d86e2c167dab
+ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.24@sha256:eacd4847627e36b52aaec46c16359f8b43992c8fb7ab27228fa75f5fa35b7815
 FROM ${TARS_IMAGE} AS tars
 
 # catalogo: debian | sistema base (trixie-slim, por digest)
