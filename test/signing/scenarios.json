@@ -1,0 +1,9 @@
+{
+  "tars-identity": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "signing": {}
+    }
+  }
+}

@@ -8,13 +8,26 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
   - a numeração ficou alinhada: a primeira publicação é a `v0.0.1-dev.3`, não a `v0.1.0`;
   - o `tars identity provision` passa a ser só do dono (TTY);
   - o README ganha o volume do `tars secrets` e a regra do `[dependency-groups]`;
-  - os `.githooks/` voltam a ser executáveis.
+  - os `.githooks/` voltam a ser executáveis;
+  - a base traz o `tars` 0.0.1-dev.20 (binário, copiado da imagem do Tars por digest, D17);
+  - `secrets` 2.0.0 e `signing` 2.0.0 ficam finas: só `tars secrets git-credential` (helper do git do sistema) e
+    `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem;
+  - a feature `tars` (shim de `TARS_HOME`) é removida (D19);
+  - `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build.
 - **Por quê:**
   - decisões do dono de 14/10 (D18 e versão);
   - correção do desenho combinada com o coord segtools (D4);
-  - pedidos do seo-brain.
-- **Arquivos impactados:** `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `docs/decisoes-20261008.md`, `.githooks/`.
-- **O que o consumidor faz:** fixar a base como `base:0.0.1-dev.3` (ou por digest) quando a tag sair; não usar `:1`.
+  - pedidos do seo-brain;
+  - F8: lógica de segredo própria no consumidor é defeito (R5), e o Tars dev.19 publicou a imagem e os comandos.
+- **Arquivos impactados:** `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`,
+  `.githooks/`, `images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
+  `.github/workflows/{test,publish}.yml`.
+- **O que o consumidor faz:**
+  - fixar a base como `base:0.0.1-dev.3` (ou por digest) quando a tag sair; não usar `:1`;
+  - tirar a feature `tars` e o mount do checkout em `/opt/tars` do `devcontainer.json`;
+  - `secrets:2` e `signing:2` sem options (`project`, `patRef`, `allowedSigners`… saíram); declarar `git_hosts` e
+    `git_credential` no `[secrets]` e o `[identity]` no `.ai/tars.toml`;
+  - trocar `secrets-refresh`/`secrets-exec`/`gh-op` por `tars secrets refresh`/`tars secrets exec -- …`.
 
 ## 0.0.1-dev.2 — 13/10/2026
 

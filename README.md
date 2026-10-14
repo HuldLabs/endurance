@@ -28,11 +28,11 @@ projeto liga no `devcontainer.json` com uma linha.
   "features": {
     "ghcr.io/huldlabs/endurance/node-bun:1": {},
     "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
-    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+    "ghcr.io/huldlabs/endurance/secrets:2": {}
   },
   "remoteUser": "dev",
-  "mounts": [ "source=meu-projeto-op,target=/run/op-token,type=volume,readonly" ],
-  "remoteEnv": { "OP_TOKEN_FILE": "/run/op-token/token" }
+  // Estado do `tars secrets` (chave age, token, cache cifrado): volume por usuario E projeto.
+  "mounts": [ "source=${localEnv:USER}-meu-projeto-tars,target=/home/dev/.config/tars/meu-projeto,type=volume" ]
 }
 ```
 
@@ -52,7 +52,7 @@ Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVe
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
     "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
-    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+    "ghcr.io/huldlabs/endurance/secrets:2": {}
   }
 }
 ```
@@ -67,7 +67,7 @@ Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVe
       "nodeVersion": "22",
       "packageManager": "bun"
     },
-    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+    "ghcr.io/huldlabs/endurance/secrets:2": {}
   }
 }
 ```
@@ -87,8 +87,8 @@ Pulumi da infra; `playwright` porque há e2e de browser):
     },
     "ghcr.io/huldlabs/endurance/playwright:1": { "version": "1.63.0", "browser": "chromium" },
     "ghcr.io/huldlabs/endurance/pulumi:1": { "version": "3.263.0" },
-    "ghcr.io/huldlabs/endurance/signing:1": { "allowedSigners": "eu@exemplo ssh-ed25519 AAAA..." },
-    "ghcr.io/huldlabs/endurance/secrets:1": { "project": "meu-projeto" }
+    "ghcr.io/huldlabs/endurance/secrets:2": {},
+    "ghcr.io/huldlabs/endurance/signing:2": {}
   }
 }
 ```
@@ -119,14 +119,11 @@ compose, front em Node com `package-lock.json`):
     "ghcr.io/huldlabs/endurance/node-bun:1": { "install": false },
     "ghcr.io/huldlabs/endurance/playwright:1": { "browser": "chrome,msedge,firefox,webkit" },
     "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/huldlabs/endurance/agent-browser:1": {},
-    "ghcr.io/huldlabs/endurance/tars:1": {}
+    "ghcr.io/huldlabs/endurance/agent-browser:1": {}
   },
   "mounts": [
     // Sessão do agent-browser (cookies logados = CREDENCIAL): volume por usuário E projeto.
     "source=${localEnv:USER}-seo-brain-agent-browser,target=/home/dev/.agent-browser,type=volume",
-    // Checkout do Tars, somente leitura (a feature `tars` roda dele).
-    "source=${localEnv:HOME}/projects/tars,target=/opt/tars,type=bind,readonly",
     // Estado do `tars secrets` (chave age, op-token, cache cifrado) fica FORA do repo, em
     // ~/.config/tars/<projeto>/. Sem volume, todo rebuild apaga a chave e obriga a refazer o
     // refresh. Contem CREDENCIAL: volume por usuario E projeto, nunca compartilhado (D10).
@@ -143,6 +140,31 @@ dependia dele "passa" sem rodar).
 Segredo do projeto (`SERP_DSN`, `DEEPSEEK_API_KEY`) não passa à mão: o projeto declara as
 refs `op://` no template do `tars secrets` (`[secrets]` do `.ai/tars.toml`) e roda
 `tars secrets exec -- <cmd>`. O valor só existe no env do filho.
+
+### Segredos e assinatura (`tars`, da base)
+
+O `tars` (binário do [HuldLabs/tars](https://github.com/HuldLabs/tars), versão fixada por
+digest no `images/base/Dockerfile`) vem na **base**; não há feature `tars` nem checkout
+montado. As features `secrets` e `signing` são finas e só ligam o `tars`:
+
+- **`secrets`** liga `tars secrets git-credential` como `credential.helper` do git do
+  **sistema** (vale em qualquer repo). O tars só entrega credencial para host declarado
+  em `git_hosts`, e lê o token do cache pela chave nomeada em `git_credential`. Os dois
+  campos ficam no `[secrets]` do `.ai/tars.toml` do projeto:
+
+  ```toml
+  [secrets]
+  source = "automation"
+  git_hosts = "github.com"      # host fora da lista não recebe credencial nenhuma
+  git_credential = "GITHUB_PAT" # NOME da chave no cache, nunca o valor
+  ```
+
+  O `gh` usa o mesmo cache: `tars secrets exec -- gh …`.
+- **`signing`** roda no postStart `tars identity sign-setup` (gpg.format=ssh, signingkey e
+  allowedSignersFile do `[identity]`/`[secrets].allowed_signers`), liga `commit.gpgsign` e
+  roda `tars identity verify`. Sem identidade o container sobe com AVISO e o commit
+  assinado falha alto. `tars identity provision` é do **dono**, com TTY, uma vez por
+  máquina — nenhuma feature o chama.
 
 **PowerShell** (dotfiles — scripts `.ps1`):
 
@@ -212,12 +234,11 @@ segundo cobre o buraco do segtools, que só tinha `post-create`:
 
 | Aqui (`endurance`) | No projeto |
 | --- | --- |
-| `images/base`: git, curl, sops, age, op, gitleaks, task, docker CLI, claude-code (nativo), `endurance-bg`, `endurance-init`, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
+| `images/base`: git, curl, sops, age, op, gitleaks, task, docker CLI, claude-code (nativo), `tars` (por digest), `endurance-bg`, `endurance-init`, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
 | Features de runtime: `node-bun`, `python-uv`, `php`, `pwsh`, clientes `postgres`/`mysql`/`redis`, `playwright`, `agent-browser` | Versões exatas exigidas pelo projeto (`.node-version`, `.python-version`, lockfiles) |
-| `secrets`: os scripts `op-sops`, `git-credential-op`, `gh-op`, parametrizados por projeto | Os mounts, os nomes de volume e as portas publicadas |
-| `signing`: ssh-agent de caminho fixo, `allowed_signers`, `gpg.format=ssh` | A referência `op://` da chave de assinatura e o arquivo `allowed_signers` |
+| `secrets`: `tars secrets git-credential` como helper do git do sistema | O `[secrets]` (refs `op://`, `git_hosts`, `git_credential`), os mounts, os volumes e as portas |
+| `signing`: `tars identity sign-setup` + `verify` no postStart | O `[identity]` (ator, ref `op://` da chave) e o `allowed_signers` |
 | `lifecycle/scripts`: limpeza de órfão e validação de `.venv` | Ligar os hooks, as portas e o `containerEnv` de cache |
-| `tars`: o shim do Tars (checkout montado) | O mount do checkout, as refs `op://` e o `[secrets]` de cada projeto |
 | Workflow de publicação das features e da imagem base | `post-create`/`post-start` do projeto (hooks, stamps, subir o app) |
 
 **Fronteira dura:** nada de credencial, host, dado de cliente ou referência de cofre
@@ -230,11 +251,10 @@ ferramenta, nunca o conteúdo.
 | --- | --- |
 | [`node-bun`](src/node-bun) | Node (`nodeVersion`) + bun 1.4.2, pnpm 11.1.1 (corepack) ou npm (`packageManager`), install congelado idempotente |
 | [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`) + `uv`, venv e `uv sync` |
-| [`secrets`](src/secrets) | `op-sops.sh` (com fallback Connect → Service Account), `git-credential-op.sh` (ligado no git do **sistema**: vale em qualquer repo), `gh-op.sh` |
-| [`signing`](src/signing) | `ssh-agent-init` (chave em agente, nunca em disco), `signing-git-config`, `allowed_signers` |
+| [`secrets`](src/secrets) | `tars secrets git-credential` como helper do git do **sistema** (vale em qualquer repo; só hosts de `git_hosts`) |
+| [`signing`](src/signing) | postStart: `tars identity sign-setup`, `commit.gpgsign=true`, `tars identity verify` |
 | [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome`/`msedge` instalam o Chrome/Edge reais; `firefox`/`webkit` = motores do Playwright (o WebKit é o motor do Safari, não o Safari) |
 | [`pulumi`](src/pulumi) | CLI do Pulumi (3.263.0), versão pinada |
-| [`tars`](src/tars) | Shim `tars` rodando o [HuldLabs/tars](https://github.com/HuldLabs/tars) do checkout montado em `TARS_HOME` |
 | [`postgres-client`](src/postgres-client) | `psql`/`pg_dump` do major pedido (repo PGDG assinado) |
 | [`lifecycle`](src/lifecycle) | Scripts de `initializeCommand`/`updateContentCommand` (órfãos) |
 | [`php`](src/php) | php-cli do minor pedido (Sury) + composer 2.10.3 + wp-cli 2.12.0, checksums conferidos |
