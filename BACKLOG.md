@@ -38,6 +38,16 @@
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
 
+### Feito (14/10, branch `w/base2`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F20 | `rg` 14.1.1 na base (apt trixie `14.1.1-1+b4`, versão exata, marcador `# catalogo:`) | `docker build` ok; `rg --version` na imagem |
+| F21 | Locale `pt_BR.UTF-8` + fuso `America/Sao_Paulo` na base (`locales`/`locale-gen`, `LANG`/`LC_ALL`, `tzdata`/`TZ`), no catálogo | `locale` todo `pt_BR.UTF-8`; `date +%Z` = `-03` |
+| F22 | `gen-catalogo.sh` reprova `ARG *_VERSION`/`*_IMAGE` sem `# catalogo:` imediatamente antes (`ENDURANCE_DOCKERFILE` para teste); `ARG DEBIAN_VERSION` órfão removido | teste negativo com Dockerfile temporário: rc=1 com a linha apontada |
+| F23 | Job `release` prova `:<versão>` e `:<major>` de cada feature com o mesmo digest | actionlint limpo |
+| F24 | README "Como o projeto sobe a base e as features" (digest/major, bump por PR do projeto, `GHCR_READ_TOKEN` pelo `tars adopt`, Renovate/Dependabot como opção) | — |
+
 ### Feito (14/10, branch `w/release`)
 
 | # | item | prova |

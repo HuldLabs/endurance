@@ -15,6 +15,7 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 | `git` | `1:2.47.3-0+deb13u1` | controle de versao (apt, versao exata) |
 | `python3` | `3.13.5-1` | interpretador do SISTEMA (scripts de feature e `op`); runtime de projeto e' a feature python-uv |
 | `sudo` | `1.9.16p2-3+deb13u2` | NOPASSWD restrito a groupadd/usermod/chown (gid do socket Docker em runtime) |
+| `rg` | `14.1.1-1+b4` | ripgrep, busca de texto que todo agente usa (apt da trixie, versao exata) |
 | `sops` | `3.9.4` | decifra o cache local de segredo com a chave age |
 | `age` | `1.2.0` | cripto do cache de segredo (age e age-keygen) |
 | `gitleaks` | `8.30.1` | varredura de segredo, mesma versao do pre-commit dos projetos |
@@ -23,7 +24,8 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 | `docker compose` | `5.5.1-1~debian.13~trixie` | plugin compose da Docker CLI |
 | `task` | `3.49.1` | runner de tarefas do ecossistema (go-task) |
 | `claude` | `2.1.278` | Claude Code CLI nativo (sem Node), sha256 fixado por arquitetura |
-| `ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini` | apt da trixie, sem pin | utilitarios de trabalho e transporte; tini e' o PID 1 |
+| `ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini locales tzdata` | apt da trixie, sem pin | utilitarios de trabalho e transporte; tini e' o PID 1 |
+| `locale e fuso` | `pt_BR.UTF-8`, `America/Sao_Paulo` | configuracao da base: LANG/LC_ALL e TZ (projeto sobrescreve por containerEnv) |
 | `endurance-init` | script da imagem | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x) |
 | `endurance-bg` | script da imagem | tarefa longa dentro do container (setsid com nome, log e pidfile; ADR-0001) |
 
