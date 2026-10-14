@@ -32,8 +32,9 @@ PY="$PYTHON_VERSION"
 # 3.12 (nexus-x, farmega.v2) .. 3.15 (imagem do fabber). Fora disso e' engano de
 # digitacao ou projeto novo — falha ALTO aqui em vez de baixar um interpretador que
 # ninguem vai usar.
+# Aceita major.minor (3.12) ou a versao exata, inclusive pre-release (3.15.0rc2, fabber-ecommerce).
 case "$PY" in
-  3.1[2-5]) ;;
+  3.1[2-5]|3.1[2-5].[0-9]*) ;;
   *) echo "python-uv: pythonVersion fora do intervalo suportado (3.12-3.15): $PY" >&2; exit 1 ;;
 esac
 # O uv ja sabe instalar e fixar o interpretador; nao ha razao para compilar Python a mao.
@@ -47,6 +48,10 @@ uv --version
 # Interpretador pedido, gerenciado pelo uv. Idempotente por natureza: se ja estiver na
 # cache, o uv so responde. `--no-bin` evita symlink global que sombrearia o python3 do
 # sistema para quem nao pediu.
+# Interpretadores FORA do HOME do root: o uv rodando como root instalaria em
+# /root/.local/share/uv/python (0700), e o venv do usuario apontaria para um python que ele
+# nao consegue executar ("Permission denied"). Diretorio compartilhado e legivel por todos.
+export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-/usr/local/share/uv/python}"
 uv python install "$PY"
 
 # O venv e' criado com o interpretador pedido. Volume NOMEADO que aponte para este
@@ -58,6 +63,7 @@ mkdir -p "$VENV_PATH"
 chown "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
 if [ ! -x "$VENV_PATH/bin/python" ]; then
   uv venv --python "$PY" "$VENV_PATH"
+  chown -R "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
 fi
 
 # Caches FORA da arvore do repo: build output grande e milhares de arquivos; num mount de
@@ -67,6 +73,7 @@ cat > "$PROFILE" <<EOF
 export UV_CACHE_DIR="${UV_CACHE_DIR:-\$HOME/.cache/uv}"
 export PYTHONPYCACHEPREFIX="${PYTHONPYCACHEPREFIX:-\$HOME/.cache/pycache}"
 export PYTHONDONTWRITEBYTECODE=1
+export UV_PYTHON_INSTALL_DIR="$UV_PYTHON_INSTALL_DIR"
 export VIRTUAL_ENV="$VENV_PATH"
 EOF
 chmod 0644 "$PROFILE"

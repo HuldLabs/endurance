@@ -1,0 +1,20 @@
+{
+  "py312": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "python-uv": {
+        "pythonVersion": "3.12"
+      }
+    }
+  },
+  "py315rc2": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "python-uv": {
+        "pythonVersion": "3.15.0rc2"
+      }
+    }
+  }
+}
