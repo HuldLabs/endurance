@@ -242,6 +242,13 @@ chmod 0755 "$BIN/op-sops.sh" "$BIN/secrets-refresh" "$BIN/secrets-exec" \
            "$BIN/git-credential-op.sh" "$BIN/gh-op.sh"
 ln -sf "$BIN/gh-op.sh" /usr/local/bin/gh-op
 
+# Helper LIGADO no git do SISTEMA, por CAMINHO ABSOLUTO: vale em QUALQUER repo do container
+# (huldlabs, tars, o proprio projeto). O projeto que o ligava por
+# `$(git rev-parse --show-toplevel)/...` so' tinha push dentro de si mesmo — fora dele o git
+# pedia login (achado 13/10, segtools `.devcontainer/git-credential-op.sh`). O nivel SISTEMA
+# e' consultado primeiro; um helper do ~/.gitconfig so' roda se este nao responder.
+git config --system --replace-all credential.https://github.com.helper "!$BIN/git-credential-op.sh"
+
 # ------------------------------------------------------------------ assinatura de commits
 # A chave vem do CACHE de segredos; nunca e' impressa. O git config e' aplicado SEMPRE,
 # fora do `if` do escritor: e' isso que transforma chave quebrada em commit que FALHA ALTO
