@@ -1,0 +1,18 @@
+{
+  "chrome": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "node-bun": {
+        "install": false
+      },
+      "playwright": {
+        "browser": "chrome"
+      }
+    },
+    "overrideFeatureInstallOrder": [
+      "./node-bun",
+      "./playwright"
+    ]
+  }
+}
