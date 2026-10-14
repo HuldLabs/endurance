@@ -16,6 +16,13 @@
 # Todas as versoes sao ARG de build fixadas. Versao que nao esta aqui nao existe: uma
 # tag solta (ex.: `latest`) muda sozinha num rebuild e a tabela do topo passa a mentir.
 
+# tars (D17): binario compilado do HuldLabs/tars, copiado da imagem dele POR DIGEST. Fonte
+# unica da versao e' este ARG (R3); bump = trocar versao e digest juntos. Sem Node e sem
+# credencial no build da imagem (o pull do GHCR e' do runner, por docker login). O binario e'
+# glibc (bookworm) e roda na trixie (glibc mais nova).
+ARG TARS_IMAGE=ghcr.io/huldlabs/tars:0.0.1-dev.19@sha256:ac9dca584d914c9e9f917ca95067f18fe804d9f7124bc6b852a6a03f6c857d7d
+FROM ${TARS_IMAGE} AS tars
+
 FROM debian:trixie-slim@sha256:a29215f6a35e51e22adffa17f89e9d2ef06214e64a2bad10d765c46aea49f11f
 
 ARG DEBIAN_VERSION=trixie
@@ -125,7 +132,7 @@ RUN ARCH="$(dpkg --print-architecture)" \
 # 1Password CLI, do repositorio apt PROPRIO (cadeia de assinatura verificavel), nao de um
 # binario solto. Todo segredo do ecossistema passa por `op`; o TOKEN da service account
 # NUNCA entra na imagem — ele chega por volume, em runtime, e quem o resolve e o
-# op-sops.sh da feature `secrets`.
+# `tars secrets`.
 RUN curl -fsSL https://downloads.1password.com/linux/keys/1password.asc \
         | gpg --dearmor -o /usr/share/keyrings/1password-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] \
@@ -254,6 +261,10 @@ RUN set -eu; \
 # Versao e' a da imagem: o binario e' do root em /usr/local/bin e o auto-update (como `dev`)
 # so' falharia com aviso. Bump = trocar a versao e os sha256 acima.
 ENV DISABLE_AUTOUPDATER=1
+
+# tars na base: TODO projeto usa (D17). `secrets`/`signing` sao features finas sobre ele (D4).
+COPY --from=tars /tars /usr/local/bin/tars
+RUN tars --version
 
 USER dev
 
