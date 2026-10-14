@@ -32,8 +32,9 @@ PY="$PYTHON_VERSION"
 # 3.12 (nexus-x, farmega.v2) .. 3.15 (imagem do fabber). Fora disso e' engano de
 # digitacao ou projeto novo — falha ALTO aqui em vez de baixar um interpretador que
 # ninguem vai usar.
+# Aceita major.minor (3.12) ou a versao exata, inclusive pre-release (3.15.0rc2, fabber-ecommerce).
 case "$PY" in
-  3.1[2-5]) ;;
+  3.1[2-5]|3.1[2-5].[0-9]*) ;;
   *) echo "python-uv: pythonVersion fora do intervalo suportado (3.12-3.15): $PY" >&2; exit 1 ;;
 esac
 # O uv ja sabe instalar e fixar o interpretador; nao ha razao para compilar Python a mao.
@@ -47,6 +48,12 @@ uv --version
 # Interpretador pedido, gerenciado pelo uv. Idempotente por natureza: se ja estiver na
 # cache, o uv so responde. `--no-bin` evita symlink global que sombrearia o python3 do
 # sistema para quem nao pediu.
+# Interpretadores FORA do HOME do root: o uv rodando como root instalaria em
+# /root/.local/share/uv/python (0700), e o venv do usuario apontaria para um python que ele
+# nao consegue executar ("Permission denied"). Diretorio compartilhado e legivel por todos.
+# So' no build: o profile NAO exporta a variavel, senao o `uv python install` do dev tentaria
+# gravar neste diretorio do root; em runtime o uv do dev usa o ~/.local dele.
+export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-/usr/local/share/uv/python}"
 uv python install "$PY"
 
 # O venv e' criado com o interpretador pedido. Volume NOMEADO que aponte para este
@@ -56,8 +63,11 @@ uv python install "$PY"
 # opaco).
 mkdir -p "$VENV_PATH"
 chown "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
-if [ ! -x "$VENV_PATH/bin/python" ]; then
-  uv venv --python "$PY" "$VENV_PATH"
+# O teste roda COMO o usuario: um venv antigo cujo python esta' em /root passa no `-x` do
+# root e nao roda para o dev. Nesse caso o venv e' refeito (`--clear`).
+if ! su "$USERNAME" -c "'$VENV_PATH/bin/python' -V" >/dev/null 2>&1; then
+  uv venv --clear --python "$PY" "$VENV_PATH"
+  chown -R "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
 fi
 
 # Caches FORA da arvore do repo: build output grande e milhares de arquivos; num mount de

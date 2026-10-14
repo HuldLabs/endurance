@@ -1,0 +1,15 @@
+{
+  "id": "gh",
+  "version": "1.0.0",
+  "name": "GitHub CLI",
+  "description": "gh do repositorio apt oficial (cli.github.com), chave GPG conferida, versao fixa.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/gh",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "2.102.0",
+      "description": "Versao do gh (sem o v), fixada no apt."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "opentofu",
+  "version": "1.0.0",
+  "name": "OpenTofu",
+  "description": "tofu (OpenTofu), binario oficial do GitHub Releases, sha256 conferido. Substituto aberto do terraform.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/opentofu",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "1.13.1",
+      "description": "Versao do OpenTofu (sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
