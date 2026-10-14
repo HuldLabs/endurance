@@ -117,7 +117,8 @@ compose, front em Node com `package-lock.json`):
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
     "ghcr.io/huldlabs/endurance/node-bun:1": { "install": false },
-    "ghcr.io/huldlabs/endurance/playwright:1": { "browser": "chrome" },
+    "ghcr.io/huldlabs/endurance/playwright:1": { "browser": "chrome,msedge,firefox,webkit" },
+    "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/huldlabs/endurance/agent-browser:1": {},
     "ghcr.io/huldlabs/endurance/tars:1": {}
   },
@@ -222,7 +223,7 @@ ferramenta, nunca o conteúdo.
 | [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`) + `uv`, venv e `uv sync` |
 | [`secrets`](src/secrets) | `op-sops.sh` (com fallback Connect → Service Account), `git-credential-op.sh` (ligado no git do **sistema**: vale em qualquer repo), `gh-op.sh` |
 | [`signing`](src/signing) | `ssh-agent-init` (chave em agente, nunca em disco), `signing-git-config`, `allowed_signers` |
-| [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome` instala o Google Chrome real |
+| [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome`/`msedge` instalam o Chrome/Edge reais; `firefox`/`webkit` = motores do Playwright (o WebKit é o motor do Safari, não o Safari) |
 | [`pulumi`](src/pulumi) | CLI do Pulumi (3.263.0), versão pinada |
 | [`tars`](src/tars) | Shim `tars` rodando o [HuldLabs/tars](https://github.com/HuldLabs/tars) do checkout montado em `TARS_HOME` |
 | [`postgres-client`](src/postgres-client) | `psql`/`pg_dump` do major pedido (repo PGDG assinado) |

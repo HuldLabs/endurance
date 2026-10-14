@@ -26,7 +26,7 @@ command -v npx >/dev/null 2>&1 || {
 # no log e a lista completa raramente e' querida.
 IFS=',' read -r -a BROWSERS <<< "$BROWSER"
 for b in "${BROWSERS[@]}"; do
-  case "$b" in ""|chrome) continue ;; esac
+  case "$b" in ""|chrome|msedge) continue ;; esac
   apt-get update
   npx --yes "playwright@${PLAYWRIGHT_VERSION}" install-deps "$b"
   rm -rf /var/lib/apt/lists/*
@@ -50,24 +50,27 @@ chown -R "$USERNAME:$USERNAME" /workspace/.cache 2>/dev/null || true
 # blocked_by_google (portado do remendo segtools `22f4f5e6`). So' amd64: o Google nao
 # publica .deb arm64.
 #
-# EXCECAO DELIBERADA de versao (como o `op` da base): o repo apt do Google so' guarda a
-# ULTIMA stable, entao nao ha' o que fixar — um pino quebraria o build quando ela sai do
-# repo. A integridade vem da assinatura do repo do Google (o instalador do Playwright usa o
-# .deb oficial, que registra a chave).
+# EXCECAO DELIBERADA de versao (como o `op` da base): os repos apt do Google e da Microsoft
+# so' guardam a ULTIMA stable, entao nao ha' o que fixar — um pino quebraria o build quando
+# ela sai do repo. A integridade vem da assinatura de cada repo (o .deb oficial registra a
+# chave do fornecedor).
 CACHE_BROWSERS=()
 for b in "${BROWSERS[@]}"; do
   case "$b" in
-    chrome)
+    chrome|msedge)
+      # Canais de SISTEMA (Google Chrome / Microsoft Edge estaveis): o `install <canal>` do
+      # Playwright roda o .deb oficial de cada fornecedor. So' amd64.
       [ "$(dpkg --print-architecture)" = amd64 ] || {
-        echo "playwright: browser=chrome so' existe em amd64 (o Google nao publica .deb arm64)" >&2
+        echo "playwright: browser=$b so' existe em amd64 (sem .deb arm64 do fornecedor)" >&2
         exit 1
       }
-      if ! command -v google-chrome >/dev/null 2>&1; then
+      bin=google-chrome; [ "$b" = msedge ] && bin=microsoft-edge
+      if ! command -v "$bin" >/dev/null 2>&1; then
         apt-get update
-        npx --yes "playwright@${PLAYWRIGHT_VERSION}" install --with-deps chrome
+        npx --yes "playwright@${PLAYWRIGHT_VERSION}" install --with-deps "$b"
         rm -rf /var/lib/apt/lists/*
       fi
-      google-chrome --version ;;
+      "$bin" --version ;;
     "") ;;
     *) CACHE_BROWSERS+=("$b") ;;
   esac
