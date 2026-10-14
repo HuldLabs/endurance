@@ -251,6 +251,9 @@ RUN set -eu; \
     echo "${sum}  /tmp/claude" | sha256sum -c -; \
     install -m 0755 /tmp/claude /usr/local/bin/claude; rm -f /tmp/claude; \
     claude --version
+# Versao e' a da imagem: o binario e' do root em /usr/local/bin e o auto-update (como `dev`)
+# so' falharia com aviso. Bump = trocar a versao e os sha256 acima.
+ENV DISABLE_AUTOUPDATER=1
 
 USER dev
 

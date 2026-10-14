@@ -23,9 +23,11 @@ apt-get install -y --no-install-recommends ca-certificates curl gnupg
 # Chave de assinatura da Oracle, conferida pela impressao digital COMPLETA. O arquivo
 # `-2023` traz a mesma chave com a validade VENCIDA (22/10/2025) e o apt recusa o repo;
 # o `-2025` e' a mesma chave renovada.
-MYSQL_KEY_FPR="BCA43417C3B485DD128EC6D4B7B3B788A8D3785C"
+MYSQL_KEY_FPR="BCA43417C3B485DD128EC6D4B7B3B788A8D3785C"  # gitleaks:allow (impressao digital de chave PUBLICA)
 curl -fsSL https://repo.mysql.com/RPM-GPG-KEY-mysql-2025 -o /tmp/mysql.asc
-gpg --show-keys --with-colons /tmp/mysql.asc | grep -q "^fpr:::::::::${MYSQL_KEY_FPR}:" || {
+# Exatamente UMA chave PRIMARIA no arquivo, e e' a esperada (subchaves nao contam): uma
+# chave extra viraria confiavel junto.
+[ "$(gpg --show-keys --with-colons /tmp/mysql.asc | awk -F: '/^pub/{p=1;next} p&&/^fpr/{print $10;p=0}' | sort -u)" = "${MYSQL_KEY_FPR}" ] || {
   echo "mysql-client: impressao digital da chave da Oracle NAO confere (esperada ${MYSQL_KEY_FPR})" >&2
   exit 1
 }
