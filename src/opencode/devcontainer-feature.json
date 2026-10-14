@@ -1,0 +1,15 @@
+{
+  "id": "opencode",
+  "version": "1.0.0",
+  "name": "opencode",
+  "description": "CLI do opencode (agente de codigo), binario oficial do GitHub Releases, sha256 conferido.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/opencode",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "1.18.29",
+      "description": "Versao do opencode (sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

@@ -48,6 +48,13 @@
 | F23 | Job `release` prova `:<versão>` e `:<major>` de cada feature com o mesmo digest | actionlint limpo |
 | F24 | README "Como o projeto sobe a base e as features" (digest/major, bump por PR do projeto, `GHCR_READ_TOKEN` pelo `tars adopt`, Renovate/Dependabot como opção) | — |
 
+### Feito (14/10, branch `w/feat2`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F19 | Feature `opencode` 1.18.29 (seo-brain), sha256 embutido; L4 provado: a matriz roda todos os cenários de `node-bun` (npm, node20/24/26) e `python-uv` (py312, py315rc2), cada um checando a versão instalada | `ENDURANCE_UNPUBLISHED=1 tools/test-features.sh opencode node-bun python-uv` |
+| — | Features `go` e `az` retiradas por falta de pedido real (decisão do coord segtools, 14/10) | — |
+
 ### Feito (14/10, branch `w/release`)
 
 | # | item | prova |
