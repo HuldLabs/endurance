@@ -8,7 +8,7 @@ a entrada no lugar.
 **Onde estamos:** `main` com os PRs #1–#5 mergeados. Nove features testadas e o CI de teste em todo PR. A branch
 `w/versao` alinha a numeração: a primeira tag é a `v0.0.1-dev.3`, e quem cria a tag é o dono.
 
-**Proximo passo:** revisar e mergear a `w/f8` (F8 + D17: `tars` dev.19 na base por digest, `secrets`/`signing`
+**Proximo passo:** revisar e mergear a `w/f8` (F8 + D17: `tars` dev.20 na base por digest, `secrets`/`signing`
 2.0.0 finas, feature `tars` removida — D19). Antes da tag: resolver o login duplo do `publish.yml` (F16). Depois,
 mapear o ecossistema inteiro (D18), e aí o dono cria a tag.
 
