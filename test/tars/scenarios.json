@@ -1,0 +1,11 @@
+{
+  "shim": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "node-bun": { "install": false },
+      "tars": {}
+    },
+    "overrideFeatureInstallOrder": ["./node-bun", "./tars"]
+  }
+}
