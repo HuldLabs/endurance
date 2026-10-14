@@ -5,8 +5,8 @@ a entrada no lugar.
 
 ## Endurance — 14/10/2026 (coord Endurance)
 
-**Onde estamos:** `main` com os PRs #1–#7 mergeados. A base traz o `tars` dev.21 por digest, `secrets`/`signing`
-2.0.0 são finas e a feature `tars` saiu (F8, D19). O `.ai` está no lock da dev.21 (o sync não apaga mais a `lib-json.sh`).
+**Onde estamos:** `main` com os PRs #1–#11 mergeados. A base traz o `tars` dev.22 por digest, `secrets`/`signing`
+2.0.0 são finas e a feature `tars` saiu (F8, D19). O `.ai` está no lock da dev.22 (guards falham fechados sem a `lib-json.sh`).
 PRs #8 (F16) e #9 (revisão adversarial) mergeados.
 
 **Proximo passo:** ecossistema mapeado (`docs/ecossistema.md`, D18) e lacunas cobertas (F17). Falta a dev.22 do Tars (guards fail-closed) na base e no lock; depois o dono cria a tag `v0.0.1-dev.3`. A tag publica base, features e, por último, a Release (notas do `tars release-notes`, catálogo anexo; F18).
