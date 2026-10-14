@@ -30,7 +30,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        feature: [node-bun, playwright, agent-browser, php, mysql-client, redis-client, pwsh, secrets, signing, python-uv, gh, lint, opentofu, duckdb, kubectl-helm, restic-rclone, opencode]
+        feature: [node-bun, playwright, agent-browser, php, mysql-client, redis-client, pwsh, secrets, signing, python-uv, gh, lint, opentofu, duckdb, kubectl-helm, restic-rclone, opencode, postgres-client]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       # O pacote ghcr.io/huldlabs/tars e' PRIVADO e a base o copia por digest (D17): login de
