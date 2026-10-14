@@ -13,7 +13,7 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 - **Catálogo gerado (`docs/catalogo.md`).** Cada ferramenta da base (versão e para que serve) e cada feature (id,
   versão, ref de uso, todas as options, `installsAfter`), gerado por `tools/gen-catalogo.sh` dos
   `devcontainer-feature.json` e dos marcadores `# catalogo:` do `Dockerfile`; o `test.yml` falha se divergir.
-- **`tars` 0.0.1-dev.21 na base.** Binário copiado da imagem do Tars por digest (D17).
+- **`tars` 0.0.1-dev.22 na base.** Binário copiado da imagem do Tars por digest (D17).
 - **`secrets` 2.0.0 e `signing` 2.0.x finas.** Só `tars secrets git-credential` (helper do git do sistema) e
   `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem. `signing` 2.0.1 liga
   `commit.gpgsign` no sistema já no build e usa `timeout` no postStart. O `tars identity provision` é só do dono (TTY).

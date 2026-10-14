@@ -1,59 +1,69 @@
 {
   "lockfileVersion": 1,
   "tars": {
-    "version": "0.0.1-dev.21",
+    "version": "0.0.1-dev.22",
     "commit": null
   },
   "files": {
     "gates/commit-msg": {
       "area": "gates",
       "item": "commit-msg",
-      "sha256": "sha256-80f5f7aac2dfb3cedac759a1dc4e972c2103ad82f4985907ab6c894c0090e8cf"
+      "sha256": "sha256-80f5f7aac2dfb3cedac759a1dc4e972c2103ad82f4985907ab6c894c0090e8cf",
+      "origem": "sha256-80f5f7aac2dfb3cedac759a1dc4e972c2103ad82f4985907ab6c894c0090e8cf"
     },
     "gates/gitleaks": {
       "area": "gates",
       "item": "gitleaks",
-      "sha256": "sha256-89457517d51b9d514fe9c0d698b6c763c8ba3234abd6c9a65185fbbb9169b6ca"
+      "sha256": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149",
+      "origem": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149"
     },
     "governance/novo-repo.md": {
       "area": "governance",
       "item": "novo-repo",
-      "sha256": "cbac2f65a4c3e6a6196ef3d79dc57ec20e45bdf44e1d767ff5319bfcd5a2c812"
+      "sha256": "cfa40489587f764fd3a0331c3f4f18a80a9c4e8f95084df7d8c45b2ff8fdc08e",
+      "origem": "cfa40489587f764fd3a0331c3f4f18a80a9c4e8f95084df7d8c45b2ff8fdc08e"
     },
     "governance/segredos-e-identidade.md": {
       "area": "governance",
       "item": "segredos-e-identidade",
-      "sha256": "a3d77aff27e18fd9a8e502be571779aece0b65955e3d0d9276a004f75368fd19"
+      "sha256": "5955838818d0ca1945beab31f6a7ed71bb953c564372521fd0d5dc5a42e789ba",
+      "origem": "5955838818d0ca1945beab31f6a7ed71bb953c564372521fd0d5dc5a42e789ba"
     },
     "guards/block-destructive-commands.sh": {
       "area": "guards",
       "item": "block-destructive-commands",
-      "sha256": "9c4c5239a1f9006e338b0a6759d293eb93c6cb2697ed7c1f37d5c01f5d4c7e61"
+      "sha256": "81fe30996a29148ede3ebd69431bb9b5d2daf7b0afffd714c249f8051ace666f",
+      "origem": "81fe30996a29148ede3ebd69431bb9b5d2daf7b0afffd714c249f8051ace666f"
     },
     "guards/block-secret-dump.sh": {
       "area": "guards",
       "item": "block-secret-dump",
-      "sha256": "1c5fdd33095c7abec28ee6ad953a1130b53b879339597b4eb96ffe6f3c7390cf"
+      "sha256": "ecfc565258a577e91e39a4525561da19a29fa5b83e435495d287e233299d7319",
+      "origem": "ecfc565258a577e91e39a4525561da19a29fa5b83e435495d287e233299d7319"
     },
     "guards/lib-json.sh": {
       "area": "guards",
       "item": "lib-json",
-      "sha256": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41"
+      "sha256": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41",
+      "origem": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41"
     },
     "rules/principles.md": {
       "area": "rules",
       "item": "principles",
-      "sha256": "13d8f133fa179743c86f8d0e1cfc75d91179df66ae692604a7e4ebf1ecce71d6"
+      "sha256": "19095a81e6062db340746d8e3d80bf27f37d61218b3fa167e6ade3e71678599e",
+      "origem": "19095a81e6062db340746d8e3d80bf27f37d61218b3fa167e6ade3e71678599e"
     },
     "skills/agent-coordination": {
       "area": "skills",
       "item": "agent-coordination",
-      "sha256": "sha256-ed586cba86ccab565e37f78b7c503c547e559b79a0cd8cae1c33fd622ef599a0"
+      "sha256": "sha256-43fd31cf76b6d2042e54bfec2024faee194b348d2de87f238a04b581d5f46586",
+      "origem": "sha256-43fd31cf76b6d2042e54bfec2024faee194b348d2de87f238a04b581d5f46586"
     },
     "skills/root-cause-debugging": {
       "area": "skills",
       "item": "root-cause-debugging",
-      "sha256": "sha256-384d8a699d989ed39c7a1aa65ed4a63c0bf66b9b6125eeb60459d1c94c343dc4"
+      "sha256": "sha256-1e9b9b2b804437c6cefa79c1305633d3bf2dd02af54169a68ac8684038bd5299",
+      "origem": "sha256-1e9b9b2b804437c6cefa79c1305633d3bf2dd02af54169a68ac8684038bd5299"
     }
   }
 }
