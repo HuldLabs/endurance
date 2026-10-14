@@ -1,15 +1,15 @@
 {
   "lockfileVersion": 1,
   "tars": {
-    "version": "0.0.1-dev.22",
+    "version": "0.0.1-dev.24",
     "commit": null
   },
   "files": {
     "gates/commit-msg": {
       "area": "gates",
       "item": "commit-msg",
-      "sha256": "sha256-80f5f7aac2dfb3cedac759a1dc4e972c2103ad82f4985907ab6c894c0090e8cf",
-      "origem": "sha256-80f5f7aac2dfb3cedac759a1dc4e972c2103ad82f4985907ab6c894c0090e8cf"
+      "sha256": "sha256-38f3ed90f148f324f1e5f19354d2ad26e4d425245558710b7650500183ebee0a",
+      "origem": "sha256-38f3ed90f148f324f1e5f19354d2ad26e4d425245558710b7650500183ebee0a"
     },
     "gates/gitleaks": {
       "area": "gates",
@@ -22,6 +22,12 @@
       "item": "novo-repo",
       "sha256": "cfa40489587f764fd3a0331c3f4f18a80a9c4e8f95084df7d8c45b2ff8fdc08e",
       "origem": "cfa40489587f764fd3a0331c3f4f18a80a9c4e8f95084df7d8c45b2ff8fdc08e"
+    },
+    "governance/release.md": {
+      "area": "governance",
+      "item": "release",
+      "sha256": "aa2b7ad84fbe2002df70e1980537fd8d7e9a3906cbe10ccbfea1af0037dac477",
+      "origem": "aa2b7ad84fbe2002df70e1980537fd8d7e9a3906cbe10ccbfea1af0037dac477"
     },
     "governance/segredos-e-identidade.md": {
       "area": "governance",
