@@ -39,6 +39,14 @@ case "$PY" in
 esac
 # O uv ja sabe instalar e fixar o interpretador; nao ha razao para compilar Python a mao.
 # O uv fica FORA do apt (binario oficial, versao fixa) porque o da distro e' antigo.
+# libgomp1 (OpenMP do GCC, ~100 KB): runtime de wheels como lightgbm, xgboost e scikit-learn, que
+# fazem dlopen da libgomp.so.1 e nao a trazem junto. Sem ela o import falha (pedido do seo-brain, 14/10).
+if ! ldconfig -p | grep -q 'libgomp\.so\.1'; then
+  apt-get update
+  apt-get install -y --no-install-recommends libgomp1
+  rm -rf /var/lib/apt/lists/*
+fi
+
 if ! command -v uv >/dev/null 2>&1; then
   curl -LsSf "https://astral.sh/uv/${UV_VERSION}/install.sh" \
     | env UV_INSTALL_DIR=/usr/local/bin UV_NO_MODIFY_PATH=1 sh

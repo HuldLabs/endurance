@@ -50,7 +50,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`postgres-client`](#postgres-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/postgres-client:1` | PostgreSQL client |
 | [`pulumi`](#pulumi) | 1.0.0 | `ghcr.io/huldlabs/endurance/pulumi:1` | Pulumi CLI |
 | [`pwsh`](#pwsh) | 1.0.0 | `ghcr.io/huldlabs/endurance/pwsh:1` | PowerShell |
-| [`python-uv`](#python-uv) | 1.2.0 | `ghcr.io/huldlabs/endurance/python-uv:1` | Python + uv |
+| [`python-uv`](#python-uv) | 1.3.0 | `ghcr.io/huldlabs/endurance/python-uv:1` | Python + uv |
 | [`redis-client`](#redis-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/redis-client:1` | Redis/Valkey client |
 | [`restic-rclone`](#restic-rclone) | 1.0.0 | `ghcr.io/huldlabs/endurance/restic-rclone:1` | restic + rclone |
 | [`secrets`](#secrets) | 2.0.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
@@ -279,7 +279,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 
 ### python-uv
 
-**Python + uv** — versão 1.2.0. Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.
+**Python + uv** — versão 1.3.0. Python (versao por option) e o uv, com venv em /workspace/.venv e uv sync idempotente quando ha uv.lock.
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/python-uv:1": {} }

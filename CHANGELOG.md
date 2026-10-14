@@ -12,6 +12,8 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 - **`python-uv` 1.2.0 exporta `UV_PROJECT_ENVIRONMENT`.** O `uv sync` passa a usar o `venvPath` em vez do `.venv`
   do diretório do projeto. Vale fora de shell de login pelo `containerEnv` (fixo no default `/workspace/.venv`: a
   spec não interpola option) e em shell de login pelo profile, com o valor da option.
+- **`python-uv` 1.3.0 traz a `libgomp1`.** Runtime OpenMP que wheels como lightgbm, xgboost e scikit-learn carregam
+  (`libgomp.so.1`); acaba o `.deb` extraído em `/tmp` com `LD_LIBRARY_PATH` no seo-brain.
 - **`postgres-client` testado no CI.** Cenários `default` (18) e `pg17` provam `psql` e `pg_dump` no major da option;
   a feature entra na matriz do `test.yml`.
 - **README: exemplo do seo-brain refeito.** Base por digest, só features do Endurance (`gh` no lugar do
@@ -27,7 +29,7 @@ ficou sem Python; o `postgres-client` não tinha teste; o exemplo do README não
 `docs/catalogo.md`, `BACKLOG.md`, `CHANGELOG.md`, `VERSION`.
 
 ### O que o consumidor faz
-Nada obrigatório: `python-uv:1` pega a 1.2.0. Quem usa `venvPath` fora do default declara
+Nada obrigatório: `python-uv:1` pega a 1.3.0. Quem usa `venvPath` fora do default declara
 `"containerEnv": { "UV_PROJECT_ENVIRONMENT": "<venvPath>" }` no próprio devcontainer. Recomendado: volume nomeado
 por usuário e projeto no `venvPath` (exemplo no README) e apagar o `.venv` antigo do repo no host.
 
