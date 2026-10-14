@@ -2,6 +2,20 @@
 
 Formato: o que mudou · por quê · arquivos impactados · o que o consumidor faz (doutrina `versionamento-de-extracao`).
 
+## 0.0.1-dev.3 — em andamento (primeira tag publicada, D18)
+
+- **O que mudou:**
+  - a numeração ficou alinhada: a primeira publicação é a `v0.0.1-dev.3`, não a `v0.1.0`;
+  - o `tars identity provision` passa a ser só do dono (TTY);
+  - o README ganha o volume do `tars secrets` e a regra do `[dependency-groups]`;
+  - os `.githooks/` voltam a ser executáveis.
+- **Por quê:**
+  - decisões do dono de 14/10 (D18 e versão);
+  - correção do desenho combinada com o coord segtools (D4);
+  - pedidos do seo-brain.
+- **Arquivos impactados:** `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `docs/decisoes-20261008.md`, `.githooks/`.
+- **O que o consumidor faz:** fixar a base como `base:0.0.1-dev.3` (ou por digest) quando a tag sair; não usar `:1`.
+
 ## 0.0.1-dev.2 — 13/10/2026
 
 - **O que mudou:**
