@@ -1,0 +1,20 @@
+{
+  "id": "lint",
+  "version": "1.0.0",
+  "name": "Lint de shell e workflows",
+  "description": "shellcheck e actionlint, binarios oficiais do GitHub Releases, sha256 conferido.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/lint",
+  "options": {
+    "shellcheckVersion": {
+      "type": "string",
+      "default": "0.11.0",
+      "description": "Versao do shellcheck (sem o v)."
+    },
+    "actionlintVersion": {
+      "type": "string",
+      "default": "1.7.12",
+      "description": "Versao do actionlint (sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

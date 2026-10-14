@@ -1,0 +1,20 @@
+{
+  "id": "restic-rclone",
+  "version": "1.0.0",
+  "name": "restic + rclone",
+  "description": "restic e rclone, binarios oficiais do GitHub Releases com sha256 conferido (SHA256SUMS do release).",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/restic-rclone",
+  "options": {
+    "resticVersion": {
+      "type": "string",
+      "default": "0.19.1",
+      "description": "Versao do restic (sem o v)."
+    },
+    "rcloneVersion": {
+      "type": "string",
+      "default": "1.75.2",
+      "description": "Versao do rclone (sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
