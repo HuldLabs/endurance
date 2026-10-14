@@ -1,0 +1,15 @@
+{
+  "id": "duckdb",
+  "version": "1.0.0",
+  "name": "DuckDB CLI",
+  "description": "CLI do duckdb, binario oficial do GitHub Releases, sha256 conferido.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/duckdb",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "1.5.6",
+      "description": "Versao do duckdb (sem o v)."
+    }
+  },
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
