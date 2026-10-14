@@ -1,0 +1,9 @@
+{
+  "default": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "opencode": {}
+    }
+  }
+}

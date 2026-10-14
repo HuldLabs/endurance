@@ -43,6 +43,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`lint`](#lint) | 1.0.0 | `ghcr.io/huldlabs/endurance/lint:1` | Lint de shell e workflows |
 | [`mysql-client`](#mysql-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/mysql-client:1` | MySQL client |
 | [`node-bun`](#node-bun) | 1.2.0 | `ghcr.io/huldlabs/endurance/node-bun:1` | Node + bun |
+| [`opencode`](#opencode) | 1.0.0 | `ghcr.io/huldlabs/endurance/opencode:1` | opencode |
 | [`opentofu`](#opentofu) | 1.0.0 | `ghcr.io/huldlabs/endurance/opentofu:1` | OpenTofu |
 | [`php`](#php) | 1.0.0 | `ghcr.io/huldlabs/endurance/php:1` | PHP + composer + wp-cli |
 | [`playwright`](#playwright) | 1.2.0 | `ghcr.io/huldlabs/endurance/playwright:1` | Playwright |
@@ -166,6 +167,21 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
 - **Fonte:** [`src/node-bun/`](../src/node-bun)
+
+### opencode
+
+**opencode** — versão 1.0.0. CLI do opencode (agente de codigo), binario oficial do GitHub Releases, sha256 conferido.
+
+```jsonc
+"features": { "ghcr.io/huldlabs/endurance/opencode:1": {} }
+```
+
+| Option | Tipo | Default | Valores | Descrição |
+| --- | --- | --- | --- | --- |
+| `version` | string | `1.18.29` | livre | Versao do opencode (sem o v). |
+
+- **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
+- **Fonte:** [`src/opencode/`](../src/opencode)
 
 ### opentofu
 

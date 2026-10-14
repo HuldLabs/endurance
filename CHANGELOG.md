@@ -21,6 +21,7 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 - **Features novas (lacunas L1–L7 de `docs/ecossistema.md`).** `gh` 1.0.0 (GitHub CLI 2.102.0, apt oficial),
   `lint` 1.0.0 (shellcheck 0.11.0 + actionlint 1.7.12), `opentofu` 1.0.0 (1.13.1), `duckdb` 1.0.0 (1.5.6),
   `kubectl-helm` 1.0.0 (kubectl 1.37.1 + helm 4.3.0), `restic-rclone` 1.0.0 (restic 0.19.1 + rclone 1.75.2).
+- **Feature `opencode`.** `opencode` 1.0.0 (opencode 1.18.29, binário oficial, sha256 por arch) para o seo-brain.
 - **`node-bun` e `python-uv` mais largos.** Node 26 instala a `libatomic1`; `python-uv` aceita versão exata e rc
   (`3.15.0rc2`) e guarda os interpretadores em `/usr/local/share/uv/python` (antes iam para `/root` e o venv do
   `dev` dava "Permission denied").
@@ -45,7 +46,7 @@ no consumidor é defeito (R5), e o Tars dev.19 publicou a imagem e os comandos.
 ### Arquivos impactados
 `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`,
 `docs/ecossistema.md`, `docs/catalogo.md` (novo, gerado), `tools/gen-catalogo.sh` (novo),
-`src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv}/`, `.githooks/`,
+`src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv,opencode}/`, `.githooks/`,
 `images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
 `.github/workflows/{test,publish}.yml`.
 
