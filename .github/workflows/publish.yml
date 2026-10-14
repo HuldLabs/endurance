@@ -28,6 +28,16 @@ jobs:
 
       - uses: docker/setup-buildx-action@v3
 
+      # O pacote ghcr.io/huldlabs/tars e' PRIVADO e a base o copia por digest (D17): login de
+      # LEITURA antes de qualquer build. Token so' por secret do repo; nunca em log nem argv.
+      # ATENCAO: o login de PUSH logo abaixo e' no MESMO registry e substitui este; o pull do
+      # tars no build so' passa se o GITHUB_TOKEN tambem ler o pacote (ver HANDOFF).
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ vars.GHCR_READ_USER }}
+          password: ${{ secrets.GHCR_READ_TOKEN }}
+
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
