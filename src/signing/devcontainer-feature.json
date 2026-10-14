@@ -1,25 +1,10 @@
 {
   "id": "signing",
-  "version": "1.0.0",
-  "name": "Assinatura de commit (SSH)",
-  "description": "Chave de assinatura carregada num ssh-agent de caminho FIXO (nunca toca o disco), `allowed_signers` versionado por projeto e `git config gpg.format=ssh`. Exige a feature secrets para ler a chave do cache sops.",
+  "version": "2.0.0",
+  "name": "Assinatura de commit (tars identity)",
+  "description": "Fina (D4/R5): no postStart roda `tars identity sign-setup` (gpg.format=ssh, signingkey, allowedSignersFile do `[identity]`/`[secrets]` do projeto), liga commit.gpgsign e roda `tars identity verify`. O tars vem da base. `identity provision` e' do DONO, nunca daqui.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/signing",
-  "options": {
-    "agentSocket": {
-      "type": "string",
-      "default": "/tmp/endurance-ssh-agent.sock",
-      "description": "Caminho do socket do ssh-agent. TEM de casar com o remoteEnv.SSH_AUTH_SOCK do projeto."
-    },
-    "allowedSigners": {
-      "type": "string",
-      "default": "",
-      "description": "Linhas do arquivo allowed_signers (ex.: 'eu@exemplo ssh-ed25519 AAAA...'). Vazio = o projeto versiona o proprio arquivo e aponta por allowedSignersFile."
-    },
-    "allowedSignersFile": {
-      "type": "string",
-      "default": ".allowed_signers",
-      "description": "Caminho (relativo a' raiz do projeto) do arquivo allowed_signers. E' este que o git consulta em `git log --show-signature`."
-    }
-  },
+  "options": {},
+  "postStartCommand": "tars identity sign-setup && git config commit.gpgsign true; tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); commit assinado vai falhar ate o DONO rodar `tars identity provision` (TTY)' >&2",
   "installsAfter": ["ghcr.io/huldlabs/endurance/secrets", "ghcr.io/devcontainers/features/common-utils"]
 }
