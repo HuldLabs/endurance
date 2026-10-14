@@ -333,8 +333,8 @@ extra é necessário. **Só tag publica** — push na `main` não toca o registr
 
 ### Publicar uma versão
 
-Criar a tag é o ato de publicar, e **quem cria é o dono** (humano, metodologia do Tars). A versão da
-imagem sai do nome da tag:
+Criar a tag é o ato de publicar (D20): o coord do Endurance abre o **PR final** da versão, o **dono faz o
+merge** e dá o aval, e o **coord corta a tag**. A versão da imagem sai do nome da tag:
 
 ```bash
 git tag v0.0.1-dev.3

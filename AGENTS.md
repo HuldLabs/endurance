@@ -17,6 +17,7 @@ Decisões e fila: `BACKLOG.md`. Estado vivo: `HANDOFF.md`. Origem de cada peça:
   `~/.ssh`.
 - Git: commit como Daneel, com emoji; nunca `--no-verify`, nunca `git add -A` (pathspec explícito); um worktree por
   worker em `.worktrees/<slot>` (`tars sync` antes do 1º commit).
-- Publicar = criar tag `v*`, e só com ordem direta do dono.
+- Publicar = criar tag `v*`. O fluxo é: o coord abre o PR final da versão, o **dono faz o merge** e dá o aval, e o
+  **coord corta a tag** (D20). Nada de tag sem esse aval explícito.
 - Achado de outra frente vai para o coord dela (Tars/homelab/telemetria: coord segtools; seo-brain: coord do
   seo-brain). Credencial exposta: seção Segurança do `BACKLOG.md` do `huldlabs`.

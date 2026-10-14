@@ -22,6 +22,7 @@
 | D16 | ~~Feature `tars` = shim que roda o checkout montado em `TARS_HOME`, só como **ponte** até a D17~~ — ponte encerrada pela D19 | `gh release list -R HuldLabs/tars` vazio (13/10) |
 | D18 | A primeira tag publicada é a **`v0.0.1-dev.3`** (numeração da D13; `v0.1.0` só quando o Endurance virar produto) e só sai depois que **todo o ecossistema** estiver mapeado e ajustado no Endurance, para evitar tags desnecessárias (substitui o gatilho da D3) | dono, 14/10 |
 | D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.22 `sha256:76d91cf2…` | dono, 14/10 |
+| D20 | **Quem corta a tag é o coord**, com o aval do dono; o dono faz o merge do PR final da versão (substitui "tag é do dono"). A regra é da metodologia do Tars; se faltar lá, é falha de processo do Tars a ajustar (pedido ao coord segtools, 14/10) | dono, 14/10 |
 | D19 | Feature `tars` **removida** (não depreciada): com o binário na base o shim não tem o que fazer, e não há option de comportamento implementada (D5). Mínimo = apagar; quem a usava tira a linha do `devcontainer.json` e o mount do checkout | worker F8, 14/10 |
 
 ## Fila
@@ -30,7 +31,7 @@
 | --- | --- | --- | --- |
 | F3 | Segredos do seo-brain (`SERP_DSN`, `DEEPSEEK_API_KEY`) por ref `op://`: o **seo-brain** declara o template e o `[secrets] source=automation` no `.ai/tars.toml` e roda `tars secrets exec -- …`. Do lado do Endurance basta a feature `tars` + o volume do token | coord seo-brain; desenho do `[secrets]` com o coord do Tars | o coletor roda por `tars secrets exec` sem colar valor à mão; nada em argv/log |
 | F5 | Devcontainer próprio do seo-brain consumindo as features (exemplo no `README.md`) | F9, F3 | o seo-brain sobe com `devcontainer up` sem o do segtools |
-| F9 | Tag `v0.0.1-dev.3` (D18), criada **pelo dono** (tag é ato humano) | F8, mapeamento do ecossistema | publicação no GHCR pela tag, imagem referenciada por digest |
+| F9 | Tag `v0.0.1-dev.3` (D18): o dono mergeia o PR final e dá o aval; o coord corta a tag (D20) | F8, mapeamento do ecossistema | publicação no GHCR pela tag, imagem referenciada por digest |
 | F10 | Migrar o segtools (D7), tirando o remendo do Chrome do Dockerfile dele (`22f4f5e6`) | F9 | segtools sobe pelas features; remendos do Dockerfile dele removidos |
 | F16 | ~~Login duplo no `publish.yml`~~ — **feito:** o build da base roda só com o login de leitura (`load: true`), e o login de push (`GITHUB_TOKEN`) vem depois, só para o `docker push` | F9 | `publish.yml` builda a base com o `COPY --from` do tars |
 [removido: dado do homelab, 14/10]
