@@ -26,7 +26,15 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
   `dev` dava "Permission denied").
 - **CI.** `test.yml`/`publish.yml` fazem login de leitura no GHCR antes do build; o build da base roda só com esse
   login (F16); actions pinadas por SHA; dispatch só em tag.
-- **Documentação.** O README ganha o volume do `tars secrets`, a regra do `[dependency-groups]` e o link do catálogo;
+- **`rg` (ripgrep) 14.1.1 na base.** Pacote apt da trixie com versão exata (`14.1.1-1+b4`), ARG com marcador.
+- **Locale `pt_BR.UTF-8` e fuso `America/Sao_Paulo` na base.** `locales` + `locale-gen`, `LANG` (sem `LC_ALL`, para o projeto poder sobrescrever) e `tzdata` +
+  `TZ`; o projeto sobrescreve por `containerEnv`. Aparece no catálogo como "locale e fuso".
+- **Catálogo cobra o marcador.** `tools/gen-catalogo.sh` (e o `--check` do CI) reprova `ARG *_VERSION`/`*_IMAGE` sem
+  `# catalogo:` imediatamente antes; o `ARG DEBIAN_VERSION` órfão saiu.
+- **Release prova a tag curta.** O job `release` confere `:<versão cheia>` e `:<major>` de cada feature e exige o mesmo
+  digest nas duas.
+- **Documentação.** O README ganha a seção "Como o projeto sobe a base e as features" (base por digest, features
+  pelo major, bump por PR do projeto), além de o volume do `tars secrets`, a regra do `[dependency-groups]` e o link do catálogo;
   os `.githooks/` voltam a ser executáveis.
 
 ### Por que

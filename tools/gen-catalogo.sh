@@ -7,7 +7,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT=docs/catalogo.md
-DF=images/base/Dockerfile
+DF="${ENDURANCE_DOCKERFILE:-images/base/Dockerfile}" # override: teste negativo do marcador
 REG=ghcr.io/huldlabs/endurance
 
 esc() { sed 's/|/\\|/g'; }
@@ -87,6 +87,14 @@ H
     ' "$f"
   done
 }
+
+# Toda versao/imagem fixada tem de aparecer no catalogo: `ARG *_VERSION`/`*_IMAGE` sem
+# `# catalogo:` na linha IMEDIATAMENTE anterior reprova (senao a tabela a omite em silencio).
+sem_marcador="$(awk '/^[[:space:]]*ARG[[:space:]]+[A-Za-z0-9_]*(_VERSION|_IMAGE)([[:space:]]*=|[[:space:]]*$)/ && ant !~ /^# catalogo: / { print FILENAME ":" NR ": " $0 } { ant = $0 }' "$DF")"
+if [ -n "$sem_marcador" ]; then
+  printf 'ARG de versao/imagem sem "# catalogo:" imediatamente antes:\n%s\n' "$sem_marcador" >&2
+  exit 1
+fi
 
 if [ "${1:-}" = "--check" ]; then
   diff -u "$OUT" <(gerar) || { echo "docs/catalogo.md desatualizado: rode bash tools/gen-catalogo.sh" >&2; exit 1; }
