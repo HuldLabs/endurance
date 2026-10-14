@@ -10,7 +10,7 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 
 | Ferramenta | Versão | Para que serve |
 | --- | --- | --- |
-| `tars` | `ghcr.io/huldlabs/tars:0.0.1-dev.22` @ `sha256:76d91cf23b73…` | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest |
+| `tars` | `ghcr.io/huldlabs/tars:0.0.1-dev.24` @ `sha256:eacd4847627e…` | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest |
 | `debian` | `debian:trixie-slim` @ `sha256:a29215f6a35e…` | sistema base (trixie-slim, por digest) |
 | `git` | `1:2.47.3-0+deb13u1` | controle de versao (apt, versao exata) |
 | `python3` | `3.13.5-1` | interpretador do SISTEMA (scripts de feature e `op`); runtime de projeto e' a feature python-uv |

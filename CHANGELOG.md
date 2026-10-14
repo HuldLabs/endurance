@@ -17,7 +17,9 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 - **Catálogo gerado (`docs/catalogo.md`).** Cada ferramenta da base (versão e para que serve) e cada feature (id,
   versão, ref de uso, todas as options, `installsAfter`), gerado por `tools/gen-catalogo.sh` dos
   `devcontainer-feature.json` e dos marcadores `# catalogo:` do `Dockerfile`; o `test.yml` falha se divergir.
-- **`tars` 0.0.1-dev.22 na base.** Binário copiado da imagem do Tars por digest (D17).
+- **`tars` 0.0.1-dev.24 na base.** Binário copiado da imagem do Tars por digest (D17); `.ai` no lock da dev.24, com
+  a doutrina `release` declarada (o processo desta tag: PR final, merge do dono como aval, coord corta a tag, D20).
+  As notas da Release saem do `tars release-notes --kind image`, sem pós-processamento.
 - **`secrets` 2.0.0 e `signing` 2.0.x finas.** Só `tars secrets git-credential` (helper do git do sistema) e
   `tars identity sign-setup`/`verify` no postStart; os scripts próprios de segredo saem. `signing` 2.0.1 liga
   `commit.gpgsign` no sistema já no build e usa `timeout` no postStart. O `tars identity provision` é só do dono (TTY).
@@ -47,12 +49,16 @@ Decisões do dono de 14/10 (D18, numeração e "Release completa, igual ao Tars"
 coord segtools (D4); pedidos do seo-brain; lacunas L1–L7 do mapeamento do ecossistema; F8: lógica de segredo própria
 no consumidor é defeito (R5), e o Tars dev.19 publicou a imagem e os comandos.
 
+Bugs reportados por consumidores que esta versão fecha: nenhum (é a primeira publicação). Bugs do Tars achados
+aqui e fechados lá: sync que apagava a `lib-json.sh` e guards que aprovavam sem ela (14/10, dev.21/dev.22);
+imagem com tag de versão antes da Release (gate deste repo, 14/10, dev.24).
+
 ### Arquivos impactados
 `README.md`, `BACKLOG.md`, `HANDOFF.md`, `CHANGELOG.md`, `MAPA.md`, `docs/decisoes-20261008.md`,
 `docs/ecossistema.md`, `docs/catalogo.md` (novo, gerado), `tools/gen-catalogo.sh` (novo),
 `src/{gh,lint,opentofu,duckdb,kubectl-helm,restic-rclone,node-bun,python-uv,opencode}/`, `.githooks/`,
 `images/base/Dockerfile`, `src/secrets/`, `src/signing/`, `src/tars/` (removida), `test/`,
-`.github/workflows/{test,publish}.yml`.
+`.github/workflows/{test,publish}.yml`, `tools/tars-atual.sh` (novo), `.ai/tars.toml`, `.ai/tars.lock`, `.ai/base/`.
 
 ### O que o consumidor faz
 - Fixe a base como `base:0.0.1-dev.3`, de preferência por digest (o digest está nas notas da Release); não use `:1`.
