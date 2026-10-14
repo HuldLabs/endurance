@@ -37,6 +37,13 @@
 | F14 | **(seo-brain, dono)** Egress/proxy (`EXTERNAL_PROXY_URL`, `ZYTE_API_KEYS`): é **configuração**, não feature — `containerEnv` do projeto + `tars secrets exec`. Só vira feature se precisar de binário (ex.: cliente VPN) | decisão do dono sobre egress | coleta passa pelo proxy sem chave em argv/log |
 | F15 | **(seo-brain)** Safari REAL: impossível em container Linux (Apple só publica para macOS). O WebKit do Playwright é o motor, não o Safari; se a coerência UA↔`client` exigir Safari, é runner macOS, fora do Endurance | medição do UA do WebKit pelo seo-brain | decisão registrada no ADR-006 do seo-brain |
 | F12 | Depois da primeira tag (`v0.0.1-dev.3`): tirar `ENDURANCE_UNPUBLISHED=1` do `test.yml` | F9 | CI testa os `devcontainer-feature.json` como o consumidor vê |
+| F26 | Trocar o `sed` do job `release` (texto de verificação do `notes.md`) pelo `tars release-notes --kind image` | dev.24 do Tars | notas da Release sem pós-processamento |
+
+### Feito (14/10, branch `w/tarsgate`)
+
+| # | item | prova |
+| --- | --- | --- |
+| F25 | Rotina do Tars na base: `tools/tars-atual.sh` (última versão de `ghcr.io/huldlabs/tars` pelo registry, digest fixado = digest da tag); `test.yml` avisa, `publish.yml` `--strict` falha; README "Rotina do Tars na base" | `tools/tars-atual.test.sh` (em dia, atrasado, `--strict`, digest divergente, sem digest); actionlint limpo |
 
 ### Feito (14/10, branch `w/base2`)
 

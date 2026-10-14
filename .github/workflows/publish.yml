@@ -41,6 +41,11 @@ jobs:
           username: ${{ vars.GHCR_READ_USER }}
           password: ${{ secrets.GHCR_READ_TOKEN }}
 
+      # Rotina do Tars (README): imagem nova SO' sai com a ultima Release do Tars, por digest.
+      # Atrasado ou digest divergente falha aqui, antes de qualquer build/push.
+      - name: Tars em dia na base (gate)
+        run: bash tools/tars-atual.sh --strict
+
       # A versao sai da TAG, nao do arquivo: `v0.0.1-dev.3` publica `base:0.0.1-dev.3`.
       # Pre-release (versao com `-`) NAO move a tag curta (`:0`): as duas viram a versao cheia.
       - name: Version from tag
