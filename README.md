@@ -301,6 +301,29 @@ Os cenários (`test/<feature>/`) rodam sobre `endurance-base:local`
 `ENDURANCE_UNPUBLISHED=1` existe até a primeira tag: antes dela o `installsAfter` entre
 features do próprio repo não resolve no GHCR.
 
+## Rotina do Tars na base
+
+O `tars` é parte da base (D17), então **o bump do Tars é obrigatório**:
+
+- **Toda imagem nova sai com a última Release do Tars** (pré-release incluída), copiada **por digest** do
+  `ARG TARS_IMAGE` (`ghcr.io/huldlabs/tars:<versão>@sha256:…`) do `images/base/Dockerfile`.
+- **Release do Tars com correção de segurança** (guards, gates, segredos — o `CHANGELOG` do Tars diz) **corta imagem
+  nova do Endurance logo**: bump + tag, sem esperar outra mudança.
+- **Gate (`tools/tars-atual.sh`)**: lê a lista de tags de `ghcr.io/huldlabs/tars` no registry (com o login de leitura
+  do GHCR que o docker já tem; token nunca em argv/log), pega a maior versão (pré-release antes da final) e confere
+  pelo `docker buildx imagetools inspect` que o digest fixado é o da tag declarada.
+  - `test.yml` (PR): atrasado vira `::warning::` alto, sem reprovar;
+  - `publish.yml` (tag): `--strict`, atrasado **falha** antes de buildar/publicar;
+  - digest fixado ≠ digest da tag declarada: **falha sempre**.
+  - Casos simulados (sem rede): `bash tools/tars-atual.test.sh`.
+
+**Como fazer o bump:**
+
+1. Trocar tag **e** digest do `ARG TARS_IMAGE` (digest: `docker buildx imagetools inspect ghcr.io/huldlabs/tars:<versão>`);
+2. `tars sync --upgrade` (o `.ai` vai para o lock da mesma versão);
+3. `bash tools/gen-catalogo.sh` (a linha `tars` do `docs/catalogo.md` mostra tag + digest curto);
+4. `bash tools/tars-atual.sh` diz "em dia"; entrada no `CHANGELOG.md`.
+
 ## Publicação
 
 `.github/workflows/publish.yml` publica as features e a imagem base no GHCR usando

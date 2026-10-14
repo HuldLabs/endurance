@@ -7,6 +7,10 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 ## 0.0.1-dev.3
 
 ### O que mudou
+- **Gate do Tars na base (`tools/tars-atual.sh`).** Compara o `ARG TARS_IMAGE` com a última versão publicada de
+  `ghcr.io/huldlabs/tars` (pré-release incluída) e exige que o digest fixado seja o da tag declarada: no PR avisa
+  (`::warning::`), na tag (`publish.yml`) falha antes de publicar; digest divergente falha sempre. Rotina do bump no
+  README ("Rotina do Tars na base").
 - **Primeira publicação, com Release completa.** A tag `v0.0.1-dev.3` publica a base e as features no GHCR e, por
   último, a Release do GitHub com notas do `tars release-notes`, a base por digest e o `docs/catalogo.md` anexo
   (com `sha256sums`). Versão com `-` sai como pré-release. A numeração ficou alinhada: é a `v0.0.1-dev.3`, não a `v0.1.0`.
