@@ -93,6 +93,71 @@ Pulumi da infra; `playwright` porque há e2e de browser):
 }
 ```
 
+**WordPress/PHP** (fabber-ecommerce — PHP 8.3 com composer e wp-cli, MySQL 8 e Valkey no
+compose, front em Node com `package-lock.json`):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "features": {
+    "ghcr.io/huldlabs/endurance/php:1": { "version": "8.3" },
+    "ghcr.io/huldlabs/endurance/mysql-client:1": {},
+    "ghcr.io/huldlabs/endurance/redis-client:1": {},
+    "ghcr.io/huldlabs/endurance/node-bun:1": { "nodeVersion": "24", "packageManager": "npm" }
+  }
+}
+```
+
+**Pesquisa com browser real** (seo-brain — Python, Chrome REAL para o coletor de SERP e
+`agent-browser` para os subagentes):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "features": {
+    "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
+    "ghcr.io/huldlabs/endurance/node-bun:1": { "install": false },
+    "ghcr.io/huldlabs/endurance/playwright:1": { "browser": "chrome" },
+    "ghcr.io/huldlabs/endurance/agent-browser:1": {},
+    "ghcr.io/huldlabs/endurance/tars:1": {}
+  },
+  "mounts": [
+    // Sessão do agent-browser (cookies logados = CREDENCIAL): volume por usuário E projeto.
+    "source=${localEnv:USER}-seo-brain-agent-browser,target=/home/dev/.agent-browser,type=volume",
+    // Checkout do Tars, somente leitura (a feature `tars` roda dele).
+    "source=${localEnv:HOME}/projects/tars,target=/opt/tars,type=bind,readonly"
+  ]
+}
+```
+
+Segredo do projeto (`SERP_DSN`, `DEEPSEEK_API_KEY`) não passa à mão: o projeto declara as
+refs `op://` no template do `tars secrets` (`[secrets]` do `.ai/tars.toml`) e roda
+`tars secrets exec -- <cmd>`. O valor só existe no env do filho.
+
+**PowerShell** (dotfiles — scripts `.ps1`):
+
+```jsonc
+{
+  "image": "ghcr.io/huldlabs/endurance/base:1",
+  "features": { "ghcr.io/huldlabs/endurance/pwsh:1": {} }
+}
+```
+
+### Tarefa longa (`endurance-bg`)
+
+O harness do agente mata o **grupo de processos** do comando quando ele termina: `cmd &` e
+`nohup cmd &` morrem juntos. A base traz `endurance-bg`, um `setsid` com nome, log e
+pidfile ([ADR-0001](docs/adr/0001-tarefas-longas.md)):
+
+```bash
+endurance-bg start ollama -- ollama serve
+endurance-bg status
+endurance-bg log ollama
+endurance-bg stop ollama
+```
+
+Serviço de verdade (banco, fila, storage) continua no compose do projeto.
+
 ### Caches em `.cache/` (recomendação, não padrão)
 
 Caches de ferramenta (`uv`, `bun`, `pnpm`, `ms-playwright`, `pycache`) ficam **fora** da
@@ -137,12 +202,12 @@ segundo cobre o buraco do segtools, que só tinha `post-create`:
 
 | Aqui (`endurance`) | No projeto |
 | --- | --- |
-| `images/base`: git, curl, sops, age, op, gitleaks, task, docker CLI, claude-code, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
-| Features de runtime: `node-bun`, `python-uv`, `postgres-client` | Versões exatas exigidas pelo projeto (`.node-version`, `.python-version`, lockfiles) |
+| `images/base`: git, curl, sops, age, op, gitleaks, task, docker CLI, claude-code (nativo), `endurance-bg`, `endurance-init`, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
+| Features de runtime: `node-bun`, `python-uv`, `php`, `pwsh`, clientes `postgres`/`mysql`/`redis`, `playwright`, `agent-browser` | Versões exatas exigidas pelo projeto (`.node-version`, `.python-version`, lockfiles) |
 | `secrets`: os scripts `op-sops`, `git-credential-op`, `gh-op`, parametrizados por projeto | Os mounts, os nomes de volume e as portas publicadas |
 | `signing`: ssh-agent de caminho fixo, `allowed_signers`, `gpg.format=ssh` | A referência `op://` da chave de assinatura e o arquivo `allowed_signers` |
 | `lifecycle/scripts`: limpeza de órfão e validação de `.venv` | Ligar os hooks, as portas e o `containerEnv` de cache |
-| `tars`: o binário do assistente | As referências `op://` do cofre e os campos de cada projeto |
+| `tars`: o shim do Tars (checkout montado) | O mount do checkout, as refs `op://` e o `[secrets]` de cada projeto |
 | Workflow de publicação das features e da imagem base | `post-create`/`post-start` do projeto (hooks, stamps, subir o app) |
 
 **Fronteira dura:** nada de credencial, host, dado de cliente ou referência de cofre
@@ -153,15 +218,32 @@ ferramenta, nunca o conteúdo.
 
 | Feature | O que traz |
 | --- | --- |
-| [`node-bun`](src/node-bun) | Node (`nodeVersion`) + bun 1.4.2 ou pnpm 11.1.1 (`packageManager`), install congelado idempotente |
+| [`node-bun`](src/node-bun) | Node (`nodeVersion`) + bun 1.4.2, pnpm 11.1.1 (corepack) ou npm (`packageManager`), install congelado idempotente |
 | [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`) + `uv`, venv e `uv sync` |
-| [`secrets`](src/secrets) | `op-sops.sh` (com fallback Connect → Service Account), `git-credential-op.sh`, `gh-op.sh` |
+| [`secrets`](src/secrets) | `op-sops.sh` (com fallback Connect → Service Account), `git-credential-op.sh` (ligado no git do **sistema**: vale em qualquer repo), `gh-op.sh` |
 | [`signing`](src/signing) | `ssh-agent-init` (chave em agente, nunca em disco), `signing-git-config`, `allowed_signers` |
-| [`playwright`](src/playwright) | Bibliotecas de sistema do Chromium (`install-deps`) + browser no cache do container |
+| [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome` instala o Google Chrome real |
 | [`pulumi`](src/pulumi) | CLI do Pulumi (3.263.0), versão pinada |
-| [`tars`](src/tars) | Binário do [HuldLabs/tars](https://github.com/HuldLabs/tars), do Release |
+| [`tars`](src/tars) | Shim `tars` rodando o [HuldLabs/tars](https://github.com/HuldLabs/tars) do checkout montado em `TARS_HOME` |
 | [`postgres-client`](src/postgres-client) | `psql`/`pg_dump` do major pedido (repo PGDG assinado) |
 | [`lifecycle`](src/lifecycle) | Scripts de `initializeCommand`/`updateContentCommand` (órfãos) |
+| [`php`](src/php) | php-cli do minor pedido (Sury) + composer 2.10.3 + wp-cli 2.12.0, checksums conferidos |
+| [`mysql-client`](src/mysql-client) | `mysql`/`mysqldump` da Oracle (repo apt assinado, trilha 8.4 LTS; fala com MySQL 8.0 de TLS autoassinado) |
+| [`redis-client`](src/redis-client) | `valkey-cli` (também como `redis-cli`) |
+| [`pwsh`](src/pwsh) | PowerShell 7.6.6 (tarball oficial, sha256 conferido) |
+| [`agent-browser`](src/agent-browser) | CLI `agent-browser` dirigindo o Chrome do sistema; sessão em volume por usuário/projeto |
+
+### Testar
+
+```bash
+ENDURANCE_UNPUBLISHED=1 tools/test-features.sh            # todas
+ENDURANCE_UNPUBLISHED=1 tools/test-features.sh php pwsh   # algumas
+```
+
+Os cenários (`test/<feature>/`) rodam sobre `endurance-base:local`
+(`docker build -t endurance-base:local images/base`). O CI (`test.yml`) faz o mesmo em PR.
+`ENDURANCE_UNPUBLISHED=1` existe até a primeira tag: antes dela o `installsAfter` entre
+features do próprio repo não resolve no GHCR.
 
 ## Publicação
 
@@ -213,6 +295,6 @@ Rascunho. As versões fixadas estão em `images/base/Dockerfile` e no
 
 ## Decisões
 
-`docs/decisoes-20261008.md` — sequência de uso (segurar a tag `v0.1.0` até o Tars
-dev.10), features `secrets`/`signing` enxutas delegando ao `tars`, e a cobertura
+`BACKLOG.md` (decisões em vigor e fila) e `docs/adr/`. Histórico: `docs/decisoes-20261008.md` — sequência de uso (segurar a tag `v0.1.0` até o Tars
+ter `tars identity`), features `secrets`/`signing` enxutas delegando ao `tars`, e a cobertura
 de tooling por projeto (o que falta: php, mysql-client, redis-client, pwsh).
