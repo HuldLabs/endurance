@@ -51,6 +51,8 @@ uv --version
 # Interpretadores FORA do HOME do root: o uv rodando como root instalaria em
 # /root/.local/share/uv/python (0700), e o venv do usuario apontaria para um python que ele
 # nao consegue executar ("Permission denied"). Diretorio compartilhado e legivel por todos.
+# So' no build: o profile NAO exporta a variavel, senao o `uv python install` do dev tentaria
+# gravar neste diretorio do root; em runtime o uv do dev usa o ~/.local dele.
 export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-/usr/local/share/uv/python}"
 uv python install "$PY"
 
@@ -61,8 +63,10 @@ uv python install "$PY"
 # opaco).
 mkdir -p "$VENV_PATH"
 chown "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
-if [ ! -x "$VENV_PATH/bin/python" ]; then
-  uv venv --python "$PY" "$VENV_PATH"
+# O teste roda COMO o usuario: um venv antigo cujo python esta' em /root passa no `-x` do
+# root e nao roda para o dev. Nesse caso o venv e' refeito (`--clear`).
+if ! su "$USERNAME" -c "'$VENV_PATH/bin/python' -V" >/dev/null 2>&1; then
+  uv venv --clear --python "$PY" "$VENV_PATH"
   chown -R "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
 fi
 
@@ -73,7 +77,6 @@ cat > "$PROFILE" <<EOF
 export UV_CACHE_DIR="${UV_CACHE_DIR:-\$HOME/.cache/uv}"
 export PYTHONPYCACHEPREFIX="${PYTHONPYCACHEPREFIX:-\$HOME/.cache/pycache}"
 export PYTHONDONTWRITEBYTECODE=1
-export UV_PYTHON_INSTALL_DIR="$UV_PYTHON_INSTALL_DIR"
 export VIRTUAL_ENV="$VENV_PATH"
 EOF
 chmod 0644 "$PROFILE"

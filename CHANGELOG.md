@@ -24,7 +24,7 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
   - feature nova `restic-rclone` 1.0.0: restic 0.19.1 + rclone 1.75.2 (L6);
   - `node-bun`: Node 26 instala a `libatomic1` (L4);
   - `python-uv`: aceita versão exata e rc (`3.15.0rc2`); interpretadores do uv em `/usr/local/share/uv/python`
-    (antes iam para `/root` e o venv do `dev` dava "Permission denied") (L4).
+    (antes iam para `/root` e o venv do `dev` dava "Permission denied") (L4). Quem tem o venv num volume nomeado criado pela 1.0.0 apaga esse volume uma vez.
 - **Por quê:**
   - decisões do dono de 14/10 (D18 e versão);
   - correção do desenho combinada com o coord segtools (D4);
