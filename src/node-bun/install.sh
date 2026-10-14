@@ -28,6 +28,12 @@ if ! command -v node >/dev/null 2>&1; then
     *.*.*) NODE_DIR="v${NODE_VERSION}" ;;
     *)     NODE_DIR="latest-v${NODE_VERSION}.x" ;;
   esac
+  # Node 26+ liga dinamicamente na libatomic, que a base nao traz.
+  if ! ldconfig -p | grep -q libatomic.so.1; then
+    apt-get update
+    apt-get install -y --no-install-recommends libatomic1
+    rm -rf /var/lib/apt/lists/*
+  fi
   curl -fsSL "https://nodejs.org/dist/${NODE_DIR}/node-${NODE_DIR}-linux-${NODE_ARCH}.tar.xz" \
     -o /tmp/node.tar.xz
   tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 \

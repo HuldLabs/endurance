@@ -1,6 +1,6 @@
 {
   "id": "node-bun",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Node + bun",
   "description": "Node (versao por option) e o bun. O bun e' o gerenciador de pacotes do ecossistema; o npm vem junto com o Node.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/node-bun",
