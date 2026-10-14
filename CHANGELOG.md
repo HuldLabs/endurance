@@ -4,6 +4,26 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
 Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho) com as 4 subseções `###` do Tars, e
 `- **Destaque.** …` em "O que mudou": é o que o `tars release-notes` lê para gerar as notas da Release.
 
+## 0.0.1-dev.5
+
+### O que mudou
+- **`tars` 0.0.1-dev.28 na base.** Por digest (`sha256:03288466…`), pela rotina do Tars na base; `.ai` no lock da dev.28 (hooks sempre em `.ai/base/guards/`; o sync preserva hook manual).
+- **CI sem login de leitura no GHCR.** A imagem do Tars é pública desde a dev.27: o build da base, o gate
+  `tools/tars-atual.sh` (token anônimo do registry) e as notas da Release não usam mais `GHCR_READ_USER`/`GHCR_READ_TOKEN`.
+
+### Por que
+Rotina do Tars na base (bump a cada Release) e Tars público: o PAT de leitura só servia para puxar o Tars.
+
+Bugs reportados que esta versão fecha: nenhum.
+
+### Arquivos impactados
+`images/base/Dockerfile`, `.ai/tars.lock`, `.ai/base/`, `tools/tars-atual.sh`, `.github/workflows/{test,publish}.yml`,
+`README.md`, `HANDOFF.md`, `BACKLOG.md`, `CHANGELOG.md`, `VERSION`, `docs/catalogo.md`.
+
+### O que o consumidor faz
+Fixar a base pelo digest novo das notas da Release. As features não mudaram. As imagens do Endurance seguem privadas:
+o login de leitura no GHCR para consumir continua igual.
+
 ## 0.0.1-dev.4
 
 ### O que mudou

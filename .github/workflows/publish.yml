@@ -31,16 +31,6 @@ jobs:
 
       - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
-      # O pacote ghcr.io/huldlabs/tars e' PRIVADO e a base o copia por digest (D17). Dois
-      # logins no mesmo registry se substituem (F16), entao o build roda SO' com o de leitura
-      # e carrega a imagem no docker local; o login de push vem depois, so' para o push.
-      # Token so' por secret do repo; nunca em log nem argv.
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ vars.GHCR_READ_USER }}
-          password: ${{ secrets.GHCR_READ_TOKEN }}
-
       # Rotina do Tars (README): imagem nova SO' sai com a ultima Release do Tars, por digest.
       # Atrasado ou digest divergente falha aqui, antes de qualquer build/push.
       - name: Tars em dia na base (gate)
@@ -166,12 +156,6 @@ jobs:
           mkdir dist
           cp docs/catalogo.md dist/catalogo.md
           (cd dist && sha256sum catalogo.md > sha256sums && cat sha256sums)
-
-      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
-        with:
-          registry: ghcr.io
-          username: ${{ vars.GHCR_READ_USER }}
-          password: ${{ secrets.GHCR_READ_TOKEN }}
 
       # O tars e' o MESMO da base: a imagem do ARG TARS_IMAGE, por digest (R3, fonte unica).
       - name: Gerar as notas (tars release-notes)
