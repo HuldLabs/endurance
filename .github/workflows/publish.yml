@@ -11,7 +11,7 @@ on:
   # A tag e o numero da versao, e so' o dono cria: `git tag v0.0.1-dev.3 && git push origin v0.0.1-dev.3`.
   push:
     tags: ["v*"]
-  # Permite republicar sem criar tag (ex.: apos um retry de job que falhou).
+  # Republica uma tag que ja' existe (rode escolhendo a TAG como ref; na main o job recusa).
   workflow_dispatch:
 
 permissions:
@@ -24,9 +24,9 @@ jobs:
   base:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       # O pacote ghcr.io/huldlabs/tars e' PRIVADO e a base o copia por digest (D17). Dois
       # logins no mesmo registry se substituem (F16), entao o build roda SO' com o de leitura
@@ -43,25 +43,31 @@ jobs:
       - name: Version from tag
         id: version
         run: |
+          # workflow_dispatch so' republica uma TAG (escolha a tag como ref): na main sairia `base:main`.
+          [ "$GITHUB_REF_TYPE" = tag ] || { echo "publish so' roda em tag v* (ref atual: $GITHUB_REF_NAME)" >&2; exit 1; }
           full="${GITHUB_REF_NAME#v}"
           major="${full%%.*}"
           case "$full" in *-*) major="$full" ;; esac
-          echo "full=${full}" >> "$GITHUB_OUTPUT"
-          echo "major=${major}" >> "$GITHUB_OUTPUT"
+          {
+            echo "full=${full}"
+            echo "major=${major}"
+            echo "tags<<EOF"
+            echo "ghcr.io/huldlabs/endurance/base:${full}"
+            [ "$major" = "$full" ] || echo "ghcr.io/huldlabs/endurance/base:${major}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           context: images/base
           file: images/base/Dockerfile
           load: true
           push: false
-          tags: |
-            ghcr.io/huldlabs/endurance/base:${{ steps.version.outputs.full }}
-            ghcr.io/huldlabs/endurance/base:${{ steps.version.outputs.major }}
+          tags: ${{ steps.version.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - uses: docker/login-action@v3
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -79,12 +85,12 @@ jobs:
     needs: base
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # `publish` publica CADA pasta em src/* como uma feature. O owner/namespace sai do
       # GITHUB_TOKEN — nao ha string de registry escrita a mao aqui que possa divergir.
       - name: Publish features
-        uses: devcontainers/action@v1
+        uses: devcontainers/action@bef2cf2d1a019b00b45e184f83035e01bd1972f3 # v1.4.4
         with:
           publish-features: "true"
           base-path-to-features: "./src"
