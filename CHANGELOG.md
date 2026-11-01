@@ -9,6 +9,7 @@ Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho)
 ### O que mudou
 - **`tars` 0.0.1-dev.28 na base.** Por digest (`sha256:03288466…`), pela rotina do Tars na base; `.ai` no lock da dev.28 (hooks sempre em `.ai/base/guards/`; o sync preserva hook manual).
 - **Adoção do Tars completa.** `core.hooksPath` ligado, `.ai/tars.toml` na dev.28 (estava na dev.17), linha de base dos gates e índice da memória.
+- **`gh` 2.103.3 na feature.** O apt deixou de oferecer a 2.102.0 e a instalação quebrava (feature 1.0.1).
 - **CI sem login de leitura no GHCR.** A imagem do Tars é pública desde a dev.27: o build da base, o gate
   `tools/tars-atual.sh` (token anônimo do registry) e as notas da Release não usam mais `GHCR_READ_USER`/`GHCR_READ_TOKEN`.
 
