@@ -53,6 +53,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`python-uv`](#python-uv) | 1.3.0 | `ghcr.io/huldlabs/endurance/python-uv:1` | Python + uv |
 | [`redis-client`](#redis-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/redis-client:1` | Redis/Valkey client |
 | [`restic-rclone`](#restic-rclone) | 1.0.0 | `ghcr.io/huldlabs/endurance/restic-rclone:1` | restic + rclone |
+| [`rust`](#rust) | 1.0.0 | `ghcr.io/huldlabs/endurance/rust:1` | Rust |
 | [`secrets`](#secrets) | 2.0.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
 | [`signing`](#signing) | 2.0.1 | `ghcr.io/huldlabs/endurance/signing:2` | Assinatura de commit (tars identity) |
 
@@ -323,6 +324,22 @@ Sem options.
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
 - **Fonte:** [`src/restic-rclone/`](../src/restic-rclone)
+
+### rust
+
+**Rust** — versão 1.0.0. rustup, cargo e o linker C. A versao do projeto vem do rust-toolchain.toml; a option e' so' o toolchain inicial.
+
+```jsonc
+"features": { "ghcr.io/huldlabs/endurance/rust:1": {} }
+```
+
+| Option | Tipo | Default | Valores | Descrição |
+| --- | --- | --- | --- | --- |
+| `version` | string | `stable` | livre | Toolchain inicial. O rust-toolchain.toml do projeto vence e o rustup o instala no primeiro uso. |
+
+- **Instalar depois de (`installsAfter`):** —
+- **containerEnv:** `RUSTUP_HOME=/usr/local/rustup`, `CARGO_HOME=/usr/local/cargo`, `PATH=/usr/local/cargo/bin:${PATH}`
+- **Fonte:** [`src/rust/`](../src/rust)
 
 ### secrets
 
