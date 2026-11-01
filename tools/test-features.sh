@@ -7,7 +7,7 @@
 # scenarios. Depois da publicacao, rode sem a variavel: testa o arquivo como o consumidor ve.
 set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
-CLI="@devcontainers/cli@0.89.0"
+CLI="@devcontainers/cli@0.90.0"
 feats=("$@"); [ ${#feats[@]} -gt 0 ] || mapfile -t feats < <(ls "$root/test")
 
 dir="$root"

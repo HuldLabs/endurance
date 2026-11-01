@@ -40,6 +40,11 @@ todas as options): [`docs/catalogo.md`](docs/catalogo.md), gerado por `tools/gen
 O `image` dá a base; cada `features` acrescenta um runtime; o resto (compose,
 Postgres, portas, mounts, variáveis de ambiente) é do projeto.
 
+**devcontainer CLI ≥ 0.89.0 com Docker ≥ 29.** O 0.80.1 trava no primeiro `up`: espera o
+campo legado `status` no `docker events`, que o Docker 29 (API 1.56) não manda mais (só
+`Action`). O segundo `up` concluía porque achava o container já de pé. Use
+`npx -y @devcontainers/cli@0.90.0 up` uma vez só.
+
 ### Qual projeto usa o quê
 
 Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVersion`,
