@@ -16,6 +16,9 @@
       "description": "user.email do git no sistema. Vazio: nao define."
     }
   },
+  "mounts": [
+    { "source": "ssh-state-${devcontainerId}", "target": "/home/dev/.ssh", "type": "volume" }
+  ],
   "postStartCommand": "timeout 30 tars identity sign-setup && timeout 30 tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); commit assinado vai falhar ate o DONO rodar `tars identity provision` (TTY)' >&2",
   "installsAfter": [
     "ghcr.io/huldlabs/endurance/secrets",
