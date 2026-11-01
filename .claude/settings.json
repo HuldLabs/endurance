@@ -24,6 +24,19 @@
             "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/block-secret-dump.sh\""
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/gates/no-add-all/no-add-all.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/gates/daneel-acoes/daneel-acoes.sh\""
+          }
+        ]
       }
     ],
     "PreCompact": [
@@ -37,7 +50,26 @@
         ]
       }
     ],
-    "SessionStart": [],
-    "Stop": []
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/sessionstart-context-digest.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/stop-unfinished-work.sh\""
+          }
+        ]
+      }
+    ]
   }
 }

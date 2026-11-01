@@ -6,8 +6,9 @@ version = "0.0.1-dev.29"
 skills  = ["agent-coordination", "root-cause-debugging", "senior-research", "daneel"]
 rules   = ["principles", "ambiente"]
 memory  = []                                        # fatias da memoria base por tema, ex.: ["git", "db"]
-guards  = ["block-destructive-commands", "block-host-commit", "block-secret-dump", "lib-json", "precompact-persist-state", "test-block-destructive-commands", "test-block-secret-dump", "test-precompact-persist-state"]
-governance = ["novo-repo", "segredos-e-identidade", "release", "versionamento-de-extracao", "git", "incidente-vira-prevencao", "onde-mora-o-conhecimento", "source-of-truth"]
+guards  = ["block-destructive-commands", "block-host-commit", "block-secret-dump", "lib-json", "precompact-persist-state", "sessionstart-context-digest", "stop-unfinished-work", "test-block-destructive-commands", "test-block-secret-dump", "test-precompact-persist-state"]
+agent_gates = ["no-add-all", "daneel-acoes"]
+governance = ["licoes-plataforma", "novo-repo", "segredos-e-identidade", "release", "versionamento-de-extracao", "git", "incidente-vira-prevencao", "onde-mora-o-conhecimento", "source-of-truth"]
 
 # Ambiente extra do agente (opcional). O sync SEMPRE injeta o nao interativo
 # (GIT_TERMINAL_PROMPT=0, GCM_INTERACTIVE=never, GIT_SSH_COMMAND com BatchMode).
@@ -16,7 +17,7 @@ governance = ["novo-repo", "segredos-e-identidade", "release", "versionamento-de
 # MINHA_CHAVE = "valor"
 
 [gates]
-pre-commit = ["gitleaks"]
+pre-commit = ["gitleaks", "no-add-all", "lint-swallow"]
 commit-msg = ["commit-msg"]                                     # do catalogo: commit-msg, gitleaks, no-add-all, layout-check, ds-gate
 pre-push   = []                                     # do catalogo: full-check
 local      = []                                     # do PROJETO (moradia propria, nao entra no lock): ex.: ["tools/gates/meu.sh"]

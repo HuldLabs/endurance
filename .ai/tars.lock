@@ -11,11 +11,41 @@
       "sha256": "sha256-38f3ed90f148f324f1e5f19354d2ad26e4d425245558710b7650500183ebee0a",
       "origem": "sha256-38f3ed90f148f324f1e5f19354d2ad26e4d425245558710b7650500183ebee0a"
     },
+    "gates/daneel-acoes": {
+      "area": "gates",
+      "item": "daneel-acoes",
+      "sha256": "sha256-67c445676b3e192d8e82d4757e6dfb9ee01b53b46cdffe5e33d3125537a1525f",
+      "origem": "sha256-67c445676b3e192d8e82d4757e6dfb9ee01b53b46cdffe5e33d3125537a1525f"
+    },
     "gates/gitleaks": {
       "area": "gates",
       "item": "gitleaks",
       "sha256": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149",
       "origem": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149"
+    },
+    "gates/lib-baseline.mjs": {
+      "area": "gates",
+      "item": "lib-baseline.mjs",
+      "sha256": "c66f539a9ce644812672b2994ae2bee132007c76f658b88144f35e2cf2cc0b5c",
+      "origem": "c66f539a9ce644812672b2994ae2bee132007c76f658b88144f35e2cf2cc0b5c"
+    },
+    "gates/lib-staged.mjs": {
+      "area": "gates",
+      "item": "lib-staged.mjs",
+      "sha256": "1ddf6fa0685819570db47c228d4c1997909a10f3d6ee9b407f0a01c6b53e07f6",
+      "origem": "1ddf6fa0685819570db47c228d4c1997909a10f3d6ee9b407f0a01c6b53e07f6"
+    },
+    "gates/lint-swallow": {
+      "area": "gates",
+      "item": "lint-swallow",
+      "sha256": "sha256-241031247f0f366c6895d5b997009b680ee13097587f994c89ebc318b64eea59",
+      "origem": "sha256-241031247f0f366c6895d5b997009b680ee13097587f994c89ebc318b64eea59"
+    },
+    "gates/no-add-all": {
+      "area": "gates",
+      "item": "no-add-all",
+      "sha256": "sha256-9e58cf3b585eaa3f670ae7b630799d25ea26e74b3d2487e8449aabcb53ce4223",
+      "origem": "sha256-9e58cf3b585eaa3f670ae7b630799d25ea26e74b3d2487e8449aabcb53ce4223"
     },
     "governance/git.md": {
       "area": "governance",
@@ -28,6 +58,12 @@
       "item": "incidente-vira-prevencao",
       "sha256": "6837187b3d4e80ffc6334e95d1429a54b65928776a1b9fdfa504e1b83d3fac28",
       "origem": "6837187b3d4e80ffc6334e95d1429a54b65928776a1b9fdfa504e1b83d3fac28"
+    },
+    "governance/licoes-plataforma.md": {
+      "area": "governance",
+      "item": "licoes-plataforma",
+      "sha256": "ea0c197c60bd7ddff10c1d0f8c4ea1a004502be76fb73ae12d6691fae1b2ff46",
+      "origem": "ea0c197c60bd7ddff10c1d0f8c4ea1a004502be76fb73ae12d6691fae1b2ff46"
     },
     "governance/novo-repo.md": {
       "area": "governance",
@@ -94,6 +130,18 @@
       "item": "precompact-persist-state",
       "sha256": "7b4cb45f0df648dc6fdd24ee8cf665af17991ff58ce52fab6a3b0d5edf0b68b2",
       "origem": "7b4cb45f0df648dc6fdd24ee8cf665af17991ff58ce52fab6a3b0d5edf0b68b2"
+    },
+    "guards/sessionstart-context-digest.sh": {
+      "area": "guards",
+      "item": "sessionstart-context-digest",
+      "sha256": "a5e47d15822eae22250d2591432dc27574aa25e32f51d2eba73b88a1d8632644",
+      "origem": "a5e47d15822eae22250d2591432dc27574aa25e32f51d2eba73b88a1d8632644"
+    },
+    "guards/stop-unfinished-work.sh": {
+      "area": "guards",
+      "item": "stop-unfinished-work",
+      "sha256": "28da1e13abf93b4b291b6b0011ef729c1f2ee131fa1addcf2da7900512a3f62d",
+      "origem": "28da1e13abf93b4b291b6b0011ef729c1f2ee131fa1addcf2da7900512a3f62d"
     },
     "guards/test-block-destructive-commands.sh": {
       "area": "guards",
