@@ -27,7 +27,7 @@ todas as options): [`docs/catalogo.md`](docs/catalogo.md), gerado por `tools/gen
 ```jsonc
 {
   "name": "meu-projeto",
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": {
     "ghcr.io/huldlabs/endurance/node-bun:1": {},
     "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
@@ -51,7 +51,7 @@ Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVe
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
     "ghcr.io/huldlabs/endurance/postgres-client:1": { "version": "18" },
@@ -64,7 +64,7 @@ Cada projeto do ecossistema declara a própria versão (`nodeVersion`, `pythonVe
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": {
     "ghcr.io/huldlabs/endurance/node-bun:1": {
       "nodeVersion": "22",
@@ -80,7 +80,7 @@ Pulumi da infra; `playwright` porque há e2e de browser):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.14" },
     "ghcr.io/huldlabs/endurance/node-bun:1": {
@@ -101,7 +101,7 @@ compose, front em Node com `package-lock.json`):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": {
     "ghcr.io/huldlabs/endurance/php:1": { "version": "8.3" },
     "ghcr.io/huldlabs/endurance/mysql-client:1": {},
@@ -117,7 +117,7 @@ compose, front em Node com `package-lock.json`):
 ```jsonc
 {
   // Base por DIGEST: copie o digest das notas da Release (seção "Base"); a tag é só legível.
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3@sha256:<digest das notas da Release>",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5@sha256:<digest das notas da Release>",
   "remoteUser": "dev",
   "features": {
     "ghcr.io/huldlabs/endurance/python-uv:1": { "pythonVersion": "3.13" },
@@ -230,7 +230,7 @@ montado. As features `secrets` e `signing` são finas e só ligam o `tars`:
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": { "ghcr.io/huldlabs/endurance/pwsh:1": {} }
 }
 ```
@@ -240,7 +240,7 @@ do terraform):
 
 ```jsonc
 {
-  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.3",
+  "image": "ghcr.io/huldlabs/endurance/base:0.0.1-dev.5",
   "features": {
     "ghcr.io/huldlabs/endurance/node-bun:1": { "nodeVersion": "26", "packageManager": "pnpm" },
     "ghcr.io/huldlabs/endurance/gh:1": {},
@@ -401,7 +401,7 @@ git push origin v0.0.1-dev.3
 ```
 
 **Numeração (D13, D18):** `0.0.1-dev.N` enquanto o Endurance não é produto, a versão do
-`CHANGELOG.md`. A tag `v0.0.1-dev.3` publica `ghcr.io/huldlabs/endurance/base:0.0.1-dev.3`.
+`CHANGELOG.md`. A tag `v0.0.1-dev.3` publica `ghcr.io/huldlabs/endurance/base:0.0.1-dev.5`.
 Por ser pré-release, ela **não** move nenhuma tag curta (`:0`, `:1`). O projeto fixa a
 base pela versão cheia e, de preferência, por **digest** (`base@sha256:…`, segurança
 multiusuário item 8). A tag curta `:N` só passa a existir a partir da primeira versão
