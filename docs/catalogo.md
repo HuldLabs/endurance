@@ -55,7 +55,6 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`restic-rclone`](#restic-rclone) | 1.0.0 | `ghcr.io/huldlabs/endurance/restic-rclone:1` | restic + rclone |
 | [`secrets`](#secrets) | 2.0.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
 | [`signing`](#signing) | 2.0.1 | `ghcr.io/huldlabs/endurance/signing:2` | Assinatura de commit (tars identity) |
-| [`tars`](#tars) | 1.0.0 | `ghcr.io/huldlabs/endurance/tars:1` | TARS |
 
 ### agent-browser
 
@@ -355,19 +354,3 @@ Sem options.
   ```sh
   timeout 30 tars identity sign-setup && timeout 30 tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); commit assinado vai falhar ate o DONO rodar `tars identity provision` (TTY)' >&2
   ```
-
-### tars
-
-**TARS** — versão 1.0.0. Baixa o binario do TARS do Release do HuldLabs/tars e o coloca no PATH.
-
-```jsonc
-"features": { "ghcr.io/huldlabs/endurance/tars:1": {} }
-```
-
-| Option | Tipo | Default | Valores | Descrição |
-| --- | --- | --- | --- | --- |
-| `version` | string | `latest` | livre | Tag do Release (ex.: v1.2.0) ou 'latest'. |
-| `repo` | string | `HuldLabs/tars` | livre | Owner/repo de onde o binario e' baixado. |
-
-- **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
-- **Fonte:** [`src/tars/`](../src/tars)
