@@ -1,0 +1,4 @@
+[endurance] CI proibido por ordem do dono: publish.yml/test.yml desligados; nao religar nem disparar.
+[endurance] Corte de versao (tag/Release/publicacao no GHCR) so' por ordem explicita do dono; tudo fica na dev.5.
+[endurance] Commit/push so' como Daneel no container segtools-dev (usuario node, bash -l, /projects/endurance); nunca no host.
+[endurance] Duvida de adocao do Tars vai ao COORD TARS, nunca ao dono.
