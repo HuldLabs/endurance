@@ -362,7 +362,10 @@ Sem options.
 "features": { "ghcr.io/huldlabs/endurance/signing:2": {} }
 ```
 
-Sem options.
+| Option | Tipo | Default | Valores | Descrição |
+| --- | --- | --- | --- | --- |
+| `userName` | string | `` | livre | user.name do git no sistema. Vazio: nao define. |
+| `userEmail` | string | `` | livre | user.email do git no sistema. Vazio: nao define. |
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/huldlabs/endurance/secrets`, `ghcr.io/devcontainers/features/common-utils`
 - **Fonte:** [`src/signing/`](../src/signing)

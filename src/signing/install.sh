@@ -21,5 +21,8 @@ command -v ssh-keygen >/dev/null 2>&1 || {
 }
 
 git config --system commit.gpgsign true
+git config --system gpg.format ssh
+[ -z "${USERNAME:-}" ] || git config --system user.name "$USERNAME"
+[ -z "${USEREMAIL:-}" ] || git config --system user.email "$USEREMAIL"
 
 echo "signing: pronto (postStart: tars identity sign-setup + verify)"
