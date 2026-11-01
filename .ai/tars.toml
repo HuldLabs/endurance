@@ -2,7 +2,7 @@
 # As listas abaixo estao vazias de proposito: descomente e preencha o que este projeto
 # usa. O MOTOR vem sempre (ai-memory, ai-layer-check, o sync e os hooks), sem declarar.
 [tars]
-version = "0.0.1-dev.29"
+version = "0.0.1-dev.30"
 skills  = ["agent-coordination", "root-cause-debugging", "senior-research", "daneel"]
 rules   = ["principles", "ambiente"]
 memory  = []                                        # fatias da memoria base por tema, ex.: ["git", "db"]
@@ -17,7 +17,7 @@ governance = ["licoes-plataforma", "novo-repo", "segredos-e-identidade", "releas
 # MINHA_CHAVE = "valor"
 
 [gates]
-pre-commit = ["gitleaks", "no-add-all", "lint-swallow"]
+pre-commit = ["gitleaks", "no-add-all", "lint-swallow", "healthcheck", "fail-closed"]
 commit-msg = ["commit-msg"]                                     # do catalogo: commit-msg, gitleaks, no-add-all, layout-check, ds-gate
 pre-push   = []                                     # do catalogo: full-check
 local      = []                                     # do PROJETO (moradia propria, nao entra no lock): ex.: ["tools/gates/meu.sh"]

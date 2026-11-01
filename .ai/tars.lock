@@ -1,21 +1,28 @@
 {
   "lockfileVersion": 1,
   "tars": {
-    "version": "0.0.1-dev.29",
-    "commit": null
+    "version": "0.0.1-dev.30",
+    "commit": null,
+    "de": "0.0.1-dev.29"
   },
   "files": {
     "gates/commit-msg": {
       "area": "gates",
       "item": "commit-msg",
-      "sha256": "sha256-38f3ed90f148f324f1e5f19354d2ad26e4d425245558710b7650500183ebee0a",
-      "origem": "sha256-38f3ed90f148f324f1e5f19354d2ad26e4d425245558710b7650500183ebee0a"
+      "sha256": "sha256-73ae434ee609a4212ca828d311583f14a41a18b957445b6454a4fac2a4a91823",
+      "origem": "sha256-73ae434ee609a4212ca828d311583f14a41a18b957445b6454a4fac2a4a91823"
     },
     "gates/daneel-acoes": {
       "area": "gates",
       "item": "daneel-acoes",
-      "sha256": "sha256-67c445676b3e192d8e82d4757e6dfb9ee01b53b46cdffe5e33d3125537a1525f",
-      "origem": "sha256-67c445676b3e192d8e82d4757e6dfb9ee01b53b46cdffe5e33d3125537a1525f"
+      "sha256": "sha256-ac15184b098cda0d79cb04f5048cf740a8abdb86a87049ef3ac2d4c094b3d812",
+      "origem": "sha256-ac15184b098cda0d79cb04f5048cf740a8abdb86a87049ef3ac2d4c094b3d812"
+    },
+    "gates/fail-closed": {
+      "area": "gates",
+      "item": "fail-closed",
+      "sha256": "sha256-7f2fe73245a1fd582accb14165532ae21d5b5be23d168c2995fecdb62e0d3df2",
+      "origem": "sha256-7f2fe73245a1fd582accb14165532ae21d5b5be23d168c2995fecdb62e0d3df2"
     },
     "gates/gitleaks": {
       "area": "gates",
@@ -23,11 +30,23 @@
       "sha256": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149",
       "origem": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149"
     },
+    "gates/healthcheck": {
+      "area": "gates",
+      "item": "healthcheck",
+      "sha256": "sha256-e5db38e0bf18994ef15240d8f63760ba17ef2b5571f753f1e7d5ee38aee3b87d",
+      "origem": "sha256-e5db38e0bf18994ef15240d8f63760ba17ef2b5571f753f1e7d5ee38aee3b87d"
+    },
     "gates/lib-baseline.mjs": {
       "area": "gates",
       "item": "lib-baseline.mjs",
       "sha256": "c66f539a9ce644812672b2994ae2bee132007c76f658b88144f35e2cf2cc0b5c",
       "origem": "c66f539a9ce644812672b2994ae2bee132007c76f658b88144f35e2cf2cc0b5c"
+    },
+    "gates/lib-comando.mjs": {
+      "area": "gates",
+      "item": "lib-comando.mjs",
+      "sha256": "0b0742ddf813274af45a66f3a72be19af39bb051f03725402d1bc799bae4211e",
+      "origem": "0b0742ddf813274af45a66f3a72be19af39bb051f03725402d1bc799bae4211e"
     },
     "gates/lib-staged.mjs": {
       "area": "gates",
@@ -38,14 +57,14 @@
     "gates/lint-swallow": {
       "area": "gates",
       "item": "lint-swallow",
-      "sha256": "sha256-241031247f0f366c6895d5b997009b680ee13097587f994c89ebc318b64eea59",
-      "origem": "sha256-241031247f0f366c6895d5b997009b680ee13097587f994c89ebc318b64eea59"
+      "sha256": "sha256-daa1596460fe7705bf50aa49dfdcbf6e23aa3fbea6b7ef351cee095d8ae231b2",
+      "origem": "sha256-daa1596460fe7705bf50aa49dfdcbf6e23aa3fbea6b7ef351cee095d8ae231b2"
     },
     "gates/no-add-all": {
       "area": "gates",
       "item": "no-add-all",
-      "sha256": "sha256-9e58cf3b585eaa3f670ae7b630799d25ea26e74b3d2487e8449aabcb53ce4223",
-      "origem": "sha256-9e58cf3b585eaa3f670ae7b630799d25ea26e74b3d2487e8449aabcb53ce4223"
+      "sha256": "sha256-b470befa9603aed8f96cf4e8b78be32064af7a491d6e7ec1dcc8067969e3965a",
+      "origem": "sha256-b470befa9603aed8f96cf4e8b78be32064af7a491d6e7ec1dcc8067969e3965a"
     },
     "governance/git.md": {
       "area": "governance",
@@ -104,8 +123,8 @@
     "guards/block-destructive-commands.sh": {
       "area": "guards",
       "item": "block-destructive-commands",
-      "sha256": "81fe30996a29148ede3ebd69431bb9b5d2daf7b0afffd714c249f8051ace666f",
-      "origem": "81fe30996a29148ede3ebd69431bb9b5d2daf7b0afffd714c249f8051ace666f"
+      "sha256": "98330067a7f70a1bf71865a06d2241b6527bb75b31e804e34bf8ce2cd70fe821",
+      "origem": "98330067a7f70a1bf71865a06d2241b6527bb75b31e804e34bf8ce2cd70fe821"
     },
     "guards/block-host-commit.sh": {
       "area": "guards",
@@ -122,8 +141,8 @@
     "guards/lib-json.sh": {
       "area": "guards",
       "item": "lib-json",
-      "sha256": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41",
-      "origem": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41"
+      "sha256": "f713c83446bcefce41e8cd6f55a6b5db289f1491aeece31a5f364337e3e7290a",
+      "origem": "f713c83446bcefce41e8cd6f55a6b5db289f1491aeece31a5f364337e3e7290a"
     },
     "guards/precompact-persist-state.sh": {
       "area": "guards",
