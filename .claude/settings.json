@@ -17,6 +17,10 @@
           },
           {
             "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/block-host-commit.sh\""
+          },
+          {
+            "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/block-secret-dump.sh\""
           }
         ]
@@ -33,6 +37,7 @@
         ]
       }
     ],
-    "SessionStart": []
+    "SessionStart": [],
+    "Stop": []
   }
 }

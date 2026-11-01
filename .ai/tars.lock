@@ -1,7 +1,7 @@
 {
   "lockfileVersion": 1,
   "tars": {
-    "version": "0.0.1-dev.28",
+    "version": "0.0.1-dev.29",
     "commit": null
   },
   "files": {
@@ -20,8 +20,8 @@
     "governance/git.md": {
       "area": "governance",
       "item": "git",
-      "sha256": "42f58f1efe700000e2ca023f0e26815f6982aeb5c4242326b2b936ac884203e8",
-      "origem": "42f58f1efe700000e2ca023f0e26815f6982aeb5c4242326b2b936ac884203e8"
+      "sha256": "2bcde28e2175d246bb8faddd1505041e99450517dd058fa3184bdeaceba363b6",
+      "origem": "2bcde28e2175d246bb8faddd1505041e99450517dd058fa3184bdeaceba363b6"
     },
     "governance/incidente-vira-prevencao.md": {
       "area": "governance",
@@ -44,8 +44,8 @@
     "governance/release.md": {
       "area": "governance",
       "item": "release",
-      "sha256": "05e6e4f1cedf57f16da2a71d25e418485ec0547ec787b953bf91dc38bd27dcb3",
-      "origem": "05e6e4f1cedf57f16da2a71d25e418485ec0547ec787b953bf91dc38bd27dcb3"
+      "sha256": "d63b9eff3f2b8936889849822a43f2ea7f2a7344a4290d00b9edb354f8406a63",
+      "origem": "d63b9eff3f2b8936889849822a43f2ea7f2a7344a4290d00b9edb354f8406a63"
     },
     "governance/segredos-e-identidade.md": {
       "area": "governance",
@@ -71,11 +71,17 @@
       "sha256": "81fe30996a29148ede3ebd69431bb9b5d2daf7b0afffd714c249f8051ace666f",
       "origem": "81fe30996a29148ede3ebd69431bb9b5d2daf7b0afffd714c249f8051ace666f"
     },
+    "guards/block-host-commit.sh": {
+      "area": "guards",
+      "item": "block-host-commit",
+      "sha256": "9c4ab2d09d9b9c1360010bda24346a48e9fe2bf95e3d4dd4f9ff443892e62dc6",
+      "origem": "9c4ab2d09d9b9c1360010bda24346a48e9fe2bf95e3d4dd4f9ff443892e62dc6"
+    },
     "guards/block-secret-dump.sh": {
       "area": "guards",
       "item": "block-secret-dump",
-      "sha256": "ecfc565258a577e91e39a4525561da19a29fa5b83e435495d287e233299d7319",
-      "origem": "ecfc565258a577e91e39a4525561da19a29fa5b83e435495d287e233299d7319"
+      "sha256": "f205da41be5fe335e120ac04be4f6bd77e6a2d1290cba4b49277e48387b2cea8",
+      "origem": "f205da41be5fe335e120ac04be4f6bd77e6a2d1290cba4b49277e48387b2cea8"
     },
     "guards/lib-json.sh": {
       "area": "guards",
