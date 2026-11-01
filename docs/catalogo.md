@@ -10,7 +10,7 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 
 | Ferramenta | Versão | Para que serve |
 | --- | --- | --- |
-| `tars` | `ghcr.io/huldlabs/tars:0.0.1-dev.28` @ `sha256:032884663ba3…` | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest |
+| `tars` | `ghcr.io/huldlabs/tars:0.0.1-dev.30` @ `sha256:f85a8e5a1c79…` | CLI do metodo (segredos, identidade, sync, release-notes); binario copiado da imagem do Tars por digest |
 | `debian` | `debian:trixie-slim` @ `sha256:a29215f6a35e…` | sistema base (trixie-slim, por digest) |
 | `git` | `1:2.47.3-0+deb13u1` | controle de versao (apt, versao exata) |
 | `python3` | `3.13.5-1` | interpretador do SISTEMA (scripts de feature e `op`); runtime de projeto e' a feature python-uv |
@@ -53,9 +53,9 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`python-uv`](#python-uv) | 1.3.0 | `ghcr.io/huldlabs/endurance/python-uv:1` | Python + uv |
 | [`redis-client`](#redis-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/redis-client:1` | Redis/Valkey client |
 | [`restic-rclone`](#restic-rclone) | 1.0.0 | `ghcr.io/huldlabs/endurance/restic-rclone:1` | restic + rclone |
-| [`rust`](#rust) | 1.0.0 | `ghcr.io/huldlabs/endurance/rust:1` | Rust |
-| [`secrets`](#secrets) | 2.0.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
-| [`signing`](#signing) | 2.0.1 | `ghcr.io/huldlabs/endurance/signing:2` | Assinatura de commit (tars identity) |
+| [`rust`](#rust) | 1.0.1 | `ghcr.io/huldlabs/endurance/rust:1` | Rust |
+| [`secrets`](#secrets) | 2.1.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
+| [`signing`](#signing) | 2.1.0 | `ghcr.io/huldlabs/endurance/signing:2` | Assinatura de commit (tars identity) |
 
 ### agent-browser
 
@@ -327,7 +327,7 @@ Sem options.
 
 ### rust
 
-**Rust** — versão 1.0.0. rustup, cargo e o linker C. A versao do projeto vem do rust-toolchain.toml; a option e' so' o toolchain inicial.
+**Rust** — versão 1.0.1. rustup, cargo e o linker C. A versao do projeto vem do rust-toolchain.toml; a option e' so' o toolchain inicial.
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/rust:1": {} }
@@ -343,7 +343,7 @@ Sem options.
 
 ### secrets
 
-**Segredos (tars secrets)** — versão 2.0.0. Fina (D4/R5): liga `tars secrets git-credential` (o tars vem da base) como credential helper do git no nivel do SISTEMA. Nenhuma logica de segredo propria: cofre, cache e hosts sao do `[secrets]` do projeto.
+**Segredos (tars secrets)** — versão 2.1.0. Fina (D4/R5): liga `tars secrets git-credential` (o tars vem da base) como credential helper do git no nivel do SISTEMA e, no postStart, renova o cache com `tars secrets refresh` (sem TTY, token da service account). Nenhuma logica de segredo propria: cofre, cache e hosts sao do `[secrets]` do projeto.
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/secrets:2": {} }
@@ -353,10 +353,15 @@ Sem options.
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
 - **Fonte:** [`src/secrets/`](../src/secrets)
+- **postStartCommand:**
+
+  ```sh
+  timeout 60 tars secrets refresh || echo '[secrets] AVISO: cache nao renovado (ver acima); confira o token da service account e o `[secrets]` do projeto' >&2
+  ```
 
 ### signing
 
-**Assinatura de commit (tars identity)** — versão 2.0.1. Fina (D4/R5): liga commit.gpgsign no sistema (build); no postStart roda `tars identity sign-setup` (gpg.format=ssh, signingkey, allowedSignersFile do `[identity]`/`[secrets]` do projeto), roda `tars identity verify`. O tars vem da base. `identity provision` e' do DONO, nunca daqui.
+**Assinatura de commit (tars identity)** — versão 2.1.0. Fina (D4/R5): liga commit.gpgsign no sistema (build); no postStart roda `tars identity sign-setup --from-cache --global` (chave do cache do `tars secrets` para `key_file`, sem TTY; nome, e-mail e helper do `[identity]` do projeto) e `tars identity verify`. Roda depois do postStart da feature secrets. O tars vem da base (>= dev.30).
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/signing:2": {} }
@@ -372,5 +377,5 @@ Sem options.
 - **postStartCommand:**
 
   ```sh
-  timeout 30 tars identity sign-setup && timeout 30 tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); commit assinado vai falhar ate o DONO rodar `tars identity provision` (TTY)' >&2
+  timeout 30 tars identity sign-setup --from-cache --global && timeout 30 tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); confira key_cache, git_name e git_email do `[identity]` do projeto e o postStart da feature secrets' >&2
   ```

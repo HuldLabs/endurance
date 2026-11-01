@@ -1,6 +1,6 @@
 {
   "id": "rust",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Rust",
   "description": "rustup, cargo e o linker C. A versao do projeto vem do rust-toolchain.toml; a option e' so' o toolchain inicial.",
   "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/rust",

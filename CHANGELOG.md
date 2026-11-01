@@ -4,6 +4,38 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
 Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho) com as 4 subseções `###` do Tars, e
 `- **Destaque.** …` em "O que mudou": é o que o `tars release-notes` lê para gerar as notas da Release.
 
+## 0.0.1-dev.6
+
+### O que mudou
+- **`tars` 0.0.1-dev.30 na base.** Por digest (`sha256:f85a8e5a…`); `.ai` no lock da dev.30, catálogo avaliado item a
+  item (`.ai/catalogo-decisoes.json`), gates `no-add-all`, `lint-swallow`, `healthcheck` e `fail-closed` e guard
+  `block-host-commit`.
+- **Pastas de estado com dono `dev`.** A base cria `~/.ssh`, `~/.config`, `~/.config/tars` e
+  `~/.config/tars/workspace` antes do volume; acaba o `chown` no post-start.
+- **`secrets` 2.1.0 e `signing` 2.1.0 sem TTY.** No postStart, `secrets` roda `tars secrets refresh` e `signing`
+  roda `tars identity sign-setup --from-cache --global` + `verify`; `signing` ganha `userName`/`userEmail` e
+  `gpg.format ssh` no git do sistema; volumes de estado por devcontainer.
+- **`rust` 1.0.1.** `rustup toolchain install` no postCreate (o `rust-toolchain.toml` do projeto).
+- **devcontainer CLI ≥ 0.89.0.** O 0.80.1 trava no primeiro `up` com Docker 29 (espera o campo `status` do
+  `docker events`, que não vem mais); documentado no README, e o teste local usa o 0.90.0.
+
+### Por que
+Primeiro adotante (Kerr): recriar o container do zero sem passo manual até o commit assinado. Validado no Kerr com o
+candidato local rc.1 (base `bc088596`, features `a247a763`): `up` de primeira, commit assinado e push.
+
+Bugs reportados que esta versão fecha: Kerr (01/11) `up` duas vezes, `~/.config` nascendo root, git, credential
+helper e assinatura pelo post-start do projeto.
+
+### Arquivos impactados
+`images/base/Dockerfile`, `src/{secrets,signing,rust}/`, `.ai/`, `.claude/settings.json`, `AGENTS.md`, `CLAUDE.md`,
+`tools/test-features.sh`, `README.md`, `CHANGELOG.md`, `VERSION`.
+
+### O que o consumidor faz
+- Fixar a base pelo digest novo das notas da Release e as features `secrets:2`, `signing:2`, `rust:1`.
+- Declarar em `[identity]` do projeto `key_cache`, `git_name` e `git_email`, e tirar do post-start o `chown`, o
+  `git config` e o `tars secrets refresh`/`sign-setup`.
+- Usar devcontainer CLI ≥ 0.89.0 e rodar `up` uma vez só. Depois de semear o token, parar o container e subir de novo.
+
 ## 0.0.1-dev.5
 
 ### O que mudou
