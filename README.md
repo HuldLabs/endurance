@@ -396,12 +396,12 @@ dono** nesse PR é o aval, e o **coord corta a tag anotada** (como Daneel), acom
 sem Release pode ser movida; com Release publicada, nunca: a correção vira a versão seguinte. A versão da imagem sai do nome da tag:
 
 ```bash
-git tag -a v0.0.1-dev.3 -m v0.0.1-dev.3
-git push origin v0.0.1-dev.3
+git tag -a v0.0.1-dev.N -m v0.0.1-dev.N
+git push origin v0.0.1-dev.N
 ```
 
 **Numeração (D13, D18):** `0.0.1-dev.N` enquanto o Endurance não é produto, a versão do
-`CHANGELOG.md`. A tag `v0.0.1-dev.3` publica `ghcr.io/huldlabs/endurance/base:0.0.1-dev.5`.
+`CHANGELOG.md`. A tag `v0.0.1-dev.N` publica `ghcr.io/huldlabs/endurance/base:0.0.1-dev.N`.
 Por ser pré-release, ela **não** move nenhuma tag curta (`:0`, `:1`). O projeto fixa a
 base pela versão cheia e, de preferência, por **digest** (`base@sha256:…`, segurança
 multiusuário item 8). A tag curta `:N` só passa a existir a partir da primeira versão
