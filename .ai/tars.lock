@@ -17,11 +17,29 @@
       "sha256": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149",
       "origem": "sha256-31a6461ef1136cd6e494c914100e832099f0fca125482a4980fe07a4a6d57149"
     },
+    "governance/git.md": {
+      "area": "governance",
+      "item": "git",
+      "sha256": "42f58f1efe700000e2ca023f0e26815f6982aeb5c4242326b2b936ac884203e8",
+      "origem": "42f58f1efe700000e2ca023f0e26815f6982aeb5c4242326b2b936ac884203e8"
+    },
+    "governance/incidente-vira-prevencao.md": {
+      "area": "governance",
+      "item": "incidente-vira-prevencao",
+      "sha256": "6837187b3d4e80ffc6334e95d1429a54b65928776a1b9fdfa504e1b83d3fac28",
+      "origem": "6837187b3d4e80ffc6334e95d1429a54b65928776a1b9fdfa504e1b83d3fac28"
+    },
     "governance/novo-repo.md": {
       "area": "governance",
       "item": "novo-repo",
       "sha256": "cfa40489587f764fd3a0331c3f4f18a80a9c4e8f95084df7d8c45b2ff8fdc08e",
       "origem": "cfa40489587f764fd3a0331c3f4f18a80a9c4e8f95084df7d8c45b2ff8fdc08e"
+    },
+    "governance/onde-mora-o-conhecimento.md": {
+      "area": "governance",
+      "item": "onde-mora-o-conhecimento",
+      "sha256": "cebd8228074a7ef5cc6b587365acaddc1fd754e2c4aefe3c02b22d1de4fd31b5",
+      "origem": "cebd8228074a7ef5cc6b587365acaddc1fd754e2c4aefe3c02b22d1de4fd31b5"
     },
     "governance/release.md": {
       "area": "governance",
@@ -34,6 +52,18 @@
       "item": "segredos-e-identidade",
       "sha256": "5955838818d0ca1945beab31f6a7ed71bb953c564372521fd0d5dc5a42e789ba",
       "origem": "5955838818d0ca1945beab31f6a7ed71bb953c564372521fd0d5dc5a42e789ba"
+    },
+    "governance/source-of-truth.md": {
+      "area": "governance",
+      "item": "source-of-truth",
+      "sha256": "54ae95ee32b100efdc2e4f8dde520dd6cec324eb0157d27fdb1684442ab8d9d6",
+      "origem": "54ae95ee32b100efdc2e4f8dde520dd6cec324eb0157d27fdb1684442ab8d9d6"
+    },
+    "governance/versionamento-de-extracao.md": {
+      "area": "governance",
+      "item": "versionamento-de-extracao",
+      "sha256": "f71f82bdf49a7c22f7c9241259de127d8c677e84d660df275119b7a93509f277",
+      "origem": "f71f82bdf49a7c22f7c9241259de127d8c677e84d660df275119b7a93509f277"
     },
     "guards/block-destructive-commands.sh": {
       "area": "guards",
@@ -53,6 +83,36 @@
       "sha256": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41",
       "origem": "b085def49d5458a6c84cfea8644a16a12bd4ff4d12afa1b5c3e6aa2fddc65c41"
     },
+    "guards/precompact-persist-state.sh": {
+      "area": "guards",
+      "item": "precompact-persist-state",
+      "sha256": "7b4cb45f0df648dc6fdd24ee8cf665af17991ff58ce52fab6a3b0d5edf0b68b2",
+      "origem": "7b4cb45f0df648dc6fdd24ee8cf665af17991ff58ce52fab6a3b0d5edf0b68b2"
+    },
+    "guards/test-block-destructive-commands.sh": {
+      "area": "guards",
+      "item": "test-block-destructive-commands",
+      "sha256": "6bc71246981c37f0c4c02c111b9730d3d71737a0616dd0c7db22b024ffee69e3",
+      "origem": "6bc71246981c37f0c4c02c111b9730d3d71737a0616dd0c7db22b024ffee69e3"
+    },
+    "guards/test-block-secret-dump.sh": {
+      "area": "guards",
+      "item": "test-block-secret-dump",
+      "sha256": "84797cb66a6b8a5ec57eb522c83288ccea64f31ae5f9e64d54dca9598f3dd274",
+      "origem": "84797cb66a6b8a5ec57eb522c83288ccea64f31ae5f9e64d54dca9598f3dd274"
+    },
+    "guards/test-precompact-persist-state.sh": {
+      "area": "guards",
+      "item": "test-precompact-persist-state",
+      "sha256": "815acec82a9e1ed88e8fb292d6d45b7be9e941c13d3840381221d6411ebf7926",
+      "origem": "815acec82a9e1ed88e8fb292d6d45b7be9e941c13d3840381221d6411ebf7926"
+    },
+    "rules/ambiente.md": {
+      "area": "rules",
+      "item": "ambiente",
+      "sha256": "e917beb85c97b8ff510ee9eab39d8a9de3a10376b24abd2b74982a84cdeb9613",
+      "origem": "e917beb85c97b8ff510ee9eab39d8a9de3a10376b24abd2b74982a84cdeb9613"
+    },
     "rules/principles.md": {
       "area": "rules",
       "item": "principles",
@@ -65,11 +125,23 @@
       "sha256": "sha256-43fd31cf76b6d2042e54bfec2024faee194b348d2de87f238a04b581d5f46586",
       "origem": "sha256-43fd31cf76b6d2042e54bfec2024faee194b348d2de87f238a04b581d5f46586"
     },
+    "skills/daneel": {
+      "area": "skills",
+      "item": "daneel",
+      "sha256": "sha256-e19b7041766e399ca8f53e25133a7be448fc466b109e978e82df7f44698d5ff1",
+      "origem": "sha256-e19b7041766e399ca8f53e25133a7be448fc466b109e978e82df7f44698d5ff1"
+    },
     "skills/root-cause-debugging": {
       "area": "skills",
       "item": "root-cause-debugging",
       "sha256": "sha256-1e9b9b2b804437c6cefa79c1305633d3bf2dd02af54169a68ac8684038bd5299",
       "origem": "sha256-1e9b9b2b804437c6cefa79c1305633d3bf2dd02af54169a68ac8684038bd5299"
+    },
+    "skills/senior-research": {
+      "area": "skills",
+      "item": "senior-research",
+      "sha256": "sha256-e74031e9d51d66676689b8f62d0350b04ba27a18b270bfdadfa9deb8ae89029a",
+      "origem": "sha256-e74031e9d51d66676689b8f62d0350b04ba27a18b270bfdadfa9deb8ae89029a"
     }
   }
 }
