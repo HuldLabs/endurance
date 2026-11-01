@@ -22,7 +22,17 @@
         ]
       }
     ],
-    "PreCompact": [],
+    "PreCompact": [
+      {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.ai/base/guards/precompact-persist-state.sh\""
+          }
+        ]
+      }
+    ],
     "SessionStart": []
   }
 }

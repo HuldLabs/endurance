@@ -38,7 +38,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | --- | --- | --- | --- |
 | [`agent-browser`](#agent-browser) | 1.0.0 | `ghcr.io/huldlabs/endurance/agent-browser:1` | agent-browser |
 | [`duckdb`](#duckdb) | 1.0.0 | `ghcr.io/huldlabs/endurance/duckdb:1` | DuckDB CLI |
-| [`gh`](#gh) | 1.0.0 | `ghcr.io/huldlabs/endurance/gh:1` | GitHub CLI |
+| [`gh`](#gh) | 1.0.1 | `ghcr.io/huldlabs/endurance/gh:1` | GitHub CLI |
 | [`kubectl-helm`](#kubectl-helm) | 1.0.0 | `ghcr.io/huldlabs/endurance/kubectl-helm:1` | kubectl + helm |
 | [`lint`](#lint) | 1.0.0 | `ghcr.io/huldlabs/endurance/lint:1` | Lint de shell e workflows |
 | [`mysql-client`](#mysql-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/mysql-client:1` | MySQL client |
@@ -89,7 +89,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 
 ### gh
 
-**GitHub CLI** — versão 1.0.0. gh do repositorio apt oficial (cli.github.com), chave GPG conferida, versao fixa.
+**GitHub CLI** — versão 1.0.1. gh do repositorio apt oficial (cli.github.com), chave GPG conferida, versao fixa.
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/gh:1": {} }
@@ -97,7 +97,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 
 | Option | Tipo | Default | Valores | Descrição |
 | --- | --- | --- | --- | --- |
-| `version` | string | `2.102.0` | livre | Versao do gh (sem o v), fixada no apt. |
+| `version` | string | `2.103.3` | livre | Versao do gh (sem o v), fixada no apt. |
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
 - **Fonte:** [`src/gh/`](../src/gh)

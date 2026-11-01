@@ -338,7 +338,7 @@ ferramenta, nunca o conteúdo.
 | [`mysql-client`](src/mysql-client) | `mysql`/`mysqldump` da Oracle (repo apt assinado, trilha 8.4 LTS; fala com MySQL 8.0 de TLS autoassinado) |
 | [`redis-client`](src/redis-client) | `valkey-cli` (também como `redis-cli`) |
 | [`pwsh`](src/pwsh) | PowerShell 7.6.6 (tarball oficial, sha256 conferido) |
-| [`gh`](src/gh) | GitHub CLI 2.102.0 (repo apt oficial cli.github.com, chave GPG) |
+| [`gh`](src/gh) | GitHub CLI 2.103.3 (repo apt oficial cli.github.com, chave GPG) |
 | [`lint`](src/lint) | `shellcheck` 0.11.0 + `actionlint` 1.7.12 (binários oficiais, sha256 conferido) |
 | [`opentofu`](src/opentofu) | `tofu` 1.13.1 (binário oficial, `SHA256SUMS` do release) |
 | [`duckdb`](src/duckdb) | CLI do `duckdb` 1.5.6 (binário oficial, sha256 do asset) |

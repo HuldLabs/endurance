@@ -7,7 +7,7 @@
 # Idempotente: se o gh da versao pedida ja existe, nao faz nada.
 set -euo pipefail
 
-GH_VERSION="${VERSION:-2.102.0}"
+GH_VERSION="${VERSION:-2.103.3}"
 
 if command -v gh >/dev/null 2>&1 && gh --version | head -n1 | grep -q "gh version ${GH_VERSION} "; then
   echo "gh: ${GH_VERSION} ja instalado"
