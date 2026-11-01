@@ -218,11 +218,12 @@ montado. As features `secrets` e `signing` são finas e só ligam o `tars`:
   ```
 
   O `gh` usa o mesmo cache: `tars secrets exec -- gh …`.
-- **`signing`** roda no postStart `tars identity sign-setup` (gpg.format=ssh, signingkey e
-  allowedSignersFile do `[identity]`/`[secrets].allowed_signers`), liga `commit.gpgsign` e
-  roda `tars identity verify`. Sem identidade o container sobe com AVISO e o commit
-  assinado falha alto. `tars identity provision` é do **dono**, com TTY, uma vez por
-  máquina — nenhuma feature o chama.
+  No postStart, `secrets` roda `tars secrets refresh` (sem TTY, token da service account).
+- **`signing`** liga `commit.gpgsign` e, no postStart (depois do de `secrets`), roda
+  `tars identity sign-setup --from-cache --global` e `tars identity verify`. A chave sai do
+  cache para `key_file`; nome, e-mail e helper vêm do `[identity]` do projeto, que declara
+  `key_cache`, `git_name` e `git_email` (Tars ≥ dev.30). Sem identidade o container sobe com
+  AVISO e o commit assinado falha alto.
 
 **PowerShell** (dotfiles — scripts `.ps1`):
 
@@ -316,7 +317,7 @@ segundo cobre o buraco do segtools, que só tinha `post-create`:
 | `images/base`: git, curl, sops, age, op, gitleaks, task, docker CLI, claude-code (nativo), `tars` (por digest), `endurance-bg`, `endurance-init`, usuário `dev` | `docker-compose.yaml` e os serviços (Postgres, etc.) |
 | Features de runtime: `node-bun`, `python-uv`, `php`, `pwsh`, clientes `postgres`/`mysql`/`redis`, `playwright`, `agent-browser` | Versões exatas exigidas pelo projeto (`.node-version`, `.python-version`, lockfiles) |
 | `secrets`: `tars secrets git-credential` como helper do git do sistema | O `[secrets]` (refs `op://`, `git_hosts`, `git_credential`), os mounts, os volumes e as portas |
-| `signing`: `tars identity sign-setup` + `verify` no postStart | O `[identity]` (ator, ref `op://` da chave) e o `allowed_signers` |
+| `secrets`: `tars secrets refresh` no postStart; `signing`: `tars identity sign-setup --from-cache --global` + `verify` no postStart | O `[identity]` (`key_cache`, `git_name`, `git_email`) e o `allowed_signers` |
 | `lifecycle/scripts` (raiz do repo): limpeza de órfão e validação de `.venv` | Ligar os hooks, as portas e o `containerEnv` de cache |
 | Workflow de publicação das features e da imagem base | `post-create`/`post-start` do projeto (hooks, stamps, subir o app) |
 
@@ -331,7 +332,7 @@ ferramenta, nunca o conteúdo.
 | [`node-bun`](src/node-bun) | Node (`nodeVersion`) + bun 1.4.2, pnpm 11.1.1 (corepack) ou npm (`packageManager`), install congelado idempotente |
 | [`python-uv`](src/python-uv) | Python 3.12–3.15 (`pythonVersion`, major.minor ou exata, inclusive rc como `3.15.0rc2`) + `uv`, venv e `uv sync` |
 | [`secrets`](src/secrets) | `tars secrets git-credential` como helper do git do **sistema** (vale em qualquer repo; só hosts de `git_hosts`) |
-| [`signing`](src/signing) | postStart: `tars identity sign-setup`, `commit.gpgsign=true`, `tars identity verify` |
+| [`signing`](src/signing) | postStart: `tars identity sign-setup --from-cache --global`, `commit.gpgsign=true`, `tars identity verify` |
 | [`playwright`](src/playwright) | Bibliotecas de sistema (`install-deps`) + browser no cache do container; `browser: chrome`/`msedge` instalam o Chrome/Edge reais; `firefox`/`webkit` = motores do Playwright (o WebKit é o motor do Safari, não o Safari) |
 | [`pulumi`](src/pulumi) | CLI do Pulumi (3.263.0), versão pinada |
 | [`postgres-client`](src/postgres-client) | `psql`/`pg_dump` do major pedido (repo PGDG assinado) |
