@@ -180,6 +180,9 @@ https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable
 # HOME do usuario `dev` como cwd de trabalho. O projeto monta a arvore DEPOIS; /workspace
 # e' o alvo padrao e casa com o workspaceFolder dos projetos.
 RUN mkdir -p /workspace && chown dev:dev /workspace
+# Volume nomeado herda o dono da pasta da imagem: sem isto, nasce root:root e o dev nao grava.
+RUN install -d -o dev -g dev -m 700 /home/dev/.ssh \
+    && install -d -o dev -g dev -m 755 /home/dev/.config /home/dev/.config/tars /home/dev/.config/tars/workspace
 
 # ------------------------------------------------------------------------------- git
 # As quatro configuracoes que TODA arvore montada precisa, num script so'. Elas sao
