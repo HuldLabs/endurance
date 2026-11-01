@@ -1,0 +1,26 @@
+{
+  "id": "rust",
+  "version": "1.0.0",
+  "name": "Rust",
+  "description": "rustup, cargo e o linker C. A versao do projeto vem do rust-toolchain.toml; a option e' so' o toolchain inicial.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/rust",
+  "options": {
+    "version": {
+      "type": "string",
+      "default": "stable",
+      "description": "Toolchain inicial. O rust-toolchain.toml do projeto vence e o rustup o instala no primeiro uso."
+    }
+  },
+  "containerEnv": {
+    "RUSTUP_HOME": "/usr/local/rustup",
+    "CARGO_HOME": "/usr/local/cargo",
+    "PATH": "/usr/local/cargo/bin:${PATH}"
+  },
+  "mounts": [
+    {
+      "source": "endurance-cargo-registry",
+      "target": "/usr/local/cargo/registry",
+      "type": "volume"
+    }
+  ]
+}
