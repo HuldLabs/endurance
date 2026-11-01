@@ -11,6 +11,7 @@
       "description": "Toolchain inicial. O rust-toolchain.toml do projeto vence e o rustup o instala no primeiro uso."
     }
   },
+  "postCreateCommand": "rustup toolchain install || echo '[rust] AVISO: toolchain do projeto nao instalado' >&2",
   "containerEnv": {
     "RUSTUP_HOME": "/usr/local/rustup",
     "CARGO_HOME": "/usr/local/cargo",

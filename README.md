@@ -34,8 +34,6 @@ todas as options): [`docs/catalogo.md`](docs/catalogo.md), gerado por `tools/gen
     "ghcr.io/huldlabs/endurance/secrets:2": {}
   },
   "remoteUser": "dev",
-  // Estado do `tars secrets` (chave age, token, cache cifrado): volume por usuario E projeto.
-  "mounts": [ "source=${localEnv:USER}-meu-projeto-tars,target=/home/dev/.config/tars/meu-projeto,type=volume" ]
 }
 ```
 
@@ -251,6 +249,10 @@ do terraform):
 ```
 
 Outros recortes: `duckdb:1` (nexus), `restic-rclone:1` (homelab-infra), `kubectl-helm:1` (tars, dotfiles), `opencode:1` (seo-brain).
+
+**Persistência:** `secrets` e `signing` montam volumes por devcontainer em `/home/dev/.config/tars` e
+`/home/dev/.ssh`; recriar o container mantém o estado. O diretório de estado do `tars secrets` usa o nome da pasta do
+workspace, não o do projeto: com `workspaceFolder=/workspace`, é `/home/dev/.config/tars/workspace`.
 
 ### Tarefa longa (`endurance-bg`)
 
