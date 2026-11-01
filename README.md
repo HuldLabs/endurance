@@ -229,6 +229,8 @@ montado. As features `secrets` e `signing` são finas e só ligam o `tars`:
   cache para `key_file`; nome, e-mail e helper vêm do `[identity]` do projeto, que declara
   `key_cache`, `git_name` e `git_email` (Tars ≥ dev.30). Sem identidade o container sobe com
   AVISO e o commit assinado falha alto.
+- **Depois de semear o token** (passo único do dono), pare o container e rode `up` de novo: o
+  postStart só roda em start. Um `up` com o container já de pé não o repete.
 
 **PowerShell** (dotfiles — scripts `.ps1`):
 
