@@ -3,30 +3,34 @@
 Estado vivo para quem retoma. Decisões e fila: `BACKLOG.md`. Uma entrada por frente; incremento da mesma frente edita
 a entrada no lugar.
 
-## Endurance — 14/10/2026 (coord Endurance)
+## Endurance — 02/11/2026 (coord Endurance)
 
-**Onde estamos:** `main` com os PRs #1–#16 mergeados. A base traz o `tars` dev.25 por digest; o `.ai` está no lock da
-dev.25, com a doutrina `release`. Branch `w/dev3` = PR final da `v0.0.1-dev.3`.
+**Onde estamos:** `main` depois do PR #43. Publicada: dev.6 (base `sha256:d4790d09…`, tars dev.30, Release no formato do
+Tars). Em maturação: dev.7, só como rc local; o vigente é o **dev.7-rc.4** (commit `5b3915d`, imagem
+`endurance/base:dev.7-rc.4-local`, ID `sha256:293f4d0a…`, features em `~/projects/endurance-rc/dev7-rc4/`, tar
+`8f7984ec…`). O rc.3 fica até todos trocarem. Depois do rc.4 só mudaram docs.
 
-**Proximo passo:** o dono mergeia o PR final (o merge é o aval); o coord corta a tag anotada `v0.0.1-dev.3` como
-Daneel, acompanha o `publish.yml` e confere a Release (D20, `.ai/base/governance/release.md`). Depois: avisar os
-coords consumidores e migrar Kipp e Tars (onda 1).
+**Validação por consumidor:**
+- seo-brain: passou no rc.4 com token real e commit assinado; falta commitar o devcontainer dele (gate OpenAPI, dívida
+  dele).
+- homelab: rc.3 (PR HuldLabs/homelab#37), segredos e assinatura ok.
+- Kerr: validou o rc.1 em descartável e achou os 2 bugs do playwright; rc.4 e `diag` sem teste dele. `.devcontainer/`
+  real na dev.6.
+
+**Próximo passo:**
+- Homelab testa o H1 sem Tars novo: chave de acesso no template, cache, `ssh-add` no postStart. Passando, vira receita
+  em `docs/adocao.md`. A chave de assinatura não entra no NUC; a de acesso é outra. Acesso às máquinas é função normal
+  da Daneel.
+- E8 (gate stack × feature) está no BACKLOG do Tars, aguardando ordem do dono.
+- Próximo rc: o `[signing] AVISO` citar a linha do `verify` que falhou.
+- Tars dev.31 traz `block-host-commit` amplo, commit-msg sem crash e `verify` com `known_hosts`.
+- Corte da dev.7 só com ordem do dono: seção no CHANGELOG, `VERSION`, base da árvore da tag, notas por
+  `tars release-notes`.
 
 **Limites conhecidos:**
-- A primeira tag é a `v0.0.1-dev.3` e só sai com o ecossistema mapeado (D18).
-- A imagem `ghcr.io/huldlabs/tars` é pública (dev.27): build da base e CI sem login de leitura. As imagens e
-  features do Endurance no GHCR seguem PRIVADAS (o repo é público, os pacotes não): consumir exige login.
-- Projeto que liga `secrets` declara `git_hosts` e `git_credential` no `[secrets]` do `.ai/tars.toml`.
-- Nada publicado no GHCR: os testes rodam com `ENDURANCE_UNPUBLISHED=1` (`tools/test-features.sh`).
-- `google-chrome` só existe em amd64 (o Google não publica .deb arm64).
-
-**Como operar:**
-- Worker por worktree em `.worktrees/<slot>`, `tars sync` antes do 1º commit.
-- Tars na base: bump obrigatório a cada Release do Tars (README "Rotina do Tars na base"); `bash tools/tars-atual.sh` diz se está em dia, e a tag falha se não estiver.
-- Mudou versão/option/ferramenta da base: `bash tools/gen-catalogo.sh` (o `test.yml` cobra o `docs/catalogo.md`).
-- Testes: `docker build -t endurance-base:local images/base && ENDURANCE_UNPUBLISHED=1 tools/test-features.sh`
-- Push/PR como Daneel de dentro do `segtools-dev`, a partir de `/projects/endurance` (o worktree tem gitdir do host):
-  `git -c credential.helper= -c "credential.helper=!bash /workspace/.devcontainer/git-credential-op.sh" push …` e
-  `bash /workspace/.devcontainer/gh-op.sh pr create -R HuldLabs/endurance …`. Merge: Daneel, após PASS adversarial.
-- O guard `block-secret-dump` barra qualquer comando que cite um caminho `…/secrets/…`, inclusive o
-  `src/secrets/install.sh` deste repo. Leia com o Read e use glob (`src/s*/`) no shell.
+- CI proibido pelo dono; corte à mão (README, "Release").
+- Git do agente só no container `segtools-dev` (usuário node, `bash -l`, `/projects/endurance`), inclusive leitura. O
+  docker de lá não tem BuildKit: a base se constrói no host.
+- Token dos devcontainers: o da máquina (D23), com 11 cofres medidos; somente-leitura não medido.
+- Base só amd64. Guia do consumidor: `docs/adocao.md`.
+- O guard `block-secret-dump` barra comando com texto citando token ou `src/secrets/`; use Read/Edit/Write.
