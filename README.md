@@ -259,8 +259,10 @@ do terraform):
 Outros recortes: `duckdb:1` (nexus), `restic-rclone:1` (homelab-infra), `kubectl-helm:1` (tars, dotfiles), `opencode:1` (seo-brain).
 
 **Persistência:** `secrets` e `signing` montam volumes por devcontainer em `/home/dev/.config/tars` e
-`/home/dev/.ssh`; recriar o container mantém o estado. O diretório de estado do `tars secrets` usa o nome da pasta do
-workspace, não o do projeto: com `workspaceFolder=/workspace`, é `/home/dev/.config/tars/workspace`.
+`/home/dev/.ssh`; recriar o container mantém o estado. Desde o Tars dev.30 o diretório de estado do `tars secrets` tem
+o nome do **repo** (o remote `origin`, ex.: `/home/dev/.config/tars/seo-brain`), não o da pasta do workspace; um
+diretório antigo com o nome da pasta (`/home/dev/.config/tars/workspace`) continua sendo achado. Um volume próprio do
+projeto (como na receita do seo-brain) aponta para `/home/dev/.config/tars/<repo>`.
 
 ### Tarefa longa (`endurance-bg`)
 

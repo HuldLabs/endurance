@@ -80,10 +80,16 @@ npm cache clean --force
 
 # Browser ja' instalado: roda como o usuario do container — o dono dos arquivos tem de ser
 # quem vai usa-los, senao a primeira execucao do e2e falha por permissao no cache.
+# O `install chrome|msedge` acima roda como root e, com o PLAYWRIGHT_BROWSERS_PATH do
+# containerEnv ja' valendo no build, grava ffmpeg e `.links` aqui como root: devolve a pasta
+# ao usuario antes do install dele (achado do Kerr no rc.2 com "chromium,chrome").
+chown -R "$USERNAME:$USERNAME" "$BROWSERS_DIR"
 if [ "${#CACHE_BROWSERS[@]}" -gt 0 ]; then
   su "$USERNAME" -c "PLAYWRIGHT_BROWSERS_PATH=$BROWSERS_DIR \
-    npx --yes 'playwright@${PLAYWRIGHT_VERSION}' install ${CACHE_BROWSERS[*]}" || \
-    echo "playwright: AVISO: o download do browser falhou (rode 'npx playwright install ${CACHE_BROWSERS[*]}' na mao)" >&2
+    npx --yes 'playwright@${PLAYWRIGHT_VERSION}' install ${CACHE_BROWSERS[*]}" || {
+    echo "playwright: ERRO: o download de ${CACHE_BROWSERS[*]} falhou (ver acima)" >&2
+    exit 1
+  }
 fi
 
 echo "playwright: pronto (playwright $PLAYWRIGHT_VERSION, browser=$BROWSER, cache=$BROWSERS_DIR)"
