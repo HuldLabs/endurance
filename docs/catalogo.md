@@ -37,6 +37,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | Feature | Versão | Ref de uso | O que instala |
 | --- | --- | --- | --- |
 | [`agent-browser`](#agent-browser) | 1.0.0 | `ghcr.io/huldlabs/endurance/agent-browser:1` | agent-browser |
+| [`diag`](#diag) | 1.0.0 | `ghcr.io/huldlabs/endurance/diag:1` | Diagnostico (rede, I/O, CPU, medida) |
 | [`duckdb`](#duckdb) | 1.0.0 | `ghcr.io/huldlabs/endurance/duckdb:1` | DuckDB CLI |
 | [`gh`](#gh) | 1.0.1 | `ghcr.io/huldlabs/endurance/gh:1` | GitHub CLI |
 | [`kubectl-helm`](#kubectl-helm) | 1.0.0 | `ghcr.io/huldlabs/endurance/kubectl-helm:1` | kubectl + helm |
@@ -46,7 +47,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`opencode`](#opencode) | 1.0.0 | `ghcr.io/huldlabs/endurance/opencode:1` | opencode |
 | [`opentofu`](#opentofu) | 1.0.0 | `ghcr.io/huldlabs/endurance/opentofu:1` | OpenTofu |
 | [`php`](#php) | 1.0.0 | `ghcr.io/huldlabs/endurance/php:1` | PHP + composer + wp-cli |
-| [`playwright`](#playwright) | 1.2.0 | `ghcr.io/huldlabs/endurance/playwright:1` | Playwright |
+| [`playwright`](#playwright) | 1.3.0 | `ghcr.io/huldlabs/endurance/playwright:1` | Playwright |
 | [`postgres-client`](#postgres-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/postgres-client:1` | PostgreSQL client |
 | [`pulumi`](#pulumi) | 1.0.0 | `ghcr.io/huldlabs/endurance/pulumi:1` | Pulumi CLI |
 | [`pwsh`](#pwsh) | 1.0.0 | `ghcr.io/huldlabs/endurance/pwsh:1` | PowerShell |
@@ -73,6 +74,19 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 - **Instalar depois de (`installsAfter`):** `ghcr.io/huldlabs/endurance/node-bun`, `ghcr.io/huldlabs/endurance/playwright`
 - **containerEnv:** `AGENT_BROWSER_EXECUTABLE_PATH=/usr/bin/google-chrome`, `AGENT_BROWSER_ARGS=--no-sandbox`
 - **Fonte:** [`src/agent-browser/`](../src/agent-browser)
+
+### diag
+
+**Diagnostico (rede, I/O, CPU, medida)** — versão 1.0.0. Ferramentas de diagnostico da distro: ss (iproute2), strace, lsof, perf, iostat (sysstat), zstd e hyperfine. Pedido do Kerr: dono de porta, I/O do crawl (fsync, WAL) e medida de tempo com mediana.
+
+```jsonc
+"features": { "ghcr.io/huldlabs/endurance/diag:1": {} }
+```
+
+Sem options.
+
+- **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
+- **Fonte:** [`src/diag/`](../src/diag)
 
 ### duckdb
 
@@ -220,7 +234,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 
 ### playwright
 
-**Playwright** — versão 1.2.0. Bibliotecas de sistema do browser (por `install-deps` da versao pedida) e o browser instalado nas pastas de cache do container. Exige a feature node-bun para ter Node/npx.
+**Playwright** — versão 1.3.0. Bibliotecas de sistema do browser (por `install-deps` da versao pedida) e o browser instalado nas pastas de cache do container. Exige a feature node-bun para ter Node/npx.
 
 ```jsonc
 "features": { "ghcr.io/huldlabs/endurance/playwright:1": {} }
@@ -232,6 +246,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | `browser` | string | `chromium` | sugestões: `chromium`, `chrome`, `chrome,msedge,firefox,webkit`, `firefox`, `webkit`, `chromium,firefox,webkit` | Browsers, separados por virgula. 'chromium'/'firefox'/'webkit' (motores do Playwright) vao para o cache do container; 'chrome' e 'msedge' instalam o Google Chrome / Microsoft Edge REAIS no sistema (so' amd64) — para quem usa channel="chrome"/"msedge" e precisa do UA do proprio motor (coletor de SERP do seo-brain). |
 
 - **Instalar depois de (`installsAfter`):** `ghcr.io/huldlabs/endurance/node-bun`, `ghcr.io/devcontainers/features/common-utils`
+- **containerEnv:** `PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright`
 - **Fonte:** [`src/playwright/`](../src/playwright)
 
 ### postgres-client
