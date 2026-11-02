@@ -32,16 +32,17 @@ for b in "${BROWSERS[@]}"; do
   rm -rf /var/lib/apt/lists/*
 done
 
-# Browser em pasta de CACHE do container, a mesma que o projeto usa. Sem
-# PLAYWRIGHT_BROWSERS_PATH o Playwright escreve em ~/.cache/ms-playwright do usuario que
-# chamou, e um rebuild/volume novo obriga a baixar ~150 MB de novo. O perfil e' lido por
-# qualquer shell, entao o `playwright install` do projeto acha o mesmo diretorio.
-cat > /etc/profile.d/endurance-playwright.sh <<'EOF'
-export PLAYWRIGHT_BROWSERS_PATH="${PLAYWRIGHT_BROWSERS_PATH:-/workspace/.cache/ms-playwright}"
+# Browser na IMAGEM, em /opt/ms-playwright (dono = usuario do container). NUNCA sob
+# /workspace: no build o /workspace e' uma pasta da imagem, mas no container o bind do
+# projeto a cobre e o browser baixado some (achado do Kerr no rc.1 da dev.7). O perfil e o
+# containerEnv da feature apontam o PLAYWRIGHT_BROWSERS_PATH para ca', entao o
+# `playwright install` do projeto acha o mesmo diretorio.
+BROWSERS_DIR=/opt/ms-playwright
+cat > /etc/profile.d/endurance-playwright.sh <<EOF
+export PLAYWRIGHT_BROWSERS_PATH="\${PLAYWRIGHT_BROWSERS_PATH:-$BROWSERS_DIR}"
 EOF
 chmod 0644 /etc/profile.d/endurance-playwright.sh
-mkdir -p /workspace/.cache/ms-playwright
-chown -R "$USERNAME:$USERNAME" /workspace/.cache 2>/dev/null || true
+install -d -o "$USERNAME" -g "$USERNAME" -m 755 "$BROWSERS_DIR"
 
 # Chrome REAL (google-chrome-stable) e' do SISTEMA, nao do cache: o `install chrome` do
 # Playwright roda o script oficial do Google (apt, /opt/google/chrome) e por isso exige
@@ -79,10 +80,10 @@ npm cache clean --force
 
 # Browser ja' instalado: roda como o usuario do container — o dono dos arquivos tem de ser
 # quem vai usa-los, senao a primeira execucao do e2e falha por permissao no cache.
-if [ "${#CACHE_BROWSERS[@]}" -gt 0 ] && [ -w /workspace/.cache ]; then
-  su "$USERNAME" -c "PLAYWRIGHT_BROWSERS_PATH=/workspace/.cache/ms-playwright \
+if [ "${#CACHE_BROWSERS[@]}" -gt 0 ]; then
+  su "$USERNAME" -c "PLAYWRIGHT_BROWSERS_PATH=$BROWSERS_DIR \
     npx --yes 'playwright@${PLAYWRIGHT_VERSION}' install ${CACHE_BROWSERS[*]}" || \
     echo "playwright: AVISO: o download do browser falhou (rode 'npx playwright install ${CACHE_BROWSERS[*]}' na mao)" >&2
 fi
 
-echo "playwright: pronto (playwright $PLAYWRIGHT_VERSION, browser=$BROWSER, cache=/workspace/.cache/ms-playwright)"
+echo "playwright: pronto (playwright $PLAYWRIGHT_VERSION, browser=$BROWSER, cache=$BROWSERS_DIR)"
