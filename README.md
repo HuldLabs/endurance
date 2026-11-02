@@ -37,6 +37,9 @@ todas as options): [`docs/catalogo.md`](docs/catalogo.md), gerado por `tools/gen
 }
 ```
 
+**Guia de adoção** (máquina, projeto novo, projeto que já existe, atualizar, o que fazer quando dá errado):
+[`docs/adocao.md`](docs/adocao.md).
+
 O `image` dá a base; cada `features` acrescenta um runtime; o resto (compose,
 Postgres, portas, mounts, variáveis de ambiente) é do projeto.
 
@@ -434,7 +437,13 @@ Para republicar sem criar tag nova (retry de job que falhou), use
 
 ### Release (igual ao Tars)
 
-Depois da base e das features publicadas, o job `release` do `publish.yml` cria a Release do GitHub **por último**:
+**Enquanto o CI estiver proibido pelo dono,** o corte é à mão e na mesma ordem: tag anotada e assinada, base
+construída da árvore da tag e enviada ao GHCR, features publicadas com `devcontainer features publish`, digest
+conferido no registry e, por último, a Release com as notas de `tars release-notes --version <versão> --bin endurance
+--kind image` mais a base por digest. O formato das notas é o do Tars: aviso de pré-release, destaques, a seção da
+versão no `CHANGELOG.md` e a imagem por digest.
+
+Com o CI de volta, depois da base e das features publicadas, o job `release` do `publish.yml` cria a Release do GitHub **por último**:
 
 1. prova no GHCR a base **por digest** (`tars`, `git`, `op`, `rg` respondem) e cada feature pela versão cheia do seu
    `devcontainer-feature.json` **e** pela tag curta `:<major>`, exigindo que as duas apontem para o **mesmo digest**;
@@ -449,22 +458,8 @@ Confira local: `tars release-notes --version <versão> --bin endurance`.
 
 ### Usar numa máquina
 
-As imagens e features são **privadas** (GHCR privado é gratuito). Uma vez por
-máquina, antes do primeiro `devcontainer up`:
-
-```bash
-# PAT do cache sops, com escopo `read:packages`
-gh auth token                     # ou: sops -d ~/.cache/huld/dev.env.sops | ...
-echo "$PAT" | docker login ghcr.io -u <seu-usuario> --password-stdin
-```
-
-O login fica em `~/.docker/config.json` e vale para a imagem base e para todas as
-features. Depois disso o `devcontainer.json` funciona sem nada a mais — o `image`
-e os `features` apontam para `ghcr.io/huldlabs/endurance/...` e o Docker usa a
-credencial já guardada.
-
-O PAT vem do cache sops (`~/.cache/segtools/dev.env.sops` / `~/.cache/huld/...`,
-ver `secrets/dev.env.tpl`); nunca é versionado aqui.
+As imagens e features são **públicas** no GHCR: o `devcontainer up` puxa sem login. O passo a passo de máquina,
+projeto novo, projeto existente e atualização está em [`docs/adocao.md`](docs/adocao.md).
 
 ## Como o projeto sobe a base e as features
 

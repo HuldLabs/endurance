@@ -36,7 +36,7 @@
 | K1 | `diag` 1.0.0: ss, strace, lsof, perf, iostat, zstd, hyperfine | Kerr | no rc.3 (teste local passou) |
 | E8 | Gate no `tars doctor`: marcador de stack × feature ligada (D9) | as 4 | é do Tars: levar ao coord do Tars |
 | E3/E4/H2 | Devcontainer próprio de seo-brain e homelab sobre o Endurance (D22); o segtools migra (D7/F10) | seo-brain, homelab | com os coords dos projetos |
-| E12 | Leitura do GHCR sem login à mão (pacotes públicos ou login padronizado) | Kerr, seo-brain, homelab | decisão do dono |
+| E12 | Leitura do GHCR sem login à mão | Kerr, seo-brain, homelab | feito: base e features já são públicas (conferido 02/11, pull anônimo 200) |
 | E9 | Segurança multiusuário (D10) | Kerr, homelab | antes de máquina compartilhada/runner |
 | E10 | Base multi-arquitetura (hoje só amd64) | Kerr, homelab | — |
 | H1 | ssh-agent com a chave do bot vinda do cache do `tars secrets` | homelab | é do Tars: levar ao coord do Tars |
