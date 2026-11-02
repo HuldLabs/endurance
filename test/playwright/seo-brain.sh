@@ -6,7 +6,9 @@ source dev-container-features-test-lib
 # proprio motor, nunca spoofado.
 check "google-chrome" bash -c "google-chrome --version | grep -q 'Google Chrome'"
 check "microsoft-edge" bash -c "microsoft-edge --version | grep -q 'Microsoft Edge'"
-check "firefox do playwright" bash -c "ls -d /workspace/.cache/ms-playwright/firefox-*"
-check "webkit do playwright" bash -c "ls -d /workspace/.cache/ms-playwright/webkit-*"
+check "firefox do playwright" bash -c "ls -d $PLAYWRIGHT_BROWSERS_PATH/firefox-*"
+check "webkit do playwright" bash -c "ls -d $PLAYWRIGHT_BROWSERS_PATH/webkit-*"
+
+check "cache fora do /workspace" bash -c "[ \"$PLAYWRIGHT_BROWSERS_PATH\" = /opt/ms-playwright ]"
 
 reportResults

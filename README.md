@@ -279,7 +279,7 @@ Serviço de verdade (banco, fila, storage) continua no compose do projeto.
 
 ### Caches em `.cache/` (recomendação, não padrão)
 
-Caches de ferramenta (`uv`, `bun`, `pnpm`, `ms-playwright`, `pycache`) ficam **fora** da
+Caches de ferramenta (`uv`, `bun`, `pnpm`, `pycache`) ficam **fora** da
 árvore versionada, em `.cache/`, e o diretório **não** entra no git. É o que as features
 já fazem por perfil de shell; declarar no projeto torna o ganho explícito e sobrevive a
 quem roda o comando sem shell de login:
@@ -291,11 +291,13 @@ quem roda o comando sem shell de login:
     "UV_LINK_MODE": "hardlink",
     "UV_PYTHON_PREFERENCE": "only-managed",
     "PYTHONPYCACHEPREFIX": "${containerWorkspaceFolder}/.cache/pycache",
-    "BUN_INSTALL_CACHE_DIR": "${containerWorkspaceFolder}/.cache/bun",
-    "PLAYWRIGHT_BROWSERS_PATH": "${containerWorkspaceFolder}/.cache/ms-playwright"
+    "BUN_INSTALL_CACHE_DIR": "${containerWorkspaceFolder}/.cache/bun"
   }
 }
 ```
+
+Os browsers do Playwright ficam na imagem, em `/opt/ms-playwright` (a feature `playwright` define o
+`PLAYWRIGHT_BROWSERS_PATH`): sob o `/workspace` o bind do projeto os esconderia.
 
 O `UV_LINK_MODE=hardlink` só rende se o cache estiver no **mesmo filesystem** do repo; num
 mount de rede o uv cai para cópia e o ganho evapora.
