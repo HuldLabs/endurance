@@ -26,6 +26,7 @@
 | D19 | Feature `tars` **removida** (não depreciada): com o binário na base o shim não tem o que fazer, e não há option de comportamento implementada (D5). Mínimo = apagar; quem a usava tira a linha do `devcontainer.json` e o mount do checkout | worker F8, 14/10 |
 | D21 | Entre cortes, só candidatos RC locais (`0.0.1-dev.N-rc.M`): a cada ajuste o coord avisa todos os consumidores (commit, digest, o que mudou) e cada um decide quando recriar o container. Corte só com ordem do dono | dono, 02/11 |
 | D22 | Cada repo tem o seu próprio devcontainer, todos sobre o Endurance; nenhum projeto roda no container de outro (seo-brain e homelab saem do segtools-dev) | dono, 02/11 |
+| D23 | Token da service account: o da máquina (`~/.config/tars/automation/op-sa.token`, SA de leitura da Daneel, gravado pelos dotfiles), por bind readonly + `token_file`; nada semeado por projeto. Revê a parte de escopo por projeto da D10 | dono, 02/11 |
 
 ## Fila da dev.7 (prioridade das 4 sessões consumidoras, 02/11)
 
