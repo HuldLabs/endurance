@@ -130,6 +130,23 @@ O caso típico: o projeto rodava no container de outro (o `segtools-dev`) ou tin
    achado. Quem semeou token num volume pode mantê-lo, mas o padrão é o da seção 2.5.
 4. Siga 2.3 a 2.7.
 
+## Receita: SSH da Daneel às máquinas do projeto
+
+Acesso às máquinas é função normal da Daneel; a chave de acesso é outra, não a de assinatura. Provado no homelab.
+
+1. No template de segredos, a chave **por ID do item** (por nome falhou com `could not find item`).
+2. No postStart do projeto, agente em socket fixo e chave só por stdin, sem arquivo:
+
+   ```bash
+   ssh-agent -a /tmp/daneel-agent.sock
+   tars secrets exec -- sh -c 'printf "%s\n" "$HOMELAB_SSH_KEY" | SSH_AUTH_SOCK=/tmp/daneel-agent.sock ssh-add -'
+   ```
+
+3. `SSH_AUTH_SOCK=/tmp/daneel-agent.sock` no `containerEnv` e o `known_hosts` do repo.
+
+**Alerta:** chave de transporte nunca fica no ambiente de ferramenta que imprime erro. Só o `ssh-add` roda dentro do
+`tars secrets exec`; o resto roda fora. No homelab, `tars secrets exec -- ... converge.py` imprimiu a chave na saída.
+
 ## 4. Atualizar
 
 Entre cortes, o Endurance só circula como **candidato local** (D21): `0.0.1-dev.N-rc.M`, com a imagem
