@@ -17,8 +17,8 @@ container de outro.
 
 As imagens e features do Endurance no GHCR são **públicas**: o `devcontainer up` puxa sem login.
 
-Nada do 1Password do dono entra no container. O container usa **só** o token da service account que o dono semeia uma
-vez por projeto (seção 2, passo 5).
+Nada do 1Password do dono entra no container. O container usa **só** o token da service account da máquina, gravado
+pelo bootstrap dos dotfiles em `~/.config/tars/automation/op-sa.token` (seção 2, passo 5).
 
 ## 2. Projeto novo
 
@@ -68,8 +68,8 @@ vez por projeto (seção 2, passo 5).
 
    Depois, `tars sync --upgrade` e as `tars upgrade-notes` até a versão da base.
 
-3. **Subir:** `npx -y @devcontainers/cli@0.90.0 up --workspace-folder .`, **uma vez**. Sem o token ainda, o container
-   sobe com `[secrets] AVISO` e `[signing] AVISO`: é o esperado.
+3. **Subir:** `npx -y @devcontainers/cli@0.90.0 up --workspace-folder .`, **uma vez**. O container sobe com os segredos e a
+   assinatura prontos; um `[secrets] AVISO` indica token ou `[secrets]` faltando.
 
 4. **O que já roda sozinho a cada start (nada a fazer):**
    - `secrets`: `tars secrets refresh` renova o cache cifrado e liga o `credential.helper` do git do sistema;
@@ -77,22 +77,26 @@ vez por projeto (seção 2, passo 5).
      e assinatura, e `tars identity verify` confere;
    - `rust`: `rustup toolchain install` pelo `rust-toolchain.toml`.
 
-5. **O único passo manual — do DONO, uma vez por projeto:** semear o token da service account. Dentro do container
-   (o comando pede o token com a digitação oculta):
+5. **Token: automático, pelo token da máquina** (decisão do dono, D23). Os dotfiles gravam uma vez por máquina
+   `~/.config/tars/automation/op-sa.token` (service account de leitura da Daneel, modo 600). O container só o lê por
+   bind readonly; nada se semeia por projeto, e o agente nunca abre nem copia esse arquivo.
 
-   ```bash
-   tars secrets token set
+   No `devcontainer.json`:
+
+   ```jsonc
+   "mounts": ["source=${localEnv:HOME}/.config/tars/automation/op-sa.token,target=/run/tars/op-sa.token,type=bind,readonly"]
    ```
 
-   O token é o **aval** do dono para aquele projeto: o agente nunca se autoriza nem copia o token de outro projeto. Ele
-   mora no volume do projeto e sobrevive a toda recriação do container; só se refaz se o volume for apagado ou o
-   token trocado.
+   No `[secrets]` do `.ai/tars.toml`:
 
-6. **Parar e subir de novo** (o postStart só roda em start; um `up` com o container de pé não o repete):
-
-   ```bash
-   docker stop <container> && npx -y @devcontainers/cli@0.90.0 up --workspace-folder .
+   ```toml
+   token_file = "/run/tars/op-sa.token"
    ```
+
+   Máquina sem esse arquivo: rode o bootstrap dos dotfiles antes do `up` (o bind falha sem ele).
+
+6. **Se o container subiu antes do bind,** recrie-o: mount novo só entra em container novo. O postStart roda em todo
+   start; um `up` com o container de pé não o repete.
 
 7. **Conferir:**
 
@@ -123,7 +127,7 @@ O caso típico: o projeto rodava no container de outro (o `segtools-dev`) ou tin
 
 3. **Estado que já existia:** o diretório do `tars secrets` tem o nome do **repo** desde o Tars dev.30
    (`~/.config/tars/<repo>`); um diretório antigo com o nome da pasta (`~/.config/tars/workspace`) continua sendo
-   achado. Se o token já foi semeado num volume que você mantém, não precisa semear de novo.
+   achado. Quem semeou token num volume pode mantê-lo, mas o padrão é o da seção 2.5.
 4. Siga 2.3 a 2.7.
 
 ## 4. Atualizar
@@ -150,10 +154,11 @@ exit code, o esperado e o obtido. Bug do Tars (gate, guard, `tars secrets`/`iden
 | Sintoma | Causa provável | O que fazer |
 | --- | --- | --- |
 | `devcontainer up` trava no primeiro start; o segundo conclui | CLI 0.80.1 com Docker 29 | CLI ≥ 0.89 |
-| `[secrets] AVISO token ... ausente` | token não semeado | seção 2.5, depois stop + up |
+| `[secrets] AVISO token ... ausente` | sem o bind ou sem `token_file` | seção 2.5 e recriar o container |
+| `up` falha no mount de `op-sa.token` | máquina sem o bootstrap dos dotfiles | rode o bootstrap |
 | `age-keygen: permission denied` em `~/.config/tars/<repo>` | pasta `root` de um volume montado por cima | tire o mount; `sudo chown -R dev:dev ~/.config/tars` |
 | `[signing] AVISO: identidade nao verificada` | sem token, sem `[identity]` ou Tars < dev.30 | seções 2.2 e 2.5 |
-| `either user.signingkey or gpg.ssh.defaultKeyCommand needs to be configured` | `sign-setup` ainda não rodou | token + stop + up |
+| `either user.signingkey or gpg.ssh.defaultKeyCommand needs to be configured` | `sign-setup` ainda não rodou | seção 2.5 e recriar o container |
 | `Executable doesn't exist at /opt/ms-playwright/...` | `version` da feature diferente da do lock do projeto | passe a mesma `"version"` na feature `playwright` |
 | `ls $PLAYWRIGHT_BROWSERS_PATH`: pasta vazia | `PLAYWRIGHT_BROWSERS_PATH` do projeto aponta para o `.cache/` do workspace | tire a variável do projeto |
 | `perf` não mede | `perf_event_paranoid` do host | é do host, não do container |
