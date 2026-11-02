@@ -1,0 +1,9 @@
+{
+  "id": "sqlite-client",
+  "version": "1.0.0",
+  "name": "SQLite client",
+  "description": "O shell sqlite3 da distro, para inspecionar bancos SQLite do projeto (estado de crawl, app.sqlite) sem escrever script.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/sqlite-client",
+  "options": {},
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}

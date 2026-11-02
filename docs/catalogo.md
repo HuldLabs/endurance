@@ -56,6 +56,7 @@ O projeto liga no `devcontainer.json`; as versões das ferramentas são as optio
 | [`rust`](#rust) | 1.0.1 | `ghcr.io/huldlabs/endurance/rust:1` | Rust |
 | [`secrets`](#secrets) | 2.1.0 | `ghcr.io/huldlabs/endurance/secrets:2` | Segredos (tars secrets) |
 | [`signing`](#signing) | 2.1.0 | `ghcr.io/huldlabs/endurance/signing:2` | Assinatura de commit (tars identity) |
+| [`sqlite-client`](#sqlite-client) | 1.0.0 | `ghcr.io/huldlabs/endurance/sqlite-client:1` | SQLite client |
 
 ### agent-browser
 
@@ -379,3 +380,16 @@ Sem options.
   ```sh
   timeout 30 tars identity sign-setup --from-cache --global && timeout 30 tars identity verify || echo '[signing] AVISO: identidade nao verificada (ver acima); confira key_cache, git_name e git_email do `[identity]` do projeto e o postStart da feature secrets' >&2
   ```
+
+### sqlite-client
+
+**SQLite client** — versão 1.0.0. O shell sqlite3 da distro, para inspecionar bancos SQLite do projeto (estado de crawl, app.sqlite) sem escrever script.
+
+```jsonc
+"features": { "ghcr.io/huldlabs/endurance/sqlite-client:1": {} }
+```
+
+Sem options.
+
+- **Instalar depois de (`installsAfter`):** `ghcr.io/devcontainers/features/common-utils`
+- **Fonte:** [`src/sqlite-client/`](../src/sqlite-client)
