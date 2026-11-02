@@ -263,6 +263,8 @@ o nome do **repo** (o remote `origin`, ex.: `/home/dev/.config/tars/seo-brain`),
 diretório antigo com o nome da pasta (`/home/dev/.config/tars/workspace`) continua sendo achado. Não monte volume próprio em
 `/home/dev/.config/tars/<repo>`: a pasta não existe na imagem e o Docker a cria como `root`, o que quebra o
 `age-keygen` do postStart (achado do seo-brain no rc.4). O volume da feature `secrets` já cobre `~/.config/tars`.
+Quem já subiu com esse mount fica com a pasta `root` dentro do volume da feature mesmo depois de tirá-lo: rode uma
+vez `sudo chown -R dev:dev ~/.config/tars` no container.
 
 ### Tarefa longa (`endurance-bg`)
 
