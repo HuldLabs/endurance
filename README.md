@@ -348,6 +348,7 @@ ferramenta, nunca o conteúdo.
 | [`lifecycle`](lifecycle) | Scripts (não é feature; fica fora de `src/`) de `initializeCommand`/`updateContentCommand` (órfãos) |
 | [`php`](src/php) | php-cli do minor pedido (Sury) + composer 2.10.3 + wp-cli 2.12.0, checksums conferidos |
 | [`mysql-client`](src/mysql-client) | `mysql`/`mysqldump` da Oracle (repo apt assinado, trilha 8.4 LTS; fala com MySQL 8.0 de TLS autoassinado) |
+| [`diag`](src/diag) | Diagnóstico da distro: `ss`, `strace`, `lsof`, `perf`, `iostat`, `zstd`, `hyperfine` |
 | [`sqlite-client`](src/sqlite-client) | `sqlite3` da distro, para inspecionar bancos SQLite do projeto |
 | [`redis-client`](src/redis-client) | `valkey-cli` (também como `redis-cli`) |
 | [`pwsh`](src/pwsh) | PowerShell 7.6.6 (tarball oficial, sha256 conferido) |

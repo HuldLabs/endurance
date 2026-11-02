@@ -24,6 +24,24 @@
 | D17 | O `tars` é peça **da base** (todo projeto usa). É o binário compilado (`bun build --compile`), copiado de uma imagem do Tars por digest: `COPY --from=ghcr.io/huldlabs/tars:<v>@sha256:… /tars /usr/local/bin/tars`. Sem Node e sem credencial no build. **Cumprida (F8):** `ARG TARS_IMAGE` + estágio `tars` no `images/base/Dockerfile`, dev.28 `sha256:03288466…` | dono, 14/10 |
 | D20 | **Quem corta a tag é o coord**: o merge do dono no PR final da versão é o aval; o coord corta a tag anotada como Daneel, acompanha o CI e confere a Release. Tag com Release publicada nunca se move (substitui "tag é do dono"). Regra do Tars: `.ai/governance/versionamento-de-extracao.md` §"Quem corta a tag" (HuldLabs/tars#25, dev.24) | dono, 14/10 |
 | D19 | Feature `tars` **removida** (não depreciada): com o binário na base o shim não tem o que fazer, e não há option de comportamento implementada (D5). Mínimo = apagar; quem a usava tira a linha do `devcontainer.json` e o mount do checkout | worker F8, 14/10 |
+| D21 | Entre cortes, só candidatos RC locais (`0.0.1-dev.N-rc.M`): a cada ajuste o coord avisa todos os consumidores (commit, digest, o que mudou) e cada um decide quando recriar o container. Corte só com ordem do dono | dono, 02/11 |
+| D22 | Cada repo tem o seu próprio devcontainer, todos sobre o Endurance; nenhum projeto roda no container de outro (seo-brain e homelab saem do segtools-dev) | dono, 02/11 |
+
+## Fila da dev.7 (prioridade das 4 sessões consumidoras, 02/11)
+
+| # | item | quem pediu | situação |
+| --- | --- | --- | --- |
+| E1 | `sqlite-client` 1.0.0 | Kerr, seo-brain | no rc.1, validado no Kerr |
+| — | `playwright` 1.3.0: browsers em `/opt/ms-playwright` (o bind escondia o cache) | Kerr (bug) | no rc.2 |
+| K1 | `diag` 1.0.0: ss, strace, lsof, perf, iostat, zstd, hyperfine | Kerr | no rc.3 (teste local passou) |
+| E8 | Gate no `tars doctor`: marcador de stack × feature ligada (D9) | as 4 | é do Tars: levar ao coord do Tars |
+| E3/E4/H2 | Devcontainer próprio de seo-brain e homelab sobre o Endurance (D22); o segtools migra (D7/F10) | seo-brain, homelab | com os coords dos projetos |
+| E12 | Leitura do GHCR sem login à mão (pacotes públicos ou login padronizado) | Kerr, seo-brain, homelab | decisão do dono |
+| E9 | Segurança multiusuário (D10) | Kerr, homelab | antes de máquina compartilhada/runner |
+| E10 | Base multi-arquitetura (hoje só amd64) | Kerr, homelab | — |
+| H1 | ssh-agent com a chave do bot vinda do cache do `tars secrets` | homelab | é do Tars: levar ao coord do Tars |
+| E2 | `git-cliff` | seo-brain | prioridade baixa |
+| E11 | CI de volta, base construída uma vez | — | CI proibido pelo dono |
 
 ## Fila
 

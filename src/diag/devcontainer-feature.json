@@ -1,0 +1,9 @@
+{
+  "id": "diag",
+  "version": "1.0.0",
+  "name": "Diagnostico (rede, I/O, CPU, medida)",
+  "description": "Ferramentas de diagnostico da distro: ss (iproute2), strace, lsof, perf, iostat (sysstat), zstd e hyperfine. Pedido do Kerr: dono de porta, I/O do crawl (fsync, WAL) e medida de tempo com mediana.",
+  "documentationURL": "https://github.com/HuldLabs/endurance/tree/main/src/diag",
+  "options": {},
+  "installsAfter": ["ghcr.io/devcontainers/features/common-utils"]
+}
