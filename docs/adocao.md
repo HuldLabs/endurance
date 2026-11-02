@@ -139,13 +139,15 @@ Acesso às máquinas é função normal da Daneel; a chave de acesso é outra, n
 
    ```bash
    ssh-agent -a /tmp/daneel-agent.sock
-   tars secrets exec -- sh -c 'printf "%s\n" "$HOMELAB_SSH_KEY" | SSH_AUTH_SOCK=/tmp/daneel-agent.sock ssh-add -'
+   tars secrets exec -- sh -c 'printf "%s\n" "$HOMELAB_SSH_KEY_PEM" | SSH_AUTH_SOCK=/tmp/daneel-agent.sock ssh-add -'
    ```
 
 3. `SSH_AUTH_SOCK=/tmp/daneel-agent.sock` no `containerEnv` e o `known_hosts` do repo.
 
 **Alerta:** chave de transporte nunca fica no ambiente de ferramenta que imprime erro. Só o `ssh-add` roda dentro do
-`tars secrets exec`; o resto roda fora. No homelab, `tars secrets exec -- ... converge.py` imprimiu a chave na saída.
+`tars secrets exec`; o resto roda fora. Dê à variável com o **conteúdo** um nome que não seja o de uma variável de
+**caminho** do projeto: no homelab, `HOMELAB_SSH_KEY` era lida como caminho, e o erro ao abri-la imprimiu um trecho da
+chave.
 
 ## 4. Atualizar
 
