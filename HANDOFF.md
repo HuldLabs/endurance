@@ -19,10 +19,10 @@ Tars). Em maturação: dev.7, só como rc local; o vigente é o **dev.7-rc.4** (
 
 **Próximo passo:**
 - H1 virou receita em `docs/adocao.md`, seção "Receita: SSH da Daneel". Com a dev.31 publicada, trocar o `exec` da
-  receita por `tars secrets exec --only HOMELAB_SSH_KEY` (TARS-BUG-28, HuldLabs/tars#71).
-- **Aberto, segurança:** o `converge` dentro do `exec` imprimiu base64 de chave OpenSSH no homelab. Falta o Homelab dizer
-  onde a saída ficou gravada, se a chave saiu inteira e quem a imprime. Se foi para log ou transcript, a chave conta como
-  exposta; a rotação é decisão do dono.
+  receita por `tars secrets exec --only HOMELAB_SSH_KEY_PEM` (TARS-BUG-28, HuldLabs/tars#71).
+- **Aberto, segurança:** um trecho de chave OpenSSH do homelab ficou no transcript da sessão dele; sem log, CI ou commit.
+  O nome da variável colidia com a de caminho lida pelos hosts, e o erro do pyinfra imprimiu o conteúdo; corrigido em
+  HuldLabs/homelab#39. Conta como exposta; a rotação é decisão do dono, ainda não tomada.
 - E8 (gate stack × feature) está no BACKLOG do Tars, aguardando ordem do dono.
 - Próximo rc: o `[signing] AVISO` citar a linha do `verify` que falhou.
 - Tars dev.31 traz `block-host-commit` amplo, commit-msg sem crash e `verify` com `known_hosts`.
