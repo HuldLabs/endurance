@@ -151,11 +151,10 @@ compose, front em Node com `package-lock.json`):
     // /workspace/.venv); o volume nomeado sobre esse caminho esconde o `.venv` do host.
     "source=${localEnv:USER}-seo-brain-venv,target=/workspace/.venv,type=volume",
     // Sessão do agent-browser (cookies logados = CREDENCIAL): volume por usuário E projeto.
-    "source=${localEnv:USER}-seo-brain-agent-browser,target=/home/dev/.agent-browser,type=volume",
-    // Estado do `tars secrets` (chave age, op-token, cache cifrado) fica FORA do repo, em
-    // ~/.config/tars/<projeto>/. Sem volume, todo rebuild apaga a chave e obriga a refazer o
-    // refresh. Contem CREDENCIAL: volume por usuario E projeto, nunca compartilhado (D10).
-    "source=${localEnv:USER}-seo-brain-tars,target=/home/dev/.config/tars/seo-brain,type=volume"
+    "source=${localEnv:USER}-seo-brain-agent-browser,target=/home/dev/.agent-browser,type=volume"
+    // Estado do `tars secrets` (chave age, op-token, cache cifrado): a feature `secrets` ja'
+    // monta um volume por devcontainer em ~/.config/tars inteiro. NAO monte outro volume em
+    // ~/.config/tars/<repo>: a pasta nao existe na imagem e o Docker a cria como root.
   ]
 }
 ```
@@ -261,8 +260,9 @@ Outros recortes: `duckdb:1` (nexus), `restic-rclone:1` (homelab-infra), `kubectl
 **Persistência:** `secrets` e `signing` montam volumes por devcontainer em `/home/dev/.config/tars` e
 `/home/dev/.ssh`; recriar o container mantém o estado. Desde o Tars dev.30 o diretório de estado do `tars secrets` tem
 o nome do **repo** (o remote `origin`, ex.: `/home/dev/.config/tars/seo-brain`), não o da pasta do workspace; um
-diretório antigo com o nome da pasta (`/home/dev/.config/tars/workspace`) continua sendo achado. Um volume próprio do
-projeto (como na receita do seo-brain) aponta para `/home/dev/.config/tars/<repo>`.
+diretório antigo com o nome da pasta (`/home/dev/.config/tars/workspace`) continua sendo achado. Não monte volume próprio em
+`/home/dev/.config/tars/<repo>`: a pasta não existe na imagem e o Docker a cria como `root`, o que quebra o
+`age-keygen` do postStart (achado do seo-brain no rc.4). O volume da feature `secrets` já cobre `~/.config/tars`.
 
 ### Tarefa longa (`endurance-bg`)
 
