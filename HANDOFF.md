@@ -18,9 +18,11 @@ Tars). Em maturação: dev.7, só como rc local; o vigente é o **dev.7-rc.4** (
   real na dev.6.
 
 **Próximo passo:**
-- Homelab testa o H1 sem Tars novo: chave de acesso no template, cache, `ssh-add` no postStart. Passando, vira receita
-  em `docs/adocao.md`. A chave de assinatura não entra no NUC; a de acesso é outra. Acesso às máquinas é função normal
-  da Daneel.
+- H1 virou receita em `docs/adocao.md`, seção "Receita: SSH da Daneel". Com a dev.31 publicada, trocar o `exec` da
+  receita por `tars secrets exec --only HOMELAB_SSH_KEY` (TARS-BUG-28, HuldLabs/tars#71).
+- **Aberto, segurança:** o `converge` dentro do `exec` imprimiu base64 de chave OpenSSH no homelab. Falta o Homelab dizer
+  onde a saída ficou gravada, se a chave saiu inteira e quem a imprime. Se foi para log ou transcript, a chave conta como
+  exposta; a rotação é decisão do dono.
 - E8 (gate stack × feature) está no BACKLOG do Tars, aguardando ordem do dono.
 - Próximo rc: o `[signing] AVISO` citar a linha do `verify` que falhou.
 - Tars dev.31 traz `block-host-commit` amplo, commit-msg sem crash e `verify` com `known_hosts`.
