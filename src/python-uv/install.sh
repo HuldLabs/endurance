@@ -78,6 +78,40 @@ if ! su "$USERNAME" -c "'$VENV_PATH/bin/python' -V" >/dev/null 2>&1; then
   chown -R "$USERNAME:$USERNAME" "$VENV_PATH" 2>/dev/null || true
 fi
 
+# O teste acima roda no BUILD, sobre o venv da IMAGEM. Em execucao, um volume nomeado que JA
+# existe monta por cima e esconde esse venv (o Docker so' copia a imagem para volume VAZIO):
+# trocar `pythonVersion` deixava o venv antigo com o symlink quebrado e o `uv` falhava com
+# "Broken symlink at .venv/bin/python" (consumidor de 20/11/2026, 3.13 -> 3.15.2). A mesma
+# conferencia roda entao no postStart (devcontainer-feature.json), DEPOIS do volume montado.
+# Valores fixados no build: o postStart nao recebe as options da feature.
+cat > /usr/local/bin/endurance-venv-check <<EOF
+#!/usr/bin/env bash
+# Gerado pela feature python-uv. Confere o venv contra o pythonVersion e refaz se diferir.
+set -euo pipefail
+PY="$PY"
+VENV="$VENV_PATH"
+export UV_PYTHON_INSTALL_DIR="$UV_PYTHON_INSTALL_DIR"
+EOF
+cat >> /usr/local/bin/endurance-venv-check <<'EOF'
+atual="$("$VENV/bin/python" -c 'import platform; print(platform.python_version())' 2>/dev/null || true)"
+case "$PY" in
+  *.*.*) ok=$([ "$atual" = "$PY" ] && echo 1 || echo 0) ;;
+  *)     ok=$(case "$atual" in "$PY".*) echo 1 ;; *) echo 0 ;; esac) ;;
+esac
+if [ "$ok" = 1 ]; then
+  echo "python-uv: venv ok ($VENV, python $atual)"
+  exit 0
+fi
+echo "python-uv: venv em $VENV com python '${atual:-ausente/quebrado}', pedido $PY: refazendo" >&2
+uv venv --clear --python "$PY" "$VENV" || { echo "python-uv: ERRO: nao consegui refazer o venv em $VENV" >&2; exit 1; }
+if [ -f /workspace/uv.lock ]; then
+  (cd /workspace && UV_PROJECT_ENVIRONMENT="$VENV" uv sync --frozen) || \
+    { echo "python-uv: ERRO: uv sync --frozen falhou depois de refazer o venv" >&2; exit 1; }
+fi
+echo "python-uv: venv refeito ($VENV, python $("$VENV/bin/python" -c 'import platform; print(platform.python_version())'))"
+EOF
+chmod 0755 /usr/local/bin/endurance-venv-check
+
 # UV_PROJECT_ENVIRONMENT: sem ela o `uv sync` usa o `.venv` do DIRETORIO do projeto, que no bind
 # do repo e' o mesmo do host — um `uv` no host recria esse `.venv` com o Python do host e o
 # container fica sem interpretador (seo-brain, 14/10). Com ela, o uv usa o venvPath. Fora de shell

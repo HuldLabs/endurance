@@ -23,5 +23,14 @@
     "features": {
       "python-uv": {}
     }
+  },
+  "venvstale": {
+    "image": "endurance-base:local",
+    "remoteUser": "dev",
+    "features": {
+      "python-uv": {
+        "pythonVersion": "3.13"
+      }
+    }
   }
 }
