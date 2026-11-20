@@ -4,6 +4,20 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
 Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho) com as 4 subseções `###` do Tars, e
 `- **Destaque.** …` em "O que mudou": é o que o `tars release-notes` lê para gerar as notas da Release.
 
+## 0.0.1-dev.7
+
+### O que mudou
+- **base: `endurance-init` põe o `dev` no grupo do `docker.sock`.** Descobre o gid do socket em runtime, cria o grupo se faltar (`docker-host`) e faz `usermod -aG`, pelo sudo restrito que a base já concedia. Idempotente.
+
+### Por que
+O sudo para `groupadd`/`usermod` existia na base, mas nenhum script o chamava: a chamada ficou no post-create do segtools (`5397f2ff`). No devcontainer, `docker`/`docker compose` davam "permission denied" (socket gid 977, `dev` só no grupo 1000), e o Postgres do projeto não subia. Consumidor de 20/11/2026.
+
+### Arquivos impactados
+- `images/base/Dockerfile` (`endurance-init`), `docs/catalogo.md`.
+
+### O que o consumidor faz
+- Chamar `endurance-init /workspace` no `postCreateCommand` (já é o exemplo do README). O grupo vale a partir da sessão seguinte (`devcontainer exec`/attach); no mesmo processo, use `sg <grupo> -c ...`.
+
 ## 0.0.1-dev.6
 
 ### O que mudou
