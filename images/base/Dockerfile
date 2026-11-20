@@ -207,7 +207,7 @@ RUN install -d -o dev -g dev -m 700 /home/dev/.ssh \
 # a arvore que o projeto montar (por default /workspace).
 # O script entra por `COPY <<EOF` (heredoc do BuildKit), que GRAVA o arquivo. `RUN <<EOF sh`
 # EXECUTA o conteudo no build — o arquivo nunca existia e o build quebrava no chmod.
-# catalogo: endurance-init | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x) | script da imagem
+# catalogo: endurance-init | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x, grupo do docker.sock) | script da imagem
 COPY --chmod=0755 <<'INIT' /usr/local/bin/endurance-init
 #!/usr/bin/env bash
 # Chamado no post-create do projeto (ou na mao). Idempotente.
@@ -230,6 +230,29 @@ git -C "$TREE" config core.filemode false
 # Repoe o bit executavel dos hooks (ver comentario no Dockerfile).
 if [ -d "$TREE/.githooks" ]; then
   find "$TREE/.githooks" -maxdepth 1 -type f -exec chmod +x {} +
+fi
+
+# Grupo do socket do Docker (porte do post-create do segtools, 5397f2ff). O gid do socket
+# VARIA por maquina (muda quando o Docker reinstala): nao da para fixar no build nem em
+# runArgs. Sem isto o `docker`/`docker compose` do dev da "permission denied" e o banco do
+# projeto nao sobe. O sudo restrito a groupadd/usermod ja vem da base (usuario dev, acima).
+# `usermod -aG` so vale para a PROXIMA sessao: o `devcontainer exec`/attach seguinte ja tem o
+# grupo; neste processo, use `sg <grupo> -c ...`.
+if [ -S /var/run/docker.sock ]; then
+  SOCK_GID="$(stat -c %g /var/run/docker.sock)"
+  if id -G "$(id -un)" | tr " " "\n" | grep -qx "$SOCK_GID"; then
+    echo "endurance-init: ja no grupo do docker.sock (gid $SOCK_GID)"
+  else
+    DOCKER_GROUP="$(getent group "$SOCK_GID" | cut -d: -f1 || true)"
+    if [ -z "$DOCKER_GROUP" ]; then
+      DOCKER_GROUP=docker-host
+      sudo -n groupadd -g "$SOCK_GID" "$DOCKER_GROUP"
+    fi
+    sudo -n usermod -aG "$DOCKER_GROUP" "$(id -un)"
+    echo "endurance-init: $(id -un) no grupo $DOCKER_GROUP (gid $SOCK_GID); vale a partir da proxima sessao"
+  fi
+else
+  echo "endurance-init: AVISO: /var/run/docker.sock ausente; docker/compose nao funcionam aqui" >&2
 fi
 
 echo "endurance-init: pronto ($TREE: hooksPath=.githooks, filemode=false, hooks +x)"

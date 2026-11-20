@@ -26,7 +26,7 @@ Fixe pela versão cheia e, de preferência, por digest (`base@sha256:…`). Usu�
 | `claude` | `2.1.278` | Claude Code CLI nativo (sem Node), sha256 fixado por arquitetura |
 | `ca-certificates curl gnupg jq xz-utils unzip openssh-client less procps tini locales tzdata` | apt da trixie, sem pin | utilitarios de trabalho e transporte; tini e' o PID 1 |
 | `locale e fuso` | `pt_BR.UTF-8`, `America/Sao_Paulo` | configuracao da base: LANG e TZ, sem LC_ALL (projeto sobrescreve LANG/LC_* por containerEnv) |
-| `endurance-init` | script da imagem | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x) |
+| `endurance-init` | script da imagem | configura a arvore montada (safe.directory, hooksPath, filemode, hooks +x, grupo do docker.sock) |
 | `endurance-bg` | script da imagem | tarefa longa dentro do container (setsid com nome, log e pidfile; ADR-0001) |
 
 ## Features — `ghcr.io/huldlabs/endurance/<id>:<major>`
