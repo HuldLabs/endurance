@@ -4,6 +4,26 @@ Formato: o que mudou · por quê · arquivos impactados · o que o consumidor fa
 Desde a 0.0.1-dev.3 cada seção é `## <versão>` (só a versão no cabeçalho) com as 4 subseções `###` do Tars, e
 `- **Destaque.** …` em "O que mudou": é o que o `tars release-notes` lê para gerar as notas da Release.
 
+## 0.0.1-dev.7
+
+### O que mudou
+- **`python-uv` 1.3.1: o venv é conferido depois do volume montado.** Novo `endurance-venv-check` no `postStartCommand`:
+  se o python do venv não é o `pythonVersion` (ou o symlink quebrou), refaz com `uv venv --clear` e roda
+  `uv sync --frozen` quando há `uv.lock`; falha alto se não conseguir.
+
+### Por que
+O teste do venv no `install.sh` roda no build, sobre o venv da imagem; em execução um volume nomeado que já existe
+monta por cima (o Docker só copia a imagem para volume vazio). Trocar `pythonVersion` deixava o venv antigo com o
+symlink quebrado e o `uv` falhava com "Broken symlink at .venv/bin/python".
+
+Bugs reportados que esta versão fecha: consumidor novo (repo de nutrição, 20/11), 3.13 → 3.15.2 com o volume do venv.
+
+### Arquivos impactados
+`src/python-uv/{install.sh,devcontainer-feature.json}`, `test/python-uv/{scenarios.json,venvstale.sh}`, `CHANGELOG.md`.
+
+### O que o consumidor faz
+- Fixar `python-uv:1.3.1`. Nada mais: o check roda sozinho a cada start e não mexe num venv que já está certo.
+
 ## 0.0.1-dev.6
 
 ### O que mudou
