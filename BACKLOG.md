@@ -40,6 +40,9 @@
 | E12 | Leitura do GHCR sem login à mão | Kerr, seo-brain, homelab | feito: base e features já são públicas (conferido 02/11, pull anônimo 200) |
 | E9 | Segurança multiusuário (D10) | Kerr, homelab | antes de máquina compartilhada/runner |
 | E10 | Base multi-arquitetura (hoje só amd64) | Kerr, homelab | — |
+| M1 | **`postgres-client` privado no GHCR**, contra o E12 e o README ("públicas"): token anônimo dá 401 para `huldlabs/endurance/postgres-client` e 200 para `python-uv` (medido 20/11, duas vezes). Consumidor sem login não sobe o devcontainer com a feature | maromba (bug) | ajuste de visibilidade do pacote na org; o E12 volta a valer só depois |
+| M2 | **Sem processo de contribuição de consumidor:** não há `CONTRIBUTING.md` nem template de PR (o Tomo tem os dois; o Tars também não). Consumidores abrem PR sem saber formato, escopo e CHANGELOG esperados | maromba | portar o do Tomo (`CONTRIBUTING.md`, `.github/pull_request_template.md`, branch `contrib/<consumidor>/<slug>`) |
+| M3 | **Três cópias da lógica do `docker.sock`** nos consumidores: homelab (`runArgs --group-add 977`, quebra quando o gid muda), farmega (`configure_docker_socket_access`), segtools (`post-create.sh`). A #49 leva a lógica para o `endurance-init` | maromba | depois da #49: avisar os três para apagar a cópia |
 | H1 | ssh-agent com a chave do bot vinda do cache do `tars secrets` | homelab | é do Tars: levar ao coord do Tars |
 | E2 | `git-cliff` | seo-brain | prioridade baixa |
 | E11 | CI de volta, base construída uma vez | — | CI proibido pelo dono |
